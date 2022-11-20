@@ -7,10 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="7.0.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\InnoGotchiGame.Application\InnoGotchiGame.Application.csproj" />
     <ProjectReference Include="..\InnoGotchiGame.Domain\InnoGotchiGame.Domain.csproj" />
   </ItemGroup>
 

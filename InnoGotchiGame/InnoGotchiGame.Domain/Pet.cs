@@ -3,6 +3,7 @@
     public class Pet
     {
         public int Id { get; set; }
+       
         public PetStatistic Statistic { get; set; }
         public PetView View { get; set; }
 
