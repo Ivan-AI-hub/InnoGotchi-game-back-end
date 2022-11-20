@@ -3,9 +3,37 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{77BB86F6-47BC-4713-B6D2-2509BBCD25B5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{852A61D8-09E1-4BFF-959C-CE1B24C23655}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Presentation", "Presentation", "{4B75BF86-C385-4F92-9673-342F631A5BC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InnoGotchiGame.Domain", "InnoGotchiGame.Domain\InnoGotchiGame.Domain.csproj", "{0C4CCFAE-420F-42EA-BDA1-9F7245DAFCAC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InnoGotchiGame.Application", "InnoGotchiGame.Application\InnoGotchiGame.Application.csproj", "{EE9FD46D-EED9-4309-A56A-B376A22468E3}"
+EndProject
 Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0C4CCFAE-420F-42EA-BDA1-9F7245DAFCAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C4CCFAE-420F-42EA-BDA1-9F7245DAFCAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C4CCFAE-420F-42EA-BDA1-9F7245DAFCAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C4CCFAE-420F-42EA-BDA1-9F7245DAFCAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EE9FD46D-EED9-4309-A56A-B376A22468E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EE9FD46D-EED9-4309-A56A-B376A22468E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EE9FD46D-EED9-4309-A56A-B376A22468E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EE9FD46D-EED9-4309-A56A-B376A22468E3}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0C4CCFAE-420F-42EA-BDA1-9F7245DAFCAC} = {77BB86F6-47BC-4713-B6D2-2509BBCD25B5}
+		{EE9FD46D-EED9-4309-A56A-B376A22468E3} = {77BB86F6-47BC-4713-B6D2-2509BBCD25B5}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E32BB44A-5A40-4E0C-8AA1-FD4FB1031F50}
