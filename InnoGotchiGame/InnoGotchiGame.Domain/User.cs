@@ -16,6 +16,6 @@ namespace InnoGotchiGame.Domain
 
         public int OwnPetFarmId { get; set; }
         public PetFarm? OwnPetFarm { get; set; }
-        public List<PetFarm>? FriendsFarms { get; set; }
+        public List<User>? Friends { get; set; }
     }
 }
