@@ -1,8 +1,6 @@
 ﻿using InnoGotchiGame.Domain;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
 
 namespace InnoGotchiGame.Persistence.EntityConfigurations
 {
@@ -15,7 +13,7 @@ namespace InnoGotchiGame.Persistence.EntityConfigurations
                 .HasForeignKey<PetFarm>(x => x.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            builder.HasMany(p => p.Friends).WithMany(d => d.Friends);
+            //builder.HasMany(p => p.Friends).WithMany(d => d.Friends);
         }
     }
 }

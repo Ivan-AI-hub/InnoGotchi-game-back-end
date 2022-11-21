@@ -1,5 +1,6 @@
 ﻿using InnoGotchiGame.Application.Interfaces;
 using InnoGotchiGame.Domain;
+using InnoGotchiGame.Persistence.EntityConfigurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Persistence
@@ -8,16 +9,18 @@ namespace InnoGotchiGame.Persistence
     {
         public InnoGotchiGameContext()
         {
+            Database.EnsureCreated();
         }
 
         public InnoGotchiGameContext(DbContextOptions<InnoGotchiGameContext> options)
             : base(options)
         {
+            Database.EnsureCreated();
         }
 
-        public DbSet<Pet> Pets { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public DbSet<PetFarm> PetFarms { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public DbSet<User> Users { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public DbSet<Pet> Pets { get; set; }
+        public DbSet<PetFarm> PetFarms { get; set; }
+        public DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -29,7 +32,9 @@ namespace InnoGotchiGame.Persistence
         }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-
+            modelBuilder.ApplyConfiguration(new PetConfigurator());
+            modelBuilder.ApplyConfiguration(new PetFarmConfigurator());
+            modelBuilder.ApplyConfiguration(new UserConfigurator());
         }
     }
 }
