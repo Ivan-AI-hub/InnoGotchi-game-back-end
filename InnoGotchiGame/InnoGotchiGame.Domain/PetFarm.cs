@@ -5,7 +5,6 @@ namespace InnoGotchiGame.Domain
     {
         public int Id { get; set; }
 
-        public List<Pet> Pets { get;}
         public int FeedingPeriod { get; set; }
         public int QuenchingPeriod { get; set; }
 
@@ -16,5 +15,7 @@ namespace InnoGotchiGame.Domain
 
         public int UserId { get; set; }
         public User User { get; set; }
+
+        public List<Pet> Pets { get; }
     }
 }

@@ -13,6 +13,11 @@ namespace InnoGotchiGame.Persistence.EntityConfigurations
             {
                 cb.HasIndex(x => x.Name).IsUnique();
             });
+
+            builder.HasOne(d => d.Farm)
+                .WithMany(p => p.Pets)
+                .HasForeignKey(d => d.FarmId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
