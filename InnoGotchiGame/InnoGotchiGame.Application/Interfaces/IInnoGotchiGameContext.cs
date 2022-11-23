@@ -8,6 +8,7 @@ namespace InnoGotchiGame.Application.Interfaces
         DbSet<Pet> Pets { get; set; }
         DbSet<PetFarm> PetFarms { get; set; }
         DbSet<User> Users { get; set; }
+        DbSet<FriendlyRelation> FriendlyRelations { get; set; }
 
         public int SaveChanges();
     }

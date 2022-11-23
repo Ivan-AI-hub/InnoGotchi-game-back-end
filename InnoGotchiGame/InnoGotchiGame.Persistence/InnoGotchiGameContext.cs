@@ -21,8 +21,9 @@ namespace InnoGotchiGame.Persistence
         public DbSet<Pet> Pets { get; set; }
         public DbSet<PetFarm> PetFarms { get; set; }
         public DbSet<User> Users { get; set; }
+		public DbSet<FriendlyRelation> FriendlyRelations { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (!optionsBuilder.IsConfigured)
             {
@@ -35,6 +36,7 @@ namespace InnoGotchiGame.Persistence
             modelBuilder.ApplyConfiguration(new PetConfigurator());
             modelBuilder.ApplyConfiguration(new PetFarmConfigurator());
             modelBuilder.ApplyConfiguration(new UserConfigurator());
+            modelBuilder.ApplyConfiguration(new FriendlyRelationConfigurator());
         }
     }
 }
