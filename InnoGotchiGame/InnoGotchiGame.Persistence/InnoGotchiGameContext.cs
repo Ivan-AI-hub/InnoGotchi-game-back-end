@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Persistence
 {
-    public class InnoGotchiGameContext : DbContext
+	public class InnoGotchiGameContext : DbContext
     {
         public InnoGotchiGameContext()
         {

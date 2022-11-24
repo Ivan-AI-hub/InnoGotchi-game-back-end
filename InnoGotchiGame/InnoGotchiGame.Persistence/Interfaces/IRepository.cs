@@ -2,7 +2,7 @@
 
 namespace InnoGotchiGame.Persistence.Interfaces
 {
-	internal interface IRepository<T> where T:class
+	public interface IRepository<T> where T:class
 	{
 		public T? GetItemById(int id);
 
@@ -23,5 +23,7 @@ namespace InnoGotchiGame.Persistence.Interfaces
 		public void Update(int updatedId, T item);
 
 		public void Delete(int id);
+
+		public void Save();
 	}
 }

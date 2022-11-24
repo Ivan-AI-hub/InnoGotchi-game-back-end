@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InnoGotchiGame.Persistence.EntityConfigurations
 {
-    internal class PetConfigurator : IEntityTypeConfiguration<Pet>
+	internal class PetConfigurator : IEntityTypeConfiguration<Pet>
     {
         public void Configure(EntityTypeBuilder<Pet> builder)
         {

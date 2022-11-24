@@ -70,5 +70,10 @@ namespace InnoGotchiGame.Persistence.Repositories
 				.Skip(pageSize * (pageNumber - 1))
 				.Take(pageSize);
 		}
+
+		public void Save()
+		{
+			_context.SaveChanges();
+		}
 	}
 }
