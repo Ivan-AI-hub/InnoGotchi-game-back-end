@@ -3,7 +3,7 @@ using InnoGotchiGame.Domain;
 
 namespace InnoGotchiGame.Application.Validators
 {
-	internal class UserValidator : AbstractValidator<User>
+	public class UserValidator : AbstractValidator<User>
 	{
 		public UserValidator() 
 		{
@@ -24,7 +24,7 @@ namespace InnoGotchiGame.Application.Validators
 
 			RuleFor(x => x.PasswordHach)
 				.NotEmpty()
-				.NotNull()
+				.NotNull();
 		}
 	}
 }
