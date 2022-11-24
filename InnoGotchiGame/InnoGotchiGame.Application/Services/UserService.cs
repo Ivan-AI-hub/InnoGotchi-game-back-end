@@ -20,6 +20,12 @@ namespace InnoGotchiGame.Application.Services
 			return Context.Users.FirstOrDefault(x => x.Id == id);
 		}
 
+		public User? GetUser(Func<User, bool> predicate)
+		{
+			return Context.Users.FirstOrDefault(predicate);
+		}
+
+
 		public IQueryable<User> GetUsers(Func<User, bool>? whereRule = null,
 										 Func<User, dynamic>? orderByRule = null,
 										 bool isDescendingOrder = false) 
