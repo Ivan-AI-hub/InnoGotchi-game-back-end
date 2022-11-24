@@ -1,14 +1,13 @@
-﻿using InnoGotchiGame.Application.Interfaces;
-using InnoGotchiGame.Domain;
+﻿using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
-namespace InnoGotchiGame.Application.Services
+namespace InnoGotchiGame.Persistence.Repositories
 {
-	public class UserService : IRepository<User>
+	public class UserRepository : IRepository<User>
 	{
-		private IInnoGotchiGameContext _context;
-		public UserService(IInnoGotchiGameContext context)
+		private InnoGotchiGameContext _context;
+		public UserRepository(InnoGotchiGameContext context)
 		{
 			_context = context;
 		}

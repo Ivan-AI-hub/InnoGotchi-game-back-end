@@ -1,11 +1,10 @@
-﻿using InnoGotchiGame.Application.Interfaces;
-using InnoGotchiGame.Domain;
+﻿using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.EntityConfigurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Persistence
 {
-    public class InnoGotchiGameContext : DbContext, IInnoGotchiGameContext
+    public class InnoGotchiGameContext : DbContext
     {
         public InnoGotchiGameContext()
         {
