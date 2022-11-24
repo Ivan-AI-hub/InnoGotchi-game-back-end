@@ -1,35 +1,37 @@
-﻿using InnoGotchiGame.Application.Interfaces;
-using InnoGotchiGame.Application.Services;
+﻿using AutoMapper;
+using FluentValidation;
+using FluentValidation.Results;
+using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Domain;
+using InnoGotchiGame.Persistence.Interfaces;
 
 namespace InnoGotchiGame.Application.Managers
 {
 	public class UserManager
 	{
-		/// <returns>All friends of user</returns>
-		public IEnumerable<User> GetUserFriends(User user)
-		{
-			Func<FriendlyRelation, bool> whereFunc = x => x.Status == FriendlyRelationStatus.Friends;
+		private AbstractValidator<User> _validator;
+		private IRepository<User> _repository;
+		private IMapper _mapper;
 
-			List<User> friends = new List<User>();
-			friends.AddRange(user.AcceptedFriendships.Where(whereFunc).Select(x => x.FirstFriend));
-			friends.AddRange(user.SentFriendships.Where(whereFunc).Select(x => x.SecondFriend));
-			return friends;
+		public UserManager(IRepository<User> repository, IMapper mapper, AbstractValidator<User> validator)
+		{
+			_repository = repository;
+			_mapper = mapper;
+			_validator = validator;
 		}
 
-		/// <returns>All unconfirmed invitations to be friends</returns>
-		public IEnumerable<FriendlyRelation> GetUnconfirmedInvite(User user) 
+		public ValidationResult Add(UserDTO user)
 		{
-			var invites = user.AcceptedFriendships.Where(x => x.Status == FriendlyRelationStatus.Undefined);
-			return invites;
-		}
+			var dataUser = _mapper.Map<User>(user);
+			dataUser.PasswordHach = StringToHach(user.Password);
 
-		/// <summary>
-		/// Sets the password hash
-		/// </summary>
-		public void SetPasswordHash(User user, string password)
-		{
-			user.PasswordHach = StringToHach(password);
+			var validationRezult = _validator.Validate(dataUser);
+			if(validationRezult.IsValid)
+			{
+				_repository.Add(dataUser);
+				_repository.Save();
+			}
+			return validationRezult;
 		}
 
 		/// <summary>
@@ -39,10 +41,11 @@ namespace InnoGotchiGame.Application.Managers
 		/// <param name="email">User email</param>
 		/// <param name="password">User password</param>
 		/// <returns>Found user or null if the user was not found</returns>
-		public User? FindUserInDb(UserService service, string email, string password)
+		public User? FindUserInDb(string email, string password)
 		{
 			int passwordHach = StringToHach(password);
-			return service.GetUser(x => x.Email == email && x.PasswordHach == passwordHach);
+			throw new NotImplementedException();
+			//return service.GetUser(x => x.Email == email && x.PasswordHach == passwordHach);
 		}
 
 		private int StringToHach(string read)
