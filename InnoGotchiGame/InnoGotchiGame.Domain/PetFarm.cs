@@ -8,11 +8,6 @@ namespace InnoGotchiGame.Domain
         public int FeedingPeriod { get; set; }
         public int QuenchingPeriod { get; set; }
 
-        public int AlivesPetsCount => Pets.Count(x => x.Statistic.IsAlive);
-        public int DeadsPetsCount => Pets.Count(x => !x.Statistic.IsAlive);
-        public double AveragePetsHappinessDaysCount => Pets.Average(x => (x.Statistic.FirstHappinessDay - DateTime.Now).Days);
-        public double AveragePetsAge => Pets.Average(x => x.Statistic.Age);
-
         public int UserId { get; set; }
         public User User { get; set; }
 
