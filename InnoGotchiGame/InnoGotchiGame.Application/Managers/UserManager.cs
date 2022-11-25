@@ -20,6 +20,13 @@ namespace InnoGotchiGame.Application.Managers
 			_validator = validator;
 		}
 
+		/// <summary>
+		/// Adds user in data base
+		/// </summary>
+		/// <param name="user">User for adding</param>
+		/// <returns>The result of data validation.
+		/// If the data has been validated successfully
+		/// it will be added to the database otherwise not</returns>
 		public ValidationResult Add(UserDTO user)
 		{
 			var dataUser = _mapper.Map<User>(user);
@@ -27,6 +34,34 @@ namespace InnoGotchiGame.Application.Managers
 
 			var validationRezult = _validator.Validate(dataUser);
 			if(validationRezult.IsValid)
+			{
+				_repository.Add(dataUser);
+				_repository.Save();
+			}
+			return validationRezult;
+		}
+
+
+		public ValidationResult Update(int updatedId, UserDTO newUser)
+		{
+			var dataUser = _mapper.Map<User>(newUser);
+			if (newUser.Password == String.Empty)
+			{
+				var oldUser = _repository.GetItemById(updatedId);
+				if(oldUser != null)
+					dataUser.PasswordHach = oldUser.PasswordHach;
+				else
+				{
+					var rezult = new ValidationResult();
+				}
+			}
+			else
+			{
+				dataUser.PasswordHach = StringToHach(newUser.Password);
+			}
+
+			var validationRezult = _validator.Validate(dataUser);
+			if (validationRezult.IsValid)
 			{
 				_repository.Add(dataUser);
 				_repository.Save();
