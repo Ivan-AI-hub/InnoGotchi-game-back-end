@@ -4,6 +4,7 @@ using FluentValidation.Results;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
+using System.Data;
 
 namespace InnoGotchiGame.Application.Managers
 {
@@ -27,7 +28,7 @@ namespace InnoGotchiGame.Application.Managers
 		/// <returns>The result of data validation.
 		/// If the data has been validated successfully
 		/// it will be added to the database otherwise not</returns>
-		public ValidationResult Add(UserDTO user)
+		public ManagerRezult Add(UserDTO user)
 		{
 			var dataUser = _mapper.Map<User>(user);
 			dataUser.PasswordHach = StringToHach(user.Password);
@@ -38,35 +39,36 @@ namespace InnoGotchiGame.Application.Managers
 				_repository.Add(dataUser);
 				_repository.Save();
 			}
-			return validationRezult;
+			return _mapper.Map<ManagerRezult>(validationRezult);
 		}
 
 
-		public ValidationResult Update(int updatedId, UserDTO newUser)
+		public ManagerRezult Update(int updatedId, UserDTO newUser)
 		{
+			ManagerRezult rezult = new ManagerRezult();
 			var dataUser = _mapper.Map<User>(newUser);
-			if (newUser.Password == String.Empty)
+
+			var oldUser = CheckUserId(updatedId, rezult);
+			if (rezult.IsComplete && oldUser != null)
 			{
-				var oldUser = _repository.GetItemById(updatedId);
-				if(oldUser != null)
+				if (newUser.Password == String.Empty)
+				{
 					dataUser.PasswordHach = oldUser.PasswordHach;
+				}
 				else
 				{
-					var rezult = new ValidationResult();
+					dataUser.PasswordHach = StringToHach(newUser.Password);
 				}
-			}
-			else
-			{
-				dataUser.PasswordHach = StringToHach(newUser.Password);
-			}
 
-			var validationRezult = _validator.Validate(dataUser);
-			if (validationRezult.IsValid)
-			{
-				_repository.Add(dataUser);
-				_repository.Save();
+				var validationRezult = _validator.Validate(dataUser);
+				if (validationRezult.IsValid)
+				{
+					_repository.Add(dataUser);
+					_repository.Save();
+				}
+				rezult = _mapper.Map<ManagerRezult>(validationRezult);
 			}
-			return validationRezult;
+			return rezult;
 		}
 
 		/// <summary>
@@ -92,6 +94,16 @@ namespace InnoGotchiGame.Application.Managers
 				hashedValue *= 3074457;
 			}
 			return hashedValue;
+		}
+
+		private User? CheckUserId(int userId, ManagerRezult rezult)
+		{
+			var user = _repository.GetItemById(userId);
+			if (user == null)
+			{
+				rezult.Errors.Add("The user ID is not in the database");
+			}
+			return user;
 		}
 	}
 }

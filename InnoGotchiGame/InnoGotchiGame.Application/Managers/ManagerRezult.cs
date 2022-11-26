@@ -3,11 +3,11 @@
 	public class ManagerRezult
 	{
 		public bool IsComplete => Errors.Count() == 0;
-		public IEnumerable<string> Errors;
+		public List<string> Errors { get; }
 
 		public ManagerRezult(params string[] errors) 
 		{
-			Errors = errors;
+			Errors = errors.ToList();
 		}
 	}
 }

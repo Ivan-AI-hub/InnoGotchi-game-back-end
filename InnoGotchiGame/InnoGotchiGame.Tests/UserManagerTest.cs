@@ -53,7 +53,7 @@ namespace InnoGotchiGame.Tests
 			var rez = manager.Add(user);
 
 
-			Assert.True(rez.IsValid);
+			Assert.True(rez.IsComplete);
         }
 
 		[Fact]
@@ -74,7 +74,7 @@ namespace InnoGotchiGame.Tests
 			var rez = manager.Add(user);
 
 
-			Assert.False(rez.IsValid);
+			Assert.False(rez.IsComplete);
 		}
 	}
 }
