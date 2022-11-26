@@ -56,6 +56,7 @@ namespace InnoGotchiGame.Tests
 			Assert.True(rez.IsComplete);
         }
 
+
 		[Fact]
 		public void Add_Unvalid_User()
 		{
@@ -73,6 +74,46 @@ namespace InnoGotchiGame.Tests
 
 			var rez = manager.Add(user);
 
+
+			Assert.False(rez.IsComplete);
+		}
+
+		[Fact]
+		public void Update_Unvalid_User()
+		{
+			UserManager manager = new UserManager(_repository, _mapper, _validator);
+
+
+			var user = new UserDTO()
+			{
+				FirstName = "FirstUpdate",
+				LastName = "LastUpdate",
+				Email = "update@gmail.com",
+				Password = "Test_1234"
+			};
+			manager.Add(user);
+			var foundUser = manager.FindUserInDb("update@gmail.com", "Test_1234");
+			user.Email = "wrongEmail";
+
+			var rez = manager.Update(foundUser.Id, user);
+
+			Assert.False(rez.IsComplete);
+		}
+
+		[Fact]
+		public void Update_non_existent_id()
+		{
+			UserManager manager = new UserManager(_repository, _mapper, _validator);
+
+			var user = new UserDTO()
+			{
+				FirstName = "FirstUpdate",
+				LastName = "LastUpdate",
+				Email = "update@gmail.com",
+				Password = "Test_1234"
+			};
+
+			var rez = manager.Update(10, user);
 
 			Assert.False(rez.IsComplete);
 		}

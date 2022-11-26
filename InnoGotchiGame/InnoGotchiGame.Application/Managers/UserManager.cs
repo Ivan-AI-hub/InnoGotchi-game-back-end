@@ -71,6 +71,15 @@ namespace InnoGotchiGame.Application.Managers
 			return rezult;
 		}
 
+		public UserDTO? GetUserById(int userId)
+		{
+			var user = _repository.GetItemById(userId);
+			if (user != null)
+				return _mapper.Map<UserDTO>(user);
+			else
+				return null;
+		}
+
 		/// <summary>
 		/// Finds user in data base
 		/// </summary>
@@ -78,11 +87,24 @@ namespace InnoGotchiGame.Application.Managers
 		/// <param name="email">User email</param>
 		/// <param name="password">User password</param>
 		/// <returns>Found user or null if the user was not found</returns>
-		public User? FindUserInDb(string email, string password)
+		public UserDTO? FindUserInDb(string email, string password)
 		{
 			int passwordHach = StringToHach(password);
-			throw new NotImplementedException();
+			var user = _repository.GetItem(x => x.Email == email && x.PasswordHach == passwordHach);
+			if (user != null)
+				return _mapper.Map<UserDTO>(user);
+			else
+				return null;
 			//return service.GetUser(x => x.Email == email && x.PasswordHach == passwordHach);
+		}
+
+		public IEnumerable<UserDTO> GetUsers()
+		{
+			var users = _repository.GetItems();
+			var DTOUsers = new List<UserDTO>();
+			foreach (var user in users)
+				DTOUsers.Add(_mapper.Map<UserDTO>(user));
+			return DTOUsers;
 		}
 
 		private int StringToHach(string read)
