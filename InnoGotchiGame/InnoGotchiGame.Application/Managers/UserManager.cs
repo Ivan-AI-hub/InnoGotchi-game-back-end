@@ -112,13 +112,15 @@ namespace InnoGotchiGame.Application.Managers
 		/// <returns>All users from data base</returns>
 		public IEnumerable<UserDTO> GetUsers(UserFiltrator? filtrator = null, UserSorter? sorter = null)
 		{
-			var users = _repository.GetItems();
-			users = filtrator != null? filtrator.Filter(users): users;
-			users = sorter != null ? sorter.Sort(users) : users;
-			var DTOUsers = new List<UserDTO>();
-			foreach (var user in users)
-				DTOUsers.Add(_mapper.Map<UserDTO>(user));
-			return DTOUsers;
+			var users = GetUserQuary(filtrator, sorter);
+			return QueryableUserToUserDTO(users);
+		}
+
+		public IEnumerable<UserDTO> GetUsersPage(int pageSize, int pageNumber, UserFiltrator? filtrator = null, UserSorter? sorter = null)
+		{
+			var users = GetUserQuary(filtrator, sorter);
+			users = users.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
+			return QueryableUserToUserDTO(users);
 		}
 
 		private int StringToHach(string read)
@@ -140,6 +142,22 @@ namespace InnoGotchiGame.Application.Managers
 				rezult.Errors.Add("The user ID is not in the database");
 			}
 			return user;
+		}
+
+		private IQueryable<User> GetUserQuary(UserFiltrator? filtrator = null, UserSorter? sorter = null)
+		{
+			var users = _repository.GetItems();
+			users = filtrator != null ? filtrator.Filter(users) : users;
+			users = sorter != null ? sorter.Sort(users) : users;
+			return users;
+		}
+
+		private IEnumerable<UserDTO> QueryableUserToUserDTO(IQueryable<User> users)
+		{
+			var DTOUsers = new List<UserDTO>();
+			foreach (var user in users)
+				DTOUsers.Add(_mapper.Map<UserDTO>(user));
+			return DTOUsers;
 		}
 	}
 }

@@ -64,13 +64,6 @@ namespace InnoGotchiGame.Persistence.Repositories
 			return users;
 		}
 
-		public IQueryable<User> GetItemsPage(int pageSize, int pageNumber, Func<User, bool>? whereRule = null, Func<User, dynamic>? orderByRule = null, bool isDescendingOrder = false)
-		{
-			return GetItems(whereRule, orderByRule, isDescendingOrder)
-				.Skip(pageSize * (pageNumber - 1))
-				.Take(pageSize);
-		}
-
 		public void Save()
 		{
 			_context.SaveChanges();

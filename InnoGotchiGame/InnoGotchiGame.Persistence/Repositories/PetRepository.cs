@@ -61,13 +61,6 @@ namespace InnoGotchiGame.Persistence.Repositories
 			return pets;
 		}
 
-		public IQueryable<Pet> GetItemsPage(int pageSize, int pageNumber, Func<Pet, bool>? whereRule = null, Func<Pet, dynamic>? orderByRule = null, bool isDescendingOrder = false)
-		{
-			return GetItems(whereRule, orderByRule, isDescendingOrder)
-				.Skip(pageSize * (pageNumber - 1))
-				.Take(pageSize);
-		}
-
 		public void Save()
 		{
 			_context.SaveChanges();
