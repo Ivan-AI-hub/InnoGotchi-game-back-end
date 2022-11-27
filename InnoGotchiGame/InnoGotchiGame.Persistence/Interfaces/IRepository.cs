@@ -10,7 +10,7 @@ namespace InnoGotchiGame.Persistence.Interfaces
 
 
 		public IQueryable<T> GetItems(Func<T, bool>? whereRule = null,
-										 Func<User, dynamic>? orderByRule = null,
+										 Func<T, dynamic>? orderByRule = null,
 										 bool isDescendingOrder = false);
 
 		public IQueryable<T> GetItemsPage(int pageSize, int pageNumber,
