@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using FluentValidation.Results;
+using InnoGotchiGame.Application.Filtrators;
 using InnoGotchiGame.Application.Models;
+using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
-using System.Data;
 
 namespace InnoGotchiGame.Application.Managers
 {
@@ -98,9 +98,11 @@ namespace InnoGotchiGame.Application.Managers
 			//return service.GetUser(x => x.Email == email && x.PasswordHach == passwordHach);
 		}
 
-		public IEnumerable<UserDTO> GetUsers()
+		public IEnumerable<UserDTO> GetUsers(UserFiltrator? filtrator = null, UserSorter? sorter = null)
 		{
 			var users = _repository.GetItems();
+			users = filtrator != null? filtrator.Filter(users): users;
+			users = sorter != null ? sorter.Sort(users) : users;
 			var DTOUsers = new List<UserDTO>();
 			foreach (var user in users)
 				DTOUsers.Add(_mapper.Map<UserDTO>(user));
