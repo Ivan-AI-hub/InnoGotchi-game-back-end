@@ -42,7 +42,14 @@ namespace InnoGotchiGame.Application.Managers
 			return _mapper.Map<ManagerRezult>(validationRezult);
 		}
 
-
+		/// <summary>
+		/// Updates user in data base
+		/// </summary>
+		/// <param name="updatedId">ID of the user to update</param>
+		/// <param name="newUser">Updated user</param>
+		/// <returns>The result of data validation.
+		/// If the data has been validated successfully
+		/// it will be updated to the database otherwise not</returns>
 		public ManagerRezult Update(int updatedId, UserDTO newUser)
 		{
 			ManagerRezult rezult = new ManagerRezult();
@@ -71,6 +78,8 @@ namespace InnoGotchiGame.Application.Managers
 			return rezult;
 		}
 
+
+		/// <returns>User with the transmitted ID</returns>
 		public UserDTO? GetUserById(int userId)
 		{
 			var user = _repository.GetItemById(userId);
@@ -98,6 +107,9 @@ namespace InnoGotchiGame.Application.Managers
 			//return service.GetUser(x => x.Email == email && x.PasswordHach == passwordHach);
 		}
 
+		/// <param name="filtrator">Sets filtering rules</param>
+		/// <param name="sorter">sets sorting rules</param>
+		/// <returns>All users from data base</returns>
 		public IEnumerable<UserDTO> GetUsers(UserFiltrator? filtrator = null, UserSorter? sorter = null)
 		{
 			var users = _repository.GetItems();
