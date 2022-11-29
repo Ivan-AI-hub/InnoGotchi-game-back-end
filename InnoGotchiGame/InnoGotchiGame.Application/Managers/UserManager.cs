@@ -34,7 +34,7 @@ namespace InnoGotchiGame.Application.Managers
 			dataUser.PasswordHach = StringToHach(user.Password);
 
 			var validationRezult = _validator.Validate(dataUser);
-			if(validationRezult.IsValid)
+			if (validationRezult.IsValid)
 			{
 				_repository.Add(dataUser);
 				_repository.Save();
@@ -112,13 +112,13 @@ namespace InnoGotchiGame.Application.Managers
 		/// <returns>All users from data base</returns>
 		public IEnumerable<UserDTO> GetUsers(UserFiltrator? filtrator = null, UserSorter? sorter = null)
 		{
-			var users = GetUserQuary(filtrator, sorter);
+			var users = GetUsersQuary(filtrator, sorter);
 			return QueryableUserToUserDTO(users);
 		}
 
 		public IEnumerable<UserDTO> GetUsersPage(int pageSize, int pageNumber, UserFiltrator? filtrator = null, UserSorter? sorter = null)
 		{
-			var users = GetUserQuary(filtrator, sorter);
+			var users = GetUsersQuary(filtrator, sorter);
 			users = users.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
 			return QueryableUserToUserDTO(users);
 		}
@@ -144,7 +144,7 @@ namespace InnoGotchiGame.Application.Managers
 			return user;
 		}
 
-		private IQueryable<User> GetUserQuary(UserFiltrator? filtrator = null, UserSorter? sorter = null)
+		private IQueryable<User> GetUsersQuary(UserFiltrator? filtrator = null, UserSorter? sorter = null)
 		{
 			var users = _repository.GetItems();
 			users = filtrator != null ? filtrator.Filter(users) : users;

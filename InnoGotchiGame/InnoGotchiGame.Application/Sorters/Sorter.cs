@@ -1,6 +1,4 @@
-﻿using InnoGotchiGame.Domain;
-
-namespace InnoGotchiGame.Application.Sorters
+﻿namespace InnoGotchiGame.Application.Sorters
 {
 	public abstract class Sorter<T>
 	{

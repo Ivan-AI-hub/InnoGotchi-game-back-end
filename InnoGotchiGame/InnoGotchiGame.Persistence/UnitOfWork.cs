@@ -9,7 +9,7 @@ namespace InnoGotchiGame.Persistence
 		private UserRepository _userRepository;
 
 		public UserRepository Users { get => _userRepository; }
-		
+
 		public UnitOfWork(InnoGotchiGameContext context)
 		{
 			_context = context;

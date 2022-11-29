@@ -1,8 +1,6 @@
-﻿using InnoGotchiGame.Domain;
-
-namespace InnoGotchiGame.Persistence.Interfaces
+﻿namespace InnoGotchiGame.Persistence.Interfaces
 {
-	public interface IRepository<T> where T:class
+	public interface IRepository<T> where T : class
 	{
 		public T? GetItemById(int id);
 

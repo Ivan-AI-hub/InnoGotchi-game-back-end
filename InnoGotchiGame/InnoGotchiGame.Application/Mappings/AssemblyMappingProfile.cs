@@ -8,7 +8,7 @@ namespace InnoGotchiGame.Application.Mappings
 {
 	public class AssemblyMappingProfile : Profile
 	{
-		public AssemblyMappingProfile() 
+		public AssemblyMappingProfile()
 		{
 			CreateMap<User, UserDTO>().ReverseMap();
 			CreateMap<PetFarm, PetFarmDTO>().ReverseMap();

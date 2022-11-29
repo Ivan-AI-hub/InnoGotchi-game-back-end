@@ -1,11 +1,4 @@
-﻿using InnoGotchiGame.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace InnoGotchiGame.Application.Models
+﻿namespace InnoGotchiGame.Application.Models
 {
 	public class UserDTO
 	{
@@ -19,25 +12,25 @@ namespace InnoGotchiGame.Application.Models
 		public int OwnPetFarmId { get; set; }
 		public PetFarmDTO? OwnPetFarm { get; set; }
 
-		public List<ColaborationRequestDTO> SentFriendships { get; set; }
-		public List<ColaborationRequestDTO> AcceptedFriendships { get; set; }
-		public List<PetFarm> CollaboratedFarms { get; set; }
+		public List<ColaborationRequestDTO> SentColaborations { get; set; }
+		public List<ColaborationRequestDTO> AcceptedColaborations { get; set; }
+		public List<PetFarmDTO> CollaboratedFarms { get; set; }
 
-		/// <returns>All friends of user</returns>
-		public IEnumerable<UserDTO> GetUserFriends()
+		/// <returns>All colaborators of user</returns>
+		public IEnumerable<UserDTO> GetUserColaborators()
 		{
-			Func<ColaborationRequestDTO, bool> whereFunc = x => x.Status == ColaborationRequestStatusDTO.Friends;
+			Func<ColaborationRequestDTO, bool> whereFunc = x => x.Status == ColaborationRequestStatusDTO.Colaborators;
 
 			List<UserDTO> friends = new List<UserDTO>();
-			friends.AddRange(AcceptedFriendships.Where(whereFunc).Select(x => x.FirstFriend));
-			friends.AddRange(SentFriendships.Where(whereFunc).Select(x => x.SecondFriend));
+			friends.AddRange(AcceptedColaborations.Where(whereFunc).Select(x => x.RequestSender));
+			friends.AddRange(SentColaborations.Where(whereFunc).Select(x => x.RequestReceiver));
 			return friends;
 		}
 
-		/// <returns>All unconfirmed invitations to be friends</returns>
+		/// <returns>All unconfirmed invitations to be colaborators</returns>
 		public IEnumerable<ColaborationRequestDTO> GetUnconfirmedInvite()
 		{
-			var invites = AcceptedFriendships.Where(x => x.Status == ColaborationRequestStatusDTO.Undefined);
+			var invites = AcceptedColaborations.Where(x => x.Status == ColaborationRequestStatusDTO.Undefined);
 			return invites;
 		}
 	}

@@ -1,6 +1,4 @@
-﻿using InnoGotchiGame.Domain;
-
-namespace InnoGotchiGame.Application.Filtrators
+﻿namespace InnoGotchiGame.Application.Filtrators
 {
 	public abstract class Filtrator<T>
 	{

@@ -7,21 +7,19 @@ using InnoGotchiGame.Application.Validators;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
 using InnoGotchiGame.Persistence.Repositories;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
-using System.Reflection;
 
 namespace InnoGotchiGame.Tests
 {
-    public class UserManagerTest
-    {
+	public class UserManagerTest
+	{
 		private DbContextOptions<InnoGotchiGameContext> _contextOptions;
 		private InnoGotchiGameContext _context;
 		private IRepository<User> _repository;
 		private AbstractValidator<User> _validator;
 		private IMapper _mapper;
 
-		public UserManagerTest() 
+		public UserManagerTest()
 		{
 			_contextOptions = new DbContextOptionsBuilder<InnoGotchiGameContext>()
 							.UseInMemoryDatabase("UserManagerTest")
@@ -36,13 +34,13 @@ namespace InnoGotchiGame.Tests
 		}
 
 		[Fact]
-        public void Add_Valid_User()
-        {
+		public void Add_Valid_User()
+		{
 			UserManager manager = new UserManager(_repository, _mapper, _validator);
 
 
-			var user = new UserDTO() 
-			{ 
+			var user = new UserDTO()
+			{
 				FirstName = "First",
 				LastName = "Last",
 				Email = "test_user@gmail.com",
@@ -54,7 +52,7 @@ namespace InnoGotchiGame.Tests
 
 
 			Assert.True(rez.IsComplete);
-        }
+		}
 
 
 		[Fact]

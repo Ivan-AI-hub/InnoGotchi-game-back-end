@@ -5,7 +5,7 @@ namespace InnoGotchiGame.Application.Validators
 {
 	public class UserValidator : AbstractValidator<User>
 	{
-		public UserValidator() 
+		public UserValidator()
 		{
 			RuleFor(x => x.Email)
 				.NotEmpty()

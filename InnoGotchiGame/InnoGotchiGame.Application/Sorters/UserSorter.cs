@@ -21,7 +21,7 @@ namespace InnoGotchiGame.Application.Sorters
 
 		internal override IQueryable<User> Sort(IQueryable<User> users)
 		{
-			if(!IsDescendingSort)
+			if (!IsDescendingSort)
 			{
 				if (IsFirstNameSort)
 					return users.OrderBy(x => x.FirstName);
