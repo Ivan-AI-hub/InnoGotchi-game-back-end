@@ -18,8 +18,8 @@ namespace InnoGotchiGame.Domain
         public int OwnPetFarmId { get; set; }
         public PetFarm? OwnPetFarm { get; set; }
 
-        public List<FriendlyRelation> SentFriendships { get; set; }
-        public List<FriendlyRelation> AcceptedFriendships { get; set; }
+        public List<ColaborationRequest> SentColaborations { get; set; }
+        public List<ColaborationRequest> AcceptedColaborations { get; set; }
         public List<PetFarm> CollaboratedFarms { get; set; }
     }
 }

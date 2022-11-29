@@ -4,18 +4,18 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Persistence.EntityConfigurations
 {
-	internal class FriendlyRelationConfigurator : IEntityTypeConfiguration<FriendlyRelation>
+	internal class FriendlyRelationConfigurator : IEntityTypeConfiguration<ColaborationRequest>
 	{
-		public void Configure(EntityTypeBuilder<FriendlyRelation> builder)
+		public void Configure(EntityTypeBuilder<ColaborationRequest> builder)
 		{
-			builder.HasOne(d => d.FirstFriend)
-				.WithMany(p => p.SentFriendships)
-				.HasForeignKey(d => d.FirstFriendId)
+			builder.HasOne(d => d.RequestSender)
+				.WithMany(p => p.SentColaborations)
+				.HasForeignKey(d => d.RequestSenderId)
 				.OnDelete(DeleteBehavior.NoAction);
 
-			builder.HasOne(d => d.SecondFriend)
-				.WithMany(p => p.AcceptedFriendships)
-				.HasForeignKey(d => d.SecondFriendId);
+			builder.HasOne(d => d.RequestReceiver)
+				.WithMany(p => p.AcceptedColaborations)
+				.HasForeignKey(d => d.RequestReceiverId);
 		}
 	}
 }

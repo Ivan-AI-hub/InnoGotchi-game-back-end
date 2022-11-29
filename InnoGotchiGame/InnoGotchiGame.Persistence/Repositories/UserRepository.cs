@@ -46,8 +46,8 @@ namespace InnoGotchiGame.Persistence.Repositories
 		{
 			var users = _context.Users
 				.Include(x => x.OwnPetFarm)
-				.Include(x => x.SentFriendships)
-				.Include(x => x.AcceptedFriendships);
+				.Include(x => x.SentColaborations)
+				.Include(x => x.AcceptedColaborations);
 
 			if (whereRule != null)
 				users.Where(whereRule);

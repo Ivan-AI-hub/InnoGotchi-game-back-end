@@ -19,14 +19,14 @@ namespace InnoGotchiGame.Application.Models
 		public int OwnPetFarmId { get; set; }
 		public PetFarmDTO? OwnPetFarm { get; set; }
 
-		public List<FriendlyRelationDTO> SentFriendships { get; set; }
-		public List<FriendlyRelationDTO> AcceptedFriendships { get; set; }
+		public List<ColaborationRequestDTO> SentFriendships { get; set; }
+		public List<ColaborationRequestDTO> AcceptedFriendships { get; set; }
 		public List<PetFarm> CollaboratedFarms { get; set; }
 
 		/// <returns>All friends of user</returns>
 		public IEnumerable<UserDTO> GetUserFriends()
 		{
-			Func<FriendlyRelationDTO, bool> whereFunc = x => x.Status == FriendlyRelationStatusDTO.Friends;
+			Func<ColaborationRequestDTO, bool> whereFunc = x => x.Status == ColaborationRequestStatusDTO.Friends;
 
 			List<UserDTO> friends = new List<UserDTO>();
 			friends.AddRange(AcceptedFriendships.Where(whereFunc).Select(x => x.FirstFriend));
@@ -35,9 +35,9 @@ namespace InnoGotchiGame.Application.Models
 		}
 
 		/// <returns>All unconfirmed invitations to be friends</returns>
-		public IEnumerable<FriendlyRelationDTO> GetUnconfirmedInvite()
+		public IEnumerable<ColaborationRequestDTO> GetUnconfirmedInvite()
 		{
-			var invites = AcceptedFriendships.Where(x => x.Status == FriendlyRelationStatusDTO.Undefined);
+			var invites = AcceptedFriendships.Where(x => x.Status == ColaborationRequestStatusDTO.Undefined);
 			return invites;
 		}
 	}

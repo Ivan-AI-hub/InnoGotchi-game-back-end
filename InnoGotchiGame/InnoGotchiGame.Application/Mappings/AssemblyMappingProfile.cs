@@ -12,8 +12,8 @@ namespace InnoGotchiGame.Application.Mappings
 		{
 			CreateMap<User, UserDTO>().ReverseMap();
 			CreateMap<PetFarm, PetFarmDTO>().ReverseMap();
-			CreateMap<FriendlyRelation, FriendlyRelationDTO>().ReverseMap();
-			CreateMap<FriendlyRelationStatus, FriendlyRelationStatusDTO>().ReverseMap();
+			CreateMap<ColaborationRequest, ColaborationRequestDTO>().ReverseMap();
+			CreateMap<ColaborationRequestStatus, ColaborationRequestStatusDTO>().ReverseMap();
 
 			CreateMap<Pet, PetDTO>().ReverseMap();
 			CreateMap<PetStatistic, PetStatisticDTO>().ReverseMap();
