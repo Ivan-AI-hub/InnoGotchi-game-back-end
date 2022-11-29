@@ -20,5 +20,6 @@ namespace InnoGotchiGame.Domain
 
         public List<FriendlyRelation> SentFriendships { get; set; }
         public List<FriendlyRelation> AcceptedFriendships { get; set; }
+        public List<PetFarm> CollaboratedFarms { get; set; }
     }
 }

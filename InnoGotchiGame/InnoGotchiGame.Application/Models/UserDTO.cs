@@ -1,4 +1,5 @@
-﻿using System;
+﻿using InnoGotchiGame.Domain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -20,6 +21,7 @@ namespace InnoGotchiGame.Application.Models
 
 		public List<FriendlyRelationDTO> SentFriendships { get; set; }
 		public List<FriendlyRelationDTO> AcceptedFriendships { get; set; }
+		public List<PetFarm> CollaboratedFarms { get; set; }
 
 		/// <returns>All friends of user</returns>
 		public IEnumerable<UserDTO> GetUserFriends()
