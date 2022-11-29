@@ -6,7 +6,7 @@
         public int Age { get; set; }
         public bool IsAlive { get; set; }
         public DateTime FirstHappinessDay { get; set; }
-        public DateTime DataLastFeed { get; set; }
-        public DateTime DataLastDrink { get; set; }
+        public DateTime DateLastFeed { get; set; }
+        public DateTime DateLastDrink { get; set; }
     }
 }

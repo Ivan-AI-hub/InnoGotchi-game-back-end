@@ -45,7 +45,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 		public IQueryable<PetFarm> GetItems(Func<PetFarm, bool>? whereRule = null, Func<PetFarm, dynamic>? orderByRule = null, bool isDescendingOrder = false)
 		{
 			var petFarms = _context.PetFarms
-				.Include(x => x.User)
+				.Include(x => x.Owner)
 				.Include(x => x.Pets);
 
 			if (whereRule != null)
