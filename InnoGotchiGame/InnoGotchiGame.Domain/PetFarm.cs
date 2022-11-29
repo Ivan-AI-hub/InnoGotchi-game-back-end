@@ -7,9 +7,6 @@ namespace InnoGotchiGame.Domain
         public string Name { get; set; }
 
         public DateTime CreateDate { get; set; }
-        public int FeedingCount { get; set; }
-        public int DrinkingCount { get; set; }
-
 
 		public int OwnerId { get; set; }
         public User Owner { get; set; }
