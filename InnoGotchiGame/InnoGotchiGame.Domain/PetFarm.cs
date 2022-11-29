@@ -4,13 +4,17 @@ namespace InnoGotchiGame.Domain
     public class PetFarm
     {
         public int Id { get; set; }
+        public string Name { get; set; }
 
-        public int FeedingPeriod { get; set; }
-        public int QuenchingPeriod { get; set; }
+        public DateTime CreateDate { get; set; }
+        public int FeedingCount { get; set; }
+        public int DrinkingCount { get; set; }
 
-        public int UserId { get; set; }
-        public User User { get; set; }
 
-        public List<Pet> Pets { get; }
+		public int OwnerId { get; set; }
+        public User Owner { get; set; }
+
+		public List<User> Colaborators { get; set; }
+		public List<Pet> Pets { get; }
     }
 }
