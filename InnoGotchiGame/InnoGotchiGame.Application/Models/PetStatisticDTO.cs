@@ -3,7 +3,7 @@
 	public record PetStatisticDTO
 	{
 		public string? Name { get; set; }
-		public int Age { get; set; }
+		public DateTime BornDate { get; set; }
 		public bool IsAlive { get; set; }
 		public int FeedingCount { get; set; }
 		public int DrinkingCount { get; set; }
