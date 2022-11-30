@@ -8,7 +8,11 @@ namespace InnoGotchiGame.Persistence.EntityConfigurations
 	{
 		public void Configure(EntityTypeBuilder<User> builder)
 		{
-			builder.HasMany(user => user.CollaboratedFarms).WithMany(farm => farm.Colaborators);
+			builder.HasMany(user => user.CollaboratedFarms)
+				.WithMany(farm => farm.Colaborators)
+				.UsingEntity(j => j.ToTable("ColaboratorFarm"));
+
+			builder.HasIndex(user => user.Email).IsUnique();
 		}
 	}
 }
