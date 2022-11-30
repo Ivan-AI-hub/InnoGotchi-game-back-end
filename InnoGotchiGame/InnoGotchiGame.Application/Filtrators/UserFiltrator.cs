@@ -1,8 +1,9 @@
-﻿using InnoGotchiGame.Domain;
+﻿using InnoGotchiGame.Application.Filtrators.Base;
+using InnoGotchiGame.Domain;
 
 namespace InnoGotchiGame.Application.Filtrators
 {
-	public class UserFiltrator : Filtrator<User>
+    public class UserFiltrator : Filtrator<User>
 	{
 		private string _firstName;
 		private string _lastName;
