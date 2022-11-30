@@ -1,8 +1,9 @@
-﻿using InnoGotchiGame.Domain;
+﻿using InnoGotchiGame.Application.Sorters.Base;
+using InnoGotchiGame.Domain;
 
 namespace InnoGotchiGame.Application.Sorters
 {
-	public class UserSorter : Sorter<User>
+    public class UserSorter : Sorter<User>
 	{
 		public bool IsFirstNameSort { get; set; }
 		public bool IsLastNameSort { get; set; }

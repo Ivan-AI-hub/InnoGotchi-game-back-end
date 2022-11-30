@@ -1,8 +1,9 @@
-﻿using InnoGotchiGame.Domain;
+﻿using InnoGotchiGame.Application.Sorters.Base;
+using InnoGotchiGame.Domain;
 
 namespace InnoGotchiGame.Application.Sorters
 {
-	public class PetSorter : Sorter<Pet>
+    public class PetSorter : Sorter<Pet>
 	{
 		public bool IsAgeSort { get; set; }
 		public bool IsDrinkSort { get; set; }
