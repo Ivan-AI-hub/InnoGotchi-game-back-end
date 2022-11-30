@@ -81,11 +81,11 @@ namespace InnoGotchiGame.Application.Managers
 		public ManagerRezult Delete(int id)
 		{
 			var managerRez = new ManagerRezult();
-			if(_repository.Delete(id))
+			if (CheckUserId(id, managerRez))
 			{
-				managerRez.Errors.Add("The user ID is not in the database");
+				_repository.Delete(id);
 			}
-			
+
 			return managerRez;
 		}
 
@@ -146,8 +146,7 @@ namespace InnoGotchiGame.Application.Managers
 
 		private bool CheckUserId(int userId, ManagerRezult rezult)
 		{
-			var user = _repository.GetItemById(userId);
-			if (user == null)
+			if (!_repository.IsItemExist(userId))
 			{
 				rezult.Errors.Add("The user ID is not in the database");
 				return false;

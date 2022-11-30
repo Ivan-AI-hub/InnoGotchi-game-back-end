@@ -3,6 +3,7 @@
 	public interface IRepository<T> where T : class
 	{
 		public T? GetItemById(int id);
+		public bool IsItemExist(int id);
 
 		public T? GetItem(Func<T, bool> predicate);
 

@@ -17,6 +17,11 @@ namespace InnoGotchiGame.Persistence.Repositories
 			return _context.Users.FirstOrDefault(x => x.Id == id);
 		}
 
+		public bool IsItemExist(int id)
+		{
+			return _context.Users.Any(x => x.Id == id);
+		}
+
 		public User? GetItem(Func<User, bool> predicate)
 		{
 			return _context.Users.FirstOrDefault(predicate);
