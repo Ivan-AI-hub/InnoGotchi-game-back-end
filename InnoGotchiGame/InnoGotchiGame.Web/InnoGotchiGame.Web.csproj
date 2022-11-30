@@ -10,4 +10,10 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\InnoGotchiGame.Application\InnoGotchiGame.Application.csproj" />
+    <ProjectReference Include="..\InnoGotchiGame.Domain\InnoGotchiGame.Domain.csproj" />
+    <ProjectReference Include="..\InnoGotchiGame.Persistence\InnoGotchiGame.Persistence.csproj" />
+  </ItemGroup>
+
 </Project>
