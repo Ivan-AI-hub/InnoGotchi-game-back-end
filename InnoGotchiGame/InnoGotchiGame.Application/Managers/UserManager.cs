@@ -35,6 +35,14 @@ namespace InnoGotchiGame.Application.Managers
 			}
 			return _mapper.Map<ManagerRezult>(validationRezult);
 		}
+		public void SendCollaborationInvite(UserDTO sender, UserDTO recepient)
+		{
+			var invite = new ColaborationRequestDTO() {RequestSender = sender, RequestReceiver = recepient, Status = ColaborationRequestStatusDTO.Undefined };
+			sender.SentColaborations.Add(invite);
+			recepient.AcceptedColaborations.Add(invite);
+			Update(sender.Id, sender);
+			Update(recepient.Id, recepient);
+		}
 
 		public ManagerRezult Update(int updatedId, UserDTO newUser)
 		{

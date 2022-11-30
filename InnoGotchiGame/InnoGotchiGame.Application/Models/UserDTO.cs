@@ -16,6 +16,13 @@
 		public List<ColaborationRequestDTO> AcceptedColaborations { get; set; }
 		public List<PetFarmDTO> CollaboratedFarms { get; set; }
 
+		public UserDTO()
+		{
+			SentColaborations = new List<ColaborationRequestDTO>();
+			AcceptedColaborations = new List<ColaborationRequestDTO>();
+			CollaboratedFarms = new List<PetFarmDTO>();
+		}
+
 		/// <returns>All colaborators of user</returns>
 		public IEnumerable<UserDTO> GetUserColaborators()
 		{

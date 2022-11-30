@@ -20,7 +20,7 @@ namespace InnoGotchiGame.Persistence
 		public DbSet<Pet> Pets { get; set; }
 		public DbSet<PetFarm> PetFarms { get; set; }
 		public DbSet<User> Users { get; set; }
-		public DbSet<ColaborationRequest> FriendlyRelations { get; set; }
+		public DbSet<ColaborationRequest> ColaborationRequests { get; set; }
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
