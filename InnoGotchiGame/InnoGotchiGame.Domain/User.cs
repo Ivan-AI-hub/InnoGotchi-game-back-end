@@ -9,7 +9,7 @@
 		public int PasswordHach { get; set; }
 
 		public string? PhotoFileLink { get; set; }
-		public int OwnPetFarmId { get; set; }
+		public int? OwnPetFarmId { get; set; }
 		public PetFarm? OwnPetFarm { get; set; }
 
 		public List<ColaborationRequest> SentColaborations { get; set; }

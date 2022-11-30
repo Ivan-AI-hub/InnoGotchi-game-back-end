@@ -9,7 +9,7 @@
 		public string Password { get; set; }
 		public string? PhotoFileLink { get; set; }
 
-		public int OwnPetFarmId { get; set; }
+		public int? OwnPetFarmId { get; set; }
 		public PetFarmDTO? OwnPetFarm { get; set; }
 
 		public List<ColaborationRequestDTO> SentColaborations { get; set; }
