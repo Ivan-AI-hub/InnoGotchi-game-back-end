@@ -55,12 +55,11 @@ namespace InnoGotchiGame.Application.Managers
 			ManagerRezult rezult = new ManagerRezult();
 			var dataUser = _mapper.Map<User>(newUser);
 
-			var oldUser = CheckUserId(updatedId, rezult);
-			if (rezult.IsComplete && oldUser != null)
+			if (CheckUserId(updatedId, rezult))
 			{
 				if (newUser.Password == String.Empty)
 				{
-					dataUser.PasswordHach = oldUser.PasswordHach;
+					dataUser.PasswordHach = _repository.GetItemById(updatedId).PasswordHach;
 				}
 				else
 				{
@@ -70,7 +69,7 @@ namespace InnoGotchiGame.Application.Managers
 				var validationRezult = _validator.Validate(dataUser);
 				if (validationRezult.IsValid)
 				{
-					_repository.Add(dataUser);
+					_repository.Update(updatedId, dataUser);
 					_repository.Save();
 				}
 				rezult = _mapper.Map<ManagerRezult>(validationRezult);
@@ -78,6 +77,16 @@ namespace InnoGotchiGame.Application.Managers
 			return rezult;
 		}
 
+		public ManagerRezult Delete(int id)
+		{
+			var managerRez = new ManagerRezult();
+			if(_repository.Delete(id))
+			{
+				managerRez.Errors.Add("The user ID is not in the database");
+			}
+			
+			return managerRez;
+		}
 
 		/// <returns>User with the transmitted ID</returns>
 		public UserDTO? GetUserById(int userId)
@@ -134,14 +143,15 @@ namespace InnoGotchiGame.Application.Managers
 			return hashedValue;
 		}
 
-		private User? CheckUserId(int userId, ManagerRezult rezult)
+		private bool CheckUserId(int userId, ManagerRezult rezult)
 		{
 			var user = _repository.GetItemById(userId);
 			if (user == null)
 			{
 				rezult.Errors.Add("The user ID is not in the database");
+				return false;
 			}
-			return user;
+			return true;
 		}
 
 		private IQueryable<User> GetUsersQuary(UserFiltrator? filtrator = null, UserSorter? sorter = null)
