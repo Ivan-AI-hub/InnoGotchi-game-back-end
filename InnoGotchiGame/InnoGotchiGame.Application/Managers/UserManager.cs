@@ -21,13 +21,6 @@ namespace InnoGotchiGame.Application.Managers
 			_validator = validator;
 		}
 
-		/// <summary>
-		/// Adds user in data base
-		/// </summary>
-		/// <param name="user">User for adding</param>
-		/// <returns>The result of data validation.
-		/// If the data has been validated successfully
-		/// it will be added to the database otherwise not</returns>
 		public ManagerRezult Add(UserDTO user)
 		{
 			var dataUser = _mapper.Map<User>(user);
@@ -43,14 +36,6 @@ namespace InnoGotchiGame.Application.Managers
 			return _mapper.Map<ManagerRezult>(validationRezult);
 		}
 
-		/// <summary>
-		/// Updates user in data base
-		/// </summary>
-		/// <param name="updatedId">ID of the user to update</param>
-		/// <param name="newUser">Updated user</param>
-		/// <returns>The result of data validation.
-		/// If the data has been validated successfully
-		/// it will be updated to the database otherwise not</returns>
 		public ManagerRezult Update(int updatedId, UserDTO newUser)
 		{
 			ManagerRezult rezult = new ManagerRezult();
@@ -78,18 +63,17 @@ namespace InnoGotchiGame.Application.Managers
 			return rezult;
 		}
 
-		public ManagerRezult Delete(int id)
+		public ManagerRezult Delete(int deletedId)
 		{
 			var managerRez = new ManagerRezult();
-			if (CheckUserId(id, managerRez))
+			if (CheckUserId(deletedId, managerRez))
 			{
-				_repository.Delete(id);
+				_repository.Delete(deletedId);
 			}
 
 			return managerRez;
 		}
 
-		/// <returns>User with the transmitted ID</returns>
 		public UserDTO? GetUserById(int userId)
 		{
 			var user = _repository.GetItemById(userId);
@@ -99,13 +83,6 @@ namespace InnoGotchiGame.Application.Managers
 				return null;
 		}
 
-		/// <summary>
-		/// Finds user in data base
-		/// </summary>
-		/// <param name="service">service for interacting with the database</param>
-		/// <param name="email">User email</param>
-		/// <param name="password">User password</param>
-		/// <returns>Found user or null if the user was not found</returns>
 		public UserDTO? FindUserInDb(string email, string password)
 		{
 			int passwordHach = StringToHach(password);
@@ -114,12 +91,8 @@ namespace InnoGotchiGame.Application.Managers
 				return _mapper.Map<UserDTO>(user);
 			else
 				return null;
-			//return service.GetUser(x => x.Email == email && x.PasswordHach == passwordHach);
 		}
 
-		/// <param name="filtrator">Sets filtering rules</param>
-		/// <param name="sorter">sets sorting rules</param>
-		/// <returns>All users from data base</returns>
 		public IEnumerable<UserDTO> GetUsers(UserFiltrator? filtrator = null, UserSorter? sorter = null)
 		{
 			var users = GetUsersQuary(filtrator, sorter);

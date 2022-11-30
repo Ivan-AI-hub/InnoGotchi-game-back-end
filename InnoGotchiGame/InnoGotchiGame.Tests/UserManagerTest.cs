@@ -53,6 +53,7 @@ namespace InnoGotchiGame.Tests
 
 			Assert.True(rez.IsComplete);
 		}
+
 		[Fact]
 		public void Delete_Valid_User()
 		{
@@ -73,7 +74,6 @@ namespace InnoGotchiGame.Tests
 
 			Assert.True(rez.IsComplete);
 		}
-
 
 		[Fact]
 		public void Add_Unvalid_User()
@@ -133,6 +133,34 @@ namespace InnoGotchiGame.Tests
 			var rez = manager.Update(100, user);
 
 			Assert.False(rez.IsComplete);
+		}
+
+		[Fact]
+		public void Get_users()
+		{
+			UserManager manager = new UserManager(_repository, _mapper, _validator);
+			var users = new List<UserDTO>();
+			int usersCount = 4;
+			for (int i = 0; i < usersCount; i++)
+			{
+				var user = new UserDTO()
+				{
+					FirstName = "Test"+i,
+					LastName = "Test" + i,
+					Email = $"update{i}@gmail.com",
+					Password = "Test_1234"
+				};
+				users.Add(user);
+			}
+
+			users.ForEach(x => manager.Add(x));
+
+			var dataBaseUsers = manager.GetUsers().ToList();
+
+			for (int i = 0; i < users.Count; i++)
+			{
+				Assert.Equal(users[i].FirstName, dataBaseUsers[i].FirstName);
+			}
 		}
 	}
 }
