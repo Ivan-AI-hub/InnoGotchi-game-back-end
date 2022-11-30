@@ -53,6 +53,26 @@ namespace InnoGotchiGame.Tests
 
 			Assert.True(rez.IsComplete);
 		}
+		[Fact]
+		public void Delete_Valid_User()
+		{
+			UserManager manager = new UserManager(_repository, _mapper, _validator);
+
+
+			var user = new UserDTO()
+			{
+				FirstName = "First",
+				LastName = "Last",
+				Email = "test_user@gmail.com",
+				Password = "Test_1234"
+			};
+
+
+			manager.Add(user);
+			var rez = manager.Delete(user.Id);
+
+			Assert.True(rez.IsComplete);
+		}
 
 
 		[Fact]
@@ -90,10 +110,9 @@ namespace InnoGotchiGame.Tests
 				Password = "Test_1234"
 			};
 			manager.Add(user);
-			var foundUser = manager.FindUserInDb("update@gmail.com", "Test_1234");
 			user.Email = "wrongEmail";
 
-			var rez = manager.Update(foundUser.Id, user);
+			var rez = manager.Update(user.Id, user);
 
 			Assert.False(rez.IsComplete);
 		}
@@ -111,7 +130,7 @@ namespace InnoGotchiGame.Tests
 				Password = "Test_1234"
 			};
 
-			var rez = manager.Update(10, user);
+			var rez = manager.Update(100, user);
 
 			Assert.False(rez.IsComplete);
 		}
