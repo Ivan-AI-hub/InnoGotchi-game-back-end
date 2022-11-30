@@ -36,7 +36,8 @@ namespace InnoGotchiGame.Application.Managers
 			var validationRezult = _validator.Validate(dataUser);
 			if (validationRezult.IsValid)
 			{
-				_repository.Add(dataUser);
+				var newId = _repository.Add(dataUser);
+				user.Id = newId;
 				_repository.Save();
 			}
 			return _mapper.Map<ManagerRezult>(validationRezult);

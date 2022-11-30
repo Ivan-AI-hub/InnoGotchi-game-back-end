@@ -22,9 +22,9 @@ namespace InnoGotchiGame.Persistence.Repositories
 			return _context.Users.FirstOrDefault(predicate);
 		}
 
-		public void Add(User item)
+		public int Add(User item)
 		{
-			_context.Users.Add(item);
+			return _context.Users.Add(item).Entity.Id;
 		}
 
 		public void Update(int updatedId, User item)
@@ -33,13 +33,15 @@ namespace InnoGotchiGame.Persistence.Repositories
 			_context.Users.Update(item);
 		}
 
-		public void Delete(int id)
+		public bool Delete(int id)
 		{
 			var user = GetItemById(id);
 			if (user != null)
 			{
 				_context.Users.Remove(user);
+				return true;
 			}
+			return false;
 		}
 
 		public IQueryable<User> GetItems(Func<User, bool>? whereRule = null, Func<User, dynamic>? orderByRule = null, bool isDescendingOrder = false)

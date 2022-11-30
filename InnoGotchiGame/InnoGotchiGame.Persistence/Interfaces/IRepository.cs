@@ -11,11 +11,11 @@
 										 Func<T, dynamic>? orderByRule = null,
 										 bool isDescendingOrder = false);
 
-		public void Add(T item);
+		public int Add(T item);
 
 		public void Update(int updatedId, T item);
 
-		public void Delete(int id);
+		public bool Delete(int id);
 
 		public void Save();
 	}

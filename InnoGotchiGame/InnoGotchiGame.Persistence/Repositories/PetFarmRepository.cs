@@ -22,9 +22,9 @@ namespace InnoGotchiGame.Persistence.Repositories
 			return _context.PetFarms.FirstOrDefault(predicate);
 		}
 
-		public void Add(PetFarm item)
+		public int Add(PetFarm item)
 		{
-			_context.PetFarms.Add(item);
+			return _context.PetFarms.Add(item).Entity.Id;
 		}
 
 		public void Update(int updatedId, PetFarm item)
@@ -33,13 +33,15 @@ namespace InnoGotchiGame.Persistence.Repositories
 			_context.PetFarms.Update(item);
 		}
 
-		public void Delete(int id)
+		public bool Delete(int id)
 		{
 			var petFarm = GetItemById(id);
 			if (petFarm != null)
 			{
 				_context.PetFarms.Remove(petFarm);
+				return true;
 			}
+			return false;
 		}
 
 		public IQueryable<PetFarm> GetItems(Func<PetFarm, bool>? whereRule = null, Func<PetFarm, dynamic>? orderByRule = null, bool isDescendingOrder = false)

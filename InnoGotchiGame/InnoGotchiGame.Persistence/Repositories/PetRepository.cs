@@ -21,9 +21,9 @@ namespace InnoGotchiGame.Persistence.Repositories
 			return _context.Pets.FirstOrDefault(predicate);
 		}
 
-		public void Add(Pet item)
+		public int Add(Pet item)
 		{
-			_context.Pets.Add(item);
+			return _context.Pets.Add(item).Entity.Id;
 		}
 
 		public void Update(int updatedId, Pet item)
@@ -32,13 +32,15 @@ namespace InnoGotchiGame.Persistence.Repositories
 			_context.Pets.Update(item);
 		}
 
-		public void Delete(int id)
+		public bool Delete(int id)
 		{
 			var pet = GetItemById(id);
 			if (pet != null)
 			{
 				_context.Pets.Remove(pet);
+				return true;
 			}
+			return false;
 		}
 
 
