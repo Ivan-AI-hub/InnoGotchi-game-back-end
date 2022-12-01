@@ -1,17 +1,16 @@
 using AutoMapper;
 using FluentValidation;
-using InnoGotchiGame.Application.Filtrators;
-using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Mappings;
-using InnoGotchiGame.Application.Sorters;
-using InnoGotchiGame.Application.Sorters.Base;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using InnoGotchiGame.Application.Validators;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence;
 using InnoGotchiGame.Persistence.Interfaces;
 using InnoGotchiGame.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
+using InnoGotchiGame.Web;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,8 +28,34 @@ builder.Services.AddTransient<AbstractValidator<User>, UserValidator>();
 builder.Services.AddTransient<IRepository<User>, UserRepository>();
 
 builder.Services.AddTransient<UserManager>();
+
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+					.AddJwtBearer(options =>
+					{
+						options.RequireHttpsMetadata = false;
+						options.TokenValidationParameters = new TokenValidationParameters
+						{
+							// укзывает, будет ли валидироваться издатель при валидации токена
+							ValidateIssuer = true,
+							// строка, представляющая издателя
+							ValidIssuer = AuthOptions.ISSUER,
+
+							// будет ли валидироваться потребитель токена
+							ValidateAudience = true,
+							// установка потребителя токена
+							ValidAudience = AuthOptions.AUDIENCE,
+							// будет ли валидироваться время существования
+							ValidateLifetime = true,
+
+							// установка ключа безопасности
+							IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
+							// валидация ключа безопасности
+							ValidateIssuerSigningKey = true,
+						};
+					});
 
 var app = builder.Build();
 
