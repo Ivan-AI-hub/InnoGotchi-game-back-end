@@ -35,6 +35,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 		public void Update(int updatedId, User item)
 		{
 			item.Id = updatedId;
+			_context.ChangeTracker.Clear();
 			_context.Users.Update(item);
 		}
 
