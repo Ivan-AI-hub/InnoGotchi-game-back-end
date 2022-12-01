@@ -7,6 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using InnoGotchiGame.Application.Filtrators;
 using InnoGotchiGame.Application.Sorters;
+using InnoGotchiGame.Web.Models.Users;
+using AutoMapper;
 
 namespace InnoGotchiGame.Web.Controllers
 {
@@ -14,45 +16,48 @@ namespace InnoGotchiGame.Web.Controllers
 	public class UserController : BaseController
 	{
 		private UserManager _manager;
+		private IMapper _mapper;
 
-		public UserController(UserManager manager)
+		public UserController(UserManager manager, IMapper mapper)
 		{
 			_manager = manager;
+			_mapper = mapper;
 		}
 
 		[HttpPost]
-		public IActionResult Post(string firstName, string lastName, string email, string password)
-		{
-			if(!ModelState.IsValid)
-			{
-				return BadRequest();
-			}
-
-			UserDTO user = new UserDTO() { FirstName = firstName, LastName = lastName, Email = email, Password = password };
-			
-			var rezult = _manager.Add(user);
-			if (!rezult.IsComplete)
-				return BadRequest();
-
-			return Ok(user);
-		}
-
-		[HttpPut]
-		public IActionResult Put(int userId, string firstName, string lastName, string email, string password = "")
+		public IActionResult Post(AddUserModel addUserModel)
 		{
 			if (!ModelState.IsValid)
 			{
 				return BadRequest();
 			}
 
-			UserDTO user = new UserDTO() { FirstName = firstName, LastName = lastName, Email = email, Password = password };
+			UserDTO user = _mapper.Map<UserDTO>(addUserModel);
 
-			var rezult = _manager.Update(userId, user);
-
+			var rezult = _manager.Add(user);
 			if (!rezult.IsComplete)
-				return BadRequest();
+				return BadRequest(rezult.Errors);
 
 			return Ok(user);
+		}
+
+		[HttpPut]
+		public IActionResult Put(UpdateUserModel updateUserModel)
+		{
+			updateUserModel.Password = updateUserModel.Password ?? "";
+			if (!ModelState.IsValid)
+			{
+				return BadRequest();
+			}
+
+			UserDTO user = _mapper.Map<UserDTO>(updateUserModel);
+
+			var rezult = _manager.Update(updateUserModel.UpdatedId, user);
+
+			if (!rezult.IsComplete)
+				return BadRequest(rezult.Errors);
+
+			return Ok();
 		}
 
 		[HttpGet]
@@ -66,9 +71,9 @@ namespace InnoGotchiGame.Web.Controllers
 		public IActionResult GetById(int userId)
 		{
 			var user = _manager.GetUserById(userId);
-			if(user == null)
+			if (user == null)
 				return BadRequest(new { errorText = "Invalid id." });
-			
+
 			return new ObjectResult(user);
 		}
 

@@ -13,6 +13,7 @@ namespace InnoGotchiGame.Persistence.EntityConfigurations
 				.UsingEntity(j => j.ToTable("ColaboratorFarm"));
 
 			builder.HasIndex(user => user.Email).IsUnique();
+			builder.HasKey(user => user.Id);
 		}
 	}
 }
