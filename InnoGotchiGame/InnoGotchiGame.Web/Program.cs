@@ -11,6 +11,7 @@ using InnoGotchiGame.Persistence.Repositories;
 using Microsoft.EntityFrameworkCore;
 using InnoGotchiGame.Web;
 using Microsoft.IdentityModel.Tokens;
+using InnoGotchiGame.Web.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +22,8 @@ builder.Services.AddControllers();
 string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<InnoGotchiGameContext>(options => options.UseSqlServer(connection));
 
-var config = new MapperConfiguration(cnf => cnf.AddProfile<AssemblyMappingProfile>());
+var config = new MapperConfiguration(cnf => cnf.AddProfiles(new List<Profile>() { new AssemblyMappingProfile(), new WebMappingProfile() }));
+
 builder.Services.AddTransient<IMapper>(x => new Mapper(config));
 
 builder.Services.AddTransient<AbstractValidator<User>, UserValidator>();
