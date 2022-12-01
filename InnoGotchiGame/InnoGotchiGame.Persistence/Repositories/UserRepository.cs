@@ -50,23 +50,12 @@ namespace InnoGotchiGame.Persistence.Repositories
 			return false;
 		}
 
-		public IQueryable<User> GetItems(Func<User, bool>? whereRule = null, Func<User, dynamic>? orderByRule = null, bool isDescendingOrder = false)
+		public IQueryable<User> GetItems()
 		{
 			var users = _context.Users
 				.Include(x => x.OwnPetFarm)
 				.Include(x => x.SentColaborations)
 				.Include(x => x.AcceptedColaborations);
-
-			if (whereRule != null)
-				users.Where(whereRule);
-
-			if (orderByRule != null)
-			{
-				if (isDescendingOrder)
-					users.OrderByDescending(orderByRule);
-				else
-					users.OrderBy(orderByRule);
-			}
 
 
 			return users;

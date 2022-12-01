@@ -12,13 +12,8 @@
 		/// <returns>The element, if it was found in the database or null</returns>
 		public T? GetItem(Func<T, bool> predicate);
 
-		/// <param name="whereRule">Rule for filtrating data</param>
-		/// <param name="orderByRule">Rule for sorting data</param>
-		/// <param name="isDescendingOrder">sets forward or reverse sorting</param>
 		/// <returns>queryable items from the database</returns>
-		public IQueryable<T> GetItems(Func<T, bool>? whereRule = null,
-										 Func<T, dynamic>? orderByRule = null,
-										 bool isDescendingOrder = false);
+		public IQueryable<T> GetItems();
 
 		/// <summary>
 		/// Add item in database
