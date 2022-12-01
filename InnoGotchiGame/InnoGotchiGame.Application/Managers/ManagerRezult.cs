@@ -1,4 +1,6 @@
-﻿namespace InnoGotchiGame.Application.Managers
+﻿using FluentValidation.Results;
+
+namespace InnoGotchiGame.Application.Managers
 {
 	public class ManagerRezult
 	{
@@ -8,6 +10,11 @@
 		public ManagerRezult(params string[] errors)
 		{
 			Errors = errors.ToList();
+		}
+
+		public ManagerRezult(ValidationResult validationResult)
+		{
+			Errors = validationResult.Errors.Select(x => x.ErrorMessage).ToList();
 		}
 	}
 }

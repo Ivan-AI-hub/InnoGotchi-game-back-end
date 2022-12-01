@@ -27,13 +27,14 @@ namespace InnoGotchiGame.Application.Managers
 			dataUser.PasswordHach = StringToHach(user.Password);
 
 			var validationRezult = _validator.Validate(dataUser);
-			if (validationRezult.IsValid)
+			var managerRezult = new ManagerRezult(validationRezult);
+			if (validationRezult.IsValid && IsUniqueEmail(user.Email, managerRezult))
 			{
 				var newId = _repository.Add(dataUser);
 				user.Id = newId;
 				_repository.Save();
 			}
-			return _mapper.Map<ManagerRezult>(validationRezult);
+			return managerRezult;
 		}
 		public void SendCollaborationInvite(UserDTO sender, UserDTO recepient)
 		{
@@ -46,10 +47,10 @@ namespace InnoGotchiGame.Application.Managers
 
 		public ManagerRezult Update(int updatedId, UserDTO newUser)
 		{
-			ManagerRezult rezult = new ManagerRezult();
+			ManagerRezult managerRezult = new ManagerRezult();
 			var dataUser = _mapper.Map<User>(newUser);
 
-			if (CheckUserId(updatedId, rezult))
+			if (CheckUserId(updatedId, managerRezult))
 			{
 				if (newUser.Password == String.Empty)
 				{
@@ -61,14 +62,14 @@ namespace InnoGotchiGame.Application.Managers
 				}
 
 				var validationRezult = _validator.Validate(dataUser);
-				if (validationRezult.IsValid)
+				managerRezult = new ManagerRezult(validationRezult);
+				if (validationRezult.IsValid && IsUniqueEmail(newUser.Email, managerRezult))
 				{
 					_repository.Update(updatedId, dataUser);
 					_repository.Save();
 				}
-				rezult = _mapper.Map<ManagerRezult>(validationRezult);
 			}
-			return rezult;
+			return managerRezult;
 		}
 
 		public ManagerRezult Delete(int deletedId)
@@ -130,6 +131,17 @@ namespace InnoGotchiGame.Application.Managers
 			if (!_repository.IsItemExist(userId))
 			{
 				rezult.Errors.Add("The user ID is not in the database");
+				return false;
+			}
+			return true;
+		}
+
+		private bool IsUniqueEmail(string email, ManagerRezult managerRezult)
+		{
+			var quary = GetUsersQuary();
+			if (quary.Any(x => x.Email == email))
+			{
+				managerRezult.Errors.Add("A user with the same Email already exists in the database");
 				return false;
 			}
 			return true;
