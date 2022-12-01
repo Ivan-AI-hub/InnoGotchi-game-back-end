@@ -5,19 +5,10 @@ namespace InnoGotchiGame.Application.Sorters
 {
     public class UserSorter : Sorter<User>
 	{
-		public bool IsFirstNameSort { get; set; }
-		public bool IsLastNameSort { get; set; }
-		public bool IsEmailSort { get; set; }
-		public bool IsDescendingSort { get; set; }
-
-		public UserSorter(bool isFirstNameSort = true, bool isLastNameSort = false, bool isEmailSort = false)
-		{
-			IsFirstNameSort = isFirstNameSort;
-			IsLastNameSort = isLastNameSort;
-			IsEmailSort = isEmailSort;
-			IsDescendingSort = false;
-		}
-
+		public bool IsFirstNameSort { get; set; } = true;
+		public bool IsLastNameSort { get; set; } = false;
+		public bool IsEmailSort { get; set; } = false;
+		public bool IsDescendingSort { get; set; } = false; 
 
 
 		internal override IQueryable<User> Sort(IQueryable<User> users)
