@@ -97,6 +97,28 @@ namespace InnoGotchiGame.Tests
 		}
 
 		[Fact]
+		public void Update_Valid_User()
+		{
+			UserManager manager = new UserManager(_repository, _mapper, _validator);
+
+
+			var user = new UserDTO()
+			{
+				FirstName = "FirstUpdate",
+				LastName = "LastUpdate",
+				Email = "update@gmail.com",
+				Password = "Test_1234"
+			};
+			manager.Add(user);
+			user.Email = "updateNew@gmail.com";
+
+			var rez = manager.Update(user.Id, user);
+
+			Assert.True(rez.IsComplete);
+			Assert.Equal("updateNew@gmail.com", manager.GetUserById(user.Id)?.Email);
+		}
+
+		[Fact]
 		public void Update_Unvalid_User()
 		{
 			UserManager manager = new UserManager(_repository, _mapper, _validator);
@@ -159,7 +181,7 @@ namespace InnoGotchiGame.Tests
 
 			for (int i = 0; i < users.Count; i++)
 			{
-				Assert.Equal(users[i].FirstName, dataBaseUsers[i].FirstName);
+				Assert.Equal(users[i].FirstName, dataBaseUsers.FirstOrDefault(x => x.Id == users[i].Id)?.FirstName);
 			}
 		}
 	}
