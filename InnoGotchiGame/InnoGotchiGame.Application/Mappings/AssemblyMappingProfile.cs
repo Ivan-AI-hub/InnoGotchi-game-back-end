@@ -18,9 +18,6 @@ namespace InnoGotchiGame.Application.Mappings
 			CreateMap<Pet, PetDTO>().ReverseMap();
 			CreateMap<PetStatistic, PetStatisticDTO>().ReverseMap();
 			CreateMap<PetView, PetViewDTO>().ReverseMap();
-
-			CreateMap<ValidationResult, ManagerRezult>()
-				.ForMember(dest => dest.Errors, opt => opt.MapFrom(src => src.Errors.Select(x => x.ErrorMessage)));
 		}
 	}
 }

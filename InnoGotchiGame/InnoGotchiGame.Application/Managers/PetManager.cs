@@ -3,11 +3,7 @@ using FluentValidation;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace InnoGotchiGame.Application.Managers
 {
@@ -33,23 +29,23 @@ namespace InnoGotchiGame.Application.Managers
 				_repository.Add(dataPet);
 				_repository.Save();
 			}
-			return _mapper.Map<ManagerRezult>(validationRezult);
+			return new ManagerRezult(validationRezult);
 		}
 
 		public ManagerRezult Update(int id, PetDTO pet) 
 		{
-			var dataPet = _mapper.Map<Pet>(pet);
+			
 			var managerRez = new ManagerRezult();
-			CheckPetId(id, managerRez);
-			if (managerRez.IsComplete)
+			if (CheckPetId(id, managerRez))
 			{
+				var dataPet = _mapper.Map<Pet>(pet);
 				var validationRezult = _validator.Validate(dataPet);
 				if (validationRezult.IsValid)
 				{
 					_repository.Update(id, dataPet);
 					_repository.Save();
 				}
-				managerRez = _mapper.Map<ManagerRezult>(validationRezult);
+				managerRez = new ManagerRezult(validationRezult);
 			}
 			return managerRez;
 		}
@@ -57,8 +53,7 @@ namespace InnoGotchiGame.Application.Managers
 		public ManagerRezult Delete(int id)
 		{
 			var managerRez = new ManagerRezult();
-			CheckPetId(id, managerRez);
-			if (managerRez.IsComplete)
+			if (CheckPetId(id, managerRez))
 			{
 				_repository.Delete(id);
 			}
@@ -72,12 +67,14 @@ namespace InnoGotchiGame.Application.Managers
 			return pet;
 		}
 
-		private Pet? CheckPetId(int id, ManagerRezult rezult)
+		private bool CheckPetId(int id, ManagerRezult rezult)
 		{
-			var pet = _repository.GetItemById(id);
-			if (pet == null)
+			if (_repository.IsItemExist(id))
+			{
 				rezult.Errors.Add("The pet ID is not in the database");
-			return pet;
+				return false;
+			}
+			return true;
 		}
 	}
 }
