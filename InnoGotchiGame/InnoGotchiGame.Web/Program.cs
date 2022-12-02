@@ -28,8 +28,10 @@ builder.Services.AddTransient<IMapper>(x => new Mapper(config));
 
 builder.Services.AddTransient<AbstractValidator<User>, UserValidator>();
 builder.Services.AddTransient<IRepository<User>, UserRepository>();
+builder.Services.AddTransient<IRepository<ColaborationRequest>, ColaborationRequestRepository>();
 
 builder.Services.AddTransient<UserManager>();
+builder.Services.AddTransient<ColaborationRequestManager>();
 
 
 builder.Services.AddEndpointsApiExplorer();

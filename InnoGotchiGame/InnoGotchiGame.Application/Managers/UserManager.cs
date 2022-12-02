@@ -36,14 +36,6 @@ namespace InnoGotchiGame.Application.Managers
 			}
 			return managerRezult;
 		}
-		public void SendCollaborationInvite(UserDTO sender, UserDTO recepient)
-		{
-			var invite = new ColaborationRequestDTO() {RequestSender = sender, RequestReceiver = recepient, Status = ColaborationRequestStatusDTO.Undefined };
-			sender.SentColaborations.Add(invite);
-			recepient.AcceptedColaborations.Add(invite);
-			Update(sender.Id, sender);
-			Update(recepient.Id, recepient);
-		}
 
 		public ManagerRezult Update(int updatedId, UserDTO newUser)
 		{
@@ -52,7 +44,7 @@ namespace InnoGotchiGame.Application.Managers
 
 			if (CheckUserId(updatedId, managerRezult))
 			{
-				if (newUser.Password == String.Empty)
+				if (newUser.Password == String.Empty || newUser.Password == null)
 				{
 					dataUser.PasswordHach = _repository.GetItemById(updatedId).PasswordHach;
 				}
@@ -63,7 +55,7 @@ namespace InnoGotchiGame.Application.Managers
 
 				var validationRezult = _validator.Validate(dataUser);
 				managerRezult = new ManagerRezult(validationRezult);
-				if (validationRezult.IsValid && IsUniqueEmail(newUser.Email, managerRezult))
+				if (validationRezult.IsValid)
 				{
 					_repository.Update(updatedId, dataUser);
 					_repository.Save();
