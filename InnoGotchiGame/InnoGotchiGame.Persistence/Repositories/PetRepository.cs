@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Persistence.Repositories
 {
-	internal class PetRepository : IRepository<Pet>
+	public class PetRepository : IRepository<Pet>
 	{
 		private InnoGotchiGameContext _context;
 		public PetRepository(InnoGotchiGameContext context)

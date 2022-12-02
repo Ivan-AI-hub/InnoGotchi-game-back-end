@@ -8,5 +8,11 @@
 		public PetViewDTO View { get; set; }
 		public int FarmId { get; set; }
 		public PetFarmDTO Farm { get; set; }
+
+		public PetDTO()
+		{
+			Statistic = new PetStatisticDTO();
+			View = new PetViewDTO();
+		}
 	}
 }

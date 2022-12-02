@@ -17,10 +17,10 @@ namespace InnoGotchiGame.Application.Models
 
 		public int AlivesPetsCount => Pets.Count(x => x.Statistic.IsAlive);
 		public int DeadsPetsCount => Pets.Count(x => !x.Statistic.IsAlive);
-		public double AverageFeedingPeriod => FeedingCount != 0 ? (DateTime.Now - CreateDate).Days / FeedingCount : FeedingCount;
-		public double AverageDrinkingPeriod => DrinkingCount != 0 ? (DateTime.Now - CreateDate).Days / DrinkingCount : DrinkingCount;
-		public double AveragePetsHappinessDaysCount => Pets.Average(x => (x.Statistic.FirstHappinessDay - DateTime.Now).Days);
-		public double AveragePetsAge => Pets.Average(x => (DateTime.Now - x.Statistic.BornDate).Days);
+		public double AverageFeedingPeriod => Pets.Average(x => x.Statistic.AverageFeedingPeriod);
+		public double AverageDrinkingPeriod => Pets.Average(x => x.Statistic.AverageDrinkingPeriod);
+		public double AveragePetsHappinessDaysCount => Pets.Average(x => x.Statistic.HappinessDayCount);
+		public double AveragePetsAge => Pets.Average(x => x.Statistic.Age);
 		public int FeedingCount => Pets.Sum(x => x.Statistic.FeedingCount);
 		public int DrinkingCount => Pets.Sum(x => x.Statistic.DrinkingCount);
 	}
