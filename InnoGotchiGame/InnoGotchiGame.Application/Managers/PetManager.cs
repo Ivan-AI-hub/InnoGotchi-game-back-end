@@ -22,10 +22,11 @@ namespace InnoGotchiGame.Application.Managers
 			_mapper = mapper;
 		}
 
-		public ManagerRezult Add(PetDTO pet)
+		public ManagerRezult Add(int farmId, PetDTO pet)
 		{
 			var dataPet = _mapper.Map<Pet>(pet);
 
+			dataPet.FarmId = farmId;
 			dataPet.Statistic.BornDate = DateTime.Now;
 			dataPet.Statistic.IsAlive = true;
 			dataPet.Statistic.FirstHappinessDay = DateTime.Now;

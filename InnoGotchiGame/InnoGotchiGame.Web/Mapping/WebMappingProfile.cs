@@ -1,5 +1,7 @@
 ﻿using AutoMapper;
 using InnoGotchiGame.Application.Models;
+using InnoGotchiGame.Web.Models.PetFarms;
+using InnoGotchiGame.Web.Models.Pets;
 using InnoGotchiGame.Web.Models.Users;
 
 namespace InnoGotchiGame.Web.Mapping
@@ -10,6 +12,12 @@ namespace InnoGotchiGame.Web.Mapping
 		{
 			CreateMap<AddUserModel, UserDTO>();
 			CreateMap<UpdateUserModel, UserDTO>();
+
+			CreateMap<UpdatePetFarmModel, PetFarmDTO>();
+			CreateMap<AddPetFarmModel, PetFarmDTO>();
+
+			CreateMap<UpdatePetModel, PetDTO>();
+			CreateMap<AddPetModel, PetDTO>();
 		}
 	}
 }
