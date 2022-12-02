@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using InnoGotchiGame.Application.Filtrators;
 using InnoGotchiGame.Application.Models;
+using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
-
+using System.Data;
 
 namespace InnoGotchiGame.Application.Managers
 {
@@ -23,13 +25,21 @@ namespace InnoGotchiGame.Application.Managers
 		public ManagerRezult Add(PetDTO pet)
 		{
 			var dataPet = _mapper.Map<Pet>(pet);
+
+			dataPet.Statistic.BornDate = DateTime.Now;
+			dataPet.Statistic.IsAlive = true;
+			dataPet.Statistic.FirstHappinessDay = DateTime.Now;
+			dataPet.Statistic.DateLastFeed = DateTime.Now;
+			dataPet.Statistic.DateLastDrink = DateTime.Now;
+
 			var validationRezult = _validator.Validate(dataPet);
-			if(validationRezult.IsValid)
+			var managerRezult = new ManagerRezult(validationRezult);
+			if (validationRezult.IsValid && IsUniqueName(pet.Statistic.Name, managerRezult))
 			{
 				_repository.Add(dataPet);
 				_repository.Save();
 			}
-			return new ManagerRezult(validationRezult);
+			return managerRezult;
 		}
 
 		public ManagerRezult Update(int id, PetDTO pet) 
@@ -40,12 +50,12 @@ namespace InnoGotchiGame.Application.Managers
 			{
 				var dataPet = _mapper.Map<Pet>(pet);
 				var validationRezult = _validator.Validate(dataPet);
-				if (validationRezult.IsValid)
+				managerRez = new ManagerRezult(validationRezult);
+				if (validationRezult.IsValid && IsUniqueName(pet.Statistic.Name, managerRez))
 				{
 					_repository.Update(id, dataPet);
 					_repository.Save();
 				}
-				managerRez = new ManagerRezult(validationRezult);
 			}
 			return managerRez;
 		}
@@ -72,6 +82,45 @@ namespace InnoGotchiGame.Application.Managers
 			if (_repository.IsItemExist(id))
 			{
 				rezult.Errors.Add("The pet ID is not in the database");
+				return false;
+			}
+			return true;
+		}
+		public IEnumerable<PetDTO> GetPets(PetFiltrator? filtrator = null, PetSorter? sorter = null)
+		{
+			var pets = GetPetsQuary(filtrator, sorter);
+			return QueryablePetToPetDTO(pets);
+		}
+
+		public IEnumerable<PetDTO> GetPetsPage(int pageSize, int pageNumber, PetFiltrator? filtrator = null, PetSorter? sorter = null)
+		{
+			var pets = GetPetsQuary(filtrator, sorter);
+			pets = pets.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
+			return QueryablePetToPetDTO(pets);
+		}
+
+		private IQueryable<Pet> GetPetsQuary(PetFiltrator? filtrator = null, PetSorter? sorter = null)
+		{
+			var pets = _repository.GetItems();
+			pets = filtrator != null ? filtrator.Filter(pets) : pets;
+			pets = sorter != null ? sorter.Sort(pets) : pets;
+			return pets;
+		}
+
+		private IEnumerable<PetDTO> QueryablePetToPetDTO(IQueryable<Pet> pets)
+		{
+			var DTOPets = new List<PetDTO>();
+			foreach (var pet in pets)
+				DTOPets.Add(_mapper.Map<PetDTO>(pet));
+			return DTOPets;
+		}
+
+		private bool IsUniqueName(string name, ManagerRezult managerRezult)
+		{
+			var quary = GetPetsQuary();
+			if (quary.Any(x => x.Statistic.Name == name))
+			{
+				managerRezult.Errors.Add("A pet with the same Name already exists in the database");
 				return false;
 			}
 			return true;

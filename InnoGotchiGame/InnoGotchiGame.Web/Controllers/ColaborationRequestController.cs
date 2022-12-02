@@ -41,7 +41,7 @@ namespace InnoGotchiGame.Web.Controllers
 			return Ok();
 		}
 
-		[HttpPut("reqect")]
+		[HttpPut("reject")]
 		public IActionResult RejectRequest(int requestId, int participantId)
 		{
 			if (!ModelState.IsValid)
