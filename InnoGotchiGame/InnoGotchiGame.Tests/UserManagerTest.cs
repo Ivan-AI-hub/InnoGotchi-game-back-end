@@ -64,7 +64,7 @@ namespace InnoGotchiGame.Tests
 			{
 				FirstName = "First",
 				LastName = "Last",
-				Email = "test_user@gmail.com",
+				Email = "test_user712@gmail.com",
 				Password = "Test_1234"
 			};
 
@@ -72,7 +72,7 @@ namespace InnoGotchiGame.Tests
 			manager.Add(user);
 			var rez = manager.Delete(user.Id);
 
-			Assert.True(rez.IsComplete);
+			Assert.True(rez.IsComplete, String.Concat(rez.Errors));
 		}
 
 		[Fact]

@@ -15,12 +15,12 @@ namespace InnoGotchiGame.Web.Controllers
 	[Route("api/users")]
 	public class UserController : BaseController
 	{
-		private UserManager _manager;
+		private UserManager _userManager;
 		private IMapper _mapper;
 
 		public UserController(UserManager manager, IMapper mapper)
 		{
-			_manager = manager;
+			_userManager = manager;
 			_mapper = mapper;
 		}
 
@@ -34,7 +34,7 @@ namespace InnoGotchiGame.Web.Controllers
 
 			UserDTO user = _mapper.Map<UserDTO>(addUserModel);
 
-			var rezult = _manager.Add(user);
+			var rezult = _userManager.Add(user);
 			if (!rezult.IsComplete)
 				return BadRequest(rezult.Errors);
 
@@ -52,7 +52,7 @@ namespace InnoGotchiGame.Web.Controllers
 
 			UserDTO user = _mapper.Map<UserDTO>(updateUserModel);
 
-			var rezult = _manager.Update(updateUserModel.UpdatedId, user);
+			var rezult = _userManager.Update(updateUserModel.UpdatedId, user);
 
 			if (!rezult.IsComplete)
 				return BadRequest(rezult.Errors);
@@ -63,14 +63,14 @@ namespace InnoGotchiGame.Web.Controllers
 		[HttpGet]
 		public IActionResult Get(UserFiltrator? filtrator = null, UserSorter? sorter = null)
 		{
-			var users = _manager.GetUsers(filtrator, sorter);
+			var users = _userManager.GetUsers(filtrator, sorter);
 			return new ObjectResult(users);
 		}
 
 		[HttpGet("{userId}")]
 		public IActionResult GetById(int userId)
 		{
-			var user = _manager.GetUserById(userId);
+			var user = _userManager.GetUserById(userId);
 			if (user == null)
 				return BadRequest(new { errorText = "Invalid id." });
 
@@ -108,7 +108,7 @@ namespace InnoGotchiGame.Web.Controllers
 
 		private ClaimsIdentity GetIdentity(string email, string password)
 		{
-			UserDTO? user = _manager.FindUserInDb(email, password);
+			UserDTO? user = _userManager.FindUserInDb(email, password);
 			if (user != null)
 			{
 				var claims = new List<Claim>
