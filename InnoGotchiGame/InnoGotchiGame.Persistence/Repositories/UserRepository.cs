@@ -14,7 +14,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 
 		public User? GetItemById(int id)
 		{
-			return _context.Users.FirstOrDefault(x => x.Id == id);
+			return GetItems().FirstOrDefault(x => x.Id == id);
 		}
 
 		public bool IsItemExist(int id)
@@ -24,7 +24,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 
 		public User? GetItem(Func<User, bool> predicate)
 		{
-			return _context.Users.FirstOrDefault(predicate);
+			return GetItems().FirstOrDefault(predicate);
 		}
 
 		public int Add(User item)

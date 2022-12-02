@@ -77,7 +77,7 @@ namespace InnoGotchiGame.Web.Controllers
 			return new ObjectResult(user);
 		}
 
-		[HttpPost("api/users/token")]
+		[HttpPost("token")]
 		public IActionResult Token(string email, string password)
 		{
 			var identity = GetIdentity(email, password);

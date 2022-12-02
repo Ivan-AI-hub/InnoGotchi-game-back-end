@@ -49,6 +49,7 @@ namespace InnoGotchiGame.Application.Managers
 				{
 					request.Status = ColaborationRequestStatus.Colaborators;
 					_repository.Update(requestId, request);
+					_repository.Save();
 				}
 			}
 			else
@@ -69,10 +70,12 @@ namespace InnoGotchiGame.Application.Managers
 					rezult.Errors.Add("Request already rejected");
 				if (request.RequestReceiverId != participantId && request.RequestSenderId != participantId)
 					rezult.Errors.Add("Only the participant of the request can reject the request. The recipient's ID does not match");
+
 				if (rezult.IsComplete)
 				{
 					request.Status = ColaborationRequestStatus.NotColaborators;
 					_repository.Update(requestId, request);
+					_repository.Save();
 				}
 			}
 			else
@@ -90,6 +93,7 @@ namespace InnoGotchiGame.Application.Managers
 			if (request != null)
 			{
 				_repository.Delete(requestId);
+				_repository.Save();
 			}
 			else
 			{
