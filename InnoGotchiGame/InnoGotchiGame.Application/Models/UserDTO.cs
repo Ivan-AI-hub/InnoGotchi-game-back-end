@@ -1,4 +1,6 @@
-﻿namespace InnoGotchiGame.Application.Models
+﻿using System.Text.Json.Serialization;
+
+namespace InnoGotchiGame.Application.Models
 {
 	public class UserDTO
 	{
@@ -9,18 +11,16 @@
 		public string Password { get; set; }
 		public string? PhotoFileLink { get; set; }
 
-		public int? OwnPetFarmId { get; set; }
 		public PetFarmDTO? OwnPetFarm { get; set; }
 
 		public List<ColaborationRequestDTO> SentColaborations { get; set; }
 		public List<ColaborationRequestDTO> AcceptedColaborations { get; set; }
-		public List<PetFarmDTO> CollaboratedFarms { get; set; }
+		//public List<PetFarmDTO?> CollaboratedFarms  => Colaborators.Select(x => x.OwnPetFarm).ToList();
 
 		public UserDTO()
 		{
 			SentColaborations = new List<ColaborationRequestDTO>();
 			AcceptedColaborations = new List<ColaborationRequestDTO>();
-			CollaboratedFarms = new List<PetFarmDTO>();
 		}
 
 		/// <returns>All colaborators of user</returns>
@@ -35,7 +35,7 @@
 		}
 
 		/// <returns>All unconfirmed invitations to be colaborators</returns>
-		public IEnumerable<ColaborationRequestDTO> GetUnconfirmedInvite()
+		public IEnumerable<ColaborationRequestDTO> GetUnconfirmedInvites()
 		{
 			var invites = AcceptedColaborations.Where(x => x.Status == ColaborationRequestStatusDTO.Undefined);
 			return invites;

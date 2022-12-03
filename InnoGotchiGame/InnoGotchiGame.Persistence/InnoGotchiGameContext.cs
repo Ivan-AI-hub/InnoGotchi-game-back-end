@@ -24,6 +24,10 @@ namespace InnoGotchiGame.Persistence
 
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 		{
+			if(!optionsBuilder.IsConfigured)
+			{
+				optionsBuilder.UseLazyLoadingProxies();
+			}
 
 		}
 		protected override void OnModelCreating(ModelBuilder modelBuilder)

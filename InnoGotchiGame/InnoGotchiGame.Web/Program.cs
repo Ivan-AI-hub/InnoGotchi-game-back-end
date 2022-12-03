@@ -28,10 +28,18 @@ builder.Services.AddTransient<IMapper>(x => new Mapper(config));
 
 builder.Services.AddTransient<AbstractValidator<User>, UserValidator>();
 builder.Services.AddTransient<IRepository<User>, UserRepository>();
-builder.Services.AddTransient<IRepository<ColaborationRequest>, ColaborationRequestRepository>();
-
 builder.Services.AddTransient<UserManager>();
+
+builder.Services.AddTransient<IRepository<ColaborationRequest>, ColaborationRequestRepository>();
 builder.Services.AddTransient<ColaborationRequestManager>();
+
+builder.Services.AddTransient<IRepository<Pet>, PetRepository>();
+builder.Services.AddTransient<AbstractValidator<Pet>, PetValidator>();
+builder.Services.AddTransient<PetManager>();
+
+builder.Services.AddTransient<IRepository<PetFarm>, PetFarmRepository>();
+builder.Services.AddTransient<AbstractValidator<PetFarm>, PetFarmValidator>();
+builder.Services.AddTransient<PetFarmManager>();
 
 
 builder.Services.AddEndpointsApiExplorer();

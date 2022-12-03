@@ -1,4 +1,6 @@
-﻿namespace InnoGotchiGame.Application.Models
+﻿using System.Text.Json.Serialization;
+
+namespace InnoGotchiGame.Application.Models
 {
 	public class PetDTO
 	{
@@ -7,6 +9,7 @@
 		public PetStatisticDTO Statistic { get; set; }
 		public PetViewDTO View { get; set; }
 		public int FarmId { get; set; }
+		[JsonIgnore]
 		public PetFarmDTO Farm { get; set; }
 
 		public PetDTO()

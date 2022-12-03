@@ -10,14 +10,6 @@ namespace InnoGotchiGame.Application.Sorters
 		public bool IsFeedingSort { get; set; }
 		public bool IsDescendingSort { get; set; }
 
-		public PetSorter(bool isAgeSort, bool isDrinkSort, bool isFeedingSort, bool isDescendingSort)
-		{
-			IsAgeSort = isAgeSort;
-			IsDrinkSort = isDrinkSort;
-			IsFeedingSort = isFeedingSort;
-			IsDescendingSort = isDescendingSort;
-		}
-
 		internal override IQueryable<Pet> Sort(IQueryable<Pet> pets)
 		{
 			if (!IsDescendingSort)

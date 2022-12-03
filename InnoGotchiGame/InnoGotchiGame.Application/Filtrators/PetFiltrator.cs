@@ -5,16 +5,12 @@ namespace InnoGotchiGame.Application.Filtrators
 {
 	public class PetFiltrator : Filtrator<Pet>
 	{
-		private string _name;
+		public string Name { get; set; } = "";
 
-		public PetFiltrator(string name)
-		{
-			_name = name;
-		}
 
 		internal override IQueryable<Pet> Filter(IQueryable<Pet> query)
 		{
-			return query.Where(x => x.Statistic.Name.Contains(_name));
+			return query.Where(x => x.Statistic.Name.Contains(Name));
 		}
 	}
 }

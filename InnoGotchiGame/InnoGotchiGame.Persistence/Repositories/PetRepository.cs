@@ -13,7 +13,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 		}
 		public Pet? GetItemById(int id)
 		{
-			return _context.Pets.FirstOrDefault(x => x.Id == id);
+			return GetItems().FirstOrDefault(x => x.Id == id);
 		}
 
 		public bool IsItemExist(int id)
@@ -23,7 +23,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 
 		public Pet? GetItem(Func<Pet, bool> predicate)
 		{
-			return _context.Pets.FirstOrDefault(predicate);
+			return GetItems().FirstOrDefault(predicate);
 		}
 
 		public int Add(Pet item)

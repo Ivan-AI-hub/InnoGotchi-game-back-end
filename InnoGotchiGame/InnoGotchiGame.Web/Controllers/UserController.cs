@@ -37,7 +37,7 @@ namespace InnoGotchiGame.Web.Controllers
 			if (!rezult.IsComplete)
 				return BadRequest(rezult.Errors);
 
-			return Ok(user);
+			return Ok();
 		}
 
 		[HttpPut]

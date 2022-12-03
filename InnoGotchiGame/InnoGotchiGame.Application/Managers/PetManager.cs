@@ -27,11 +27,13 @@ namespace InnoGotchiGame.Application.Managers
 			var dataPet = _mapper.Map<Pet>(pet);
 
 			dataPet.FarmId = farmId;
-			dataPet.Statistic.BornDate = DateTime.Now;
+			dataPet.Statistic.BornDate = DateTime.UtcNow;
 			dataPet.Statistic.IsAlive = true;
-			dataPet.Statistic.FirstHappinessDay = DateTime.Now;
-			dataPet.Statistic.DateLastFeed = DateTime.Now;
-			dataPet.Statistic.DateLastDrink = DateTime.Now;
+			dataPet.Statistic.FirstHappinessDay = DateTime.UtcNow;
+			dataPet.Statistic.DateLastFeed = DateTime.UtcNow;
+			dataPet.Statistic.DateLastDrink = DateTime.UtcNow;
+			dataPet.Statistic.FeedingCount = 1;
+			dataPet.Statistic.DrinkingCount = 1;
 
 			var validationRezult = _validator.Validate(dataPet);
 			var managerRezult = new ManagerRezult(validationRezult);

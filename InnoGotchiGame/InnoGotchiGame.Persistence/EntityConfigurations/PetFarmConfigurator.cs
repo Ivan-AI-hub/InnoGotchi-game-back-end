@@ -11,8 +11,7 @@ namespace InnoGotchiGame.Persistence.EntityConfigurations
 			builder.HasIndex(x => x.Name).IsUnique();
 			builder.HasOne(p => p.Owner)
 				.WithOne(d => d.OwnPetFarm)
-				.HasForeignKey<User>(x => x.OwnPetFarmId)
-				.OnDelete(DeleteBehavior.Restrict);
+				.HasForeignKey<User>(x => x.OwnPetFarmId);
 		}
 	}
 }

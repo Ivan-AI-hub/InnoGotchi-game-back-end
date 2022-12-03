@@ -11,7 +11,6 @@ namespace InnoGotchiGame.Domain
 		public int OwnerId { get; set; }
 		public User Owner { get; set; }
 
-		public List<User> Colaborators { get; set; }
 		public List<Pet> Pets { get; }
 	}
 }

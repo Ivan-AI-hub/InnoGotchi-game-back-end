@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Persistence.Repositories
 {
-	internal class PetFarmRepository : IRepository<PetFarm>
+	public class PetFarmRepository : IRepository<PetFarm>
 	{
 		private InnoGotchiGameContext _context;
 		public PetFarmRepository(InnoGotchiGameContext context)
@@ -14,7 +14,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 
 		public PetFarm? GetItemById(int id)
 		{
-			return _context.PetFarms.FirstOrDefault(x => x.Id == id);
+			return GetItems().FirstOrDefault(x => x.Id == id);
 		}
 		public bool IsItemExist(int id)
 		{
@@ -22,7 +22,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 		}
 		public PetFarm? GetItem(Func<PetFarm, bool> predicate)
 		{
-			return _context.PetFarms.FirstOrDefault(predicate);
+			return GetItems().FirstOrDefault(predicate);
 		}
 
 		public int Add(PetFarm item)

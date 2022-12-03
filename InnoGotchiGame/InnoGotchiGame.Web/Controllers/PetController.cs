@@ -4,11 +4,11 @@ using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Web.Models.Pets;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchiGame.Web.Controllers
 {
+	[Route("/api/pets")]
 	public class PetController : BaseController
 	{
 		private PetManager _petManager;
@@ -29,12 +29,13 @@ namespace InnoGotchiGame.Web.Controllers
 			}
 
 			PetDTO pet = _mapper.Map<PetDTO>(addPetModel);
+			pet.Statistic = new PetStatisticDTO() { Name = addPetModel.Name };
 
 			var rezult = _petManager.Add(addPetModel.FarmId, pet);
 			if (!rezult.IsComplete)
 				return BadRequest(rezult.Errors);
 
-			return Ok(pet);
+			return Ok();
 		}
 
 		[HttpPut]
@@ -56,10 +57,10 @@ namespace InnoGotchiGame.Web.Controllers
 		}
 
 		[HttpGet]
-		public IActionResult Get(PetFiltrator? filtrator = null, PetSorter? sorter = null)
+		public IEnumerable<PetDTO> Get(PetFiltrator? filtrator = null, PetSorter? sorter = null)
 		{
 			var Pets = _petManager.GetPets(filtrator, sorter);
-			return new ObjectResult(Pets);
+			return Pets;
 		}
 
 		[HttpGet("{PetId}")]

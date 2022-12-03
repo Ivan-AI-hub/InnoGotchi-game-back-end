@@ -26,11 +26,13 @@ namespace InnoGotchiGame.Application.Managers
 			_mapper = mapper;
 		}
 
-		public ManagerRezult Add(int ownerId, PetFarmDTO farm)
+		public ManagerRezult Add(int ownerId, string name)
 		{
-			var dataFarm = _mapper.Map<PetFarm>(farm);
+			var dataFarm = new PetFarm();
 			dataFarm.CreateDate = DateTime.Now;
+			dataFarm.Name = name;
 			dataFarm.OwnerId = ownerId;
+
 			var validationRezult = _validator.Validate(dataFarm);
 			var rezult = new ManagerRezult(validationRezult);
 			if (validationRezult.IsValid && IsUniqueName(dataFarm.Name, rezult))
@@ -119,7 +121,7 @@ namespace InnoGotchiGame.Application.Managers
 
 		private bool CheckFarmId(int id, ManagerRezult rezult)
 		{
-			if (_repository.IsItemExist(id))
+			if (!_repository.IsItemExist(id))
 			{
 				rezult.Errors.Add("The farm ID is not in the database");
 				return false;

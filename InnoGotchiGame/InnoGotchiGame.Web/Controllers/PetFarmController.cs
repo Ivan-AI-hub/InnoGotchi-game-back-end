@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchiGame.Web.Controllers
 {
+	[Route("/api/farms")]
 	public class PetFarmController : BaseController
 	{
 		private PetFarmManager _farmManager;
@@ -27,13 +28,11 @@ namespace InnoGotchiGame.Web.Controllers
 				return BadRequest();
 			}
 
-			PetFarmDTO farm = _mapper.Map<PetFarmDTO>(addFarmModel);
-
-			var rezult = _farmManager.Add(addFarmModel.OwnerId, farm);
+			var rezult = _farmManager.Add(addFarmModel.OwnerId, addFarmModel.Name);
 			if (!rezult.IsComplete)
 				return BadRequest(rezult.Errors);
 
-			return Ok(farm);
+			return Ok();
 		}
 
 		[HttpPut]

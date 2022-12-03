@@ -29,12 +29,12 @@ namespace InnoGotchiGame.Persistence.Repositories
 
 		public ColaborationRequest? GetItem(Func<ColaborationRequest, bool> predicate)
 		{
-			return _context.ColaborationRequests.FirstOrDefault(predicate);
+			return GetItems().FirstOrDefault(predicate);
 		}
 
 		public ColaborationRequest? GetItemById(int id)
 		{
-			return _context.ColaborationRequests.FirstOrDefault(x => x.Id == id);
+			return GetItems().FirstOrDefault(x => x.Id == id);
 		}
 
 		public IQueryable<ColaborationRequest> GetItems()
