@@ -5,6 +5,7 @@ using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
+using Microsoft.Identity.Client;
 using System.Data;
 
 namespace InnoGotchiGame.Application.Managers
@@ -45,19 +46,65 @@ namespace InnoGotchiGame.Application.Managers
 			return managerRezult;
 		}
 
-		public ManagerRezult Update(int id, PetDTO pet) 
+		public ManagerRezult Update(int id, string name) 
 		{
 			
 			var managerRez = new ManagerRezult();
 			if (CheckPetId(id, managerRez))
 			{
-				var dataPet = _mapper.Map<Pet>(pet);
+				var dataPet = _repository.GetItemById(id);
+				dataPet.Statistic.Name = name;
 				var validationRezult = _validator.Validate(dataPet);
 				managerRez = new ManagerRezult(validationRezult);
-				if (validationRezult.IsValid && IsUniqueName(pet.Statistic.Name, managerRez))
+				if (validationRezult.IsValid && IsUniqueName(dataPet.Statistic.Name, managerRez))
 				{
 					_repository.Update(id, dataPet);
 					_repository.Save();
+				}
+			}
+			return managerRez;
+		}
+
+		public ManagerRezult Feed(int id, int feederId)
+		{
+			var managerRez = new ManagerRezult();
+			if (CheckPetId(id, managerRez))
+			{
+				var dataPet = _repository.GetItemById(id);
+				if (dataPet.Farm.Owner.Id == feederId || dataPet.Farm.Owner.GetUserColaborators().Any(x => x.Id == feederId))
+				{
+					dataPet.Statistic.FeedingCount++;
+					dataPet.Statistic.DateLastFeed = DateTime.UtcNow;
+
+					_repository.Update(id, dataPet);
+					_repository.Save();
+				
+				}
+				else
+				{
+					managerRez.Errors.Add($"a user with id = {feederId} cannot feed a pet");
+				}
+			}
+			return managerRez;
+		}
+
+		public ManagerRezult GiveDrink(int id, int drinkerId)
+		{
+			var managerRez = new ManagerRezult();
+			if (CheckPetId(id, managerRez))
+			{
+				var dataPet = _repository.GetItemById(id);
+				if (dataPet.Farm.Owner.Id == drinkerId || dataPet.Farm.Owner.GetUserColaborators().Any(x => x.Id == drinkerId))
+				{
+					dataPet.Statistic.DrinkingCount++;
+					dataPet.Statistic.DateLastDrink = DateTime.UtcNow;
+
+					_repository.Update(id, dataPet);
+					_repository.Save();
+				}
+				else
+				{
+					managerRez.Errors.Add($"a user with id = {drinkerId} cannot give a drink to a pet");
 				}
 			}
 			return managerRez;
@@ -82,7 +129,7 @@ namespace InnoGotchiGame.Application.Managers
 
 		private bool CheckPetId(int id, ManagerRezult rezult)
 		{
-			if (_repository.IsItemExist(id))
+			if (!_repository.IsItemExist(id))
 			{
 				rezult.Errors.Add("The pet ID is not in the database");
 				return false;

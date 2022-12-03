@@ -52,7 +52,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 		public IQueryable<Pet> GetItems()
 		{
 			var pets = _context.Pets
-				.Include(x => x.Farm);
+				.Include(x => x.Farm).Include(x => x.Farm.Owner);
 
 			return pets;
 		}

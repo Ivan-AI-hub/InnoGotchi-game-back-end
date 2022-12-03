@@ -46,9 +46,39 @@ namespace InnoGotchiGame.Web.Controllers
 				return BadRequest();
 			}
 
-			PetDTO pet = _mapper.Map<PetDTO>(updatePetModel);
+			var rezult = _petManager.Update(updatePetModel.UpdatedId, updatePetModel.Name);
 
-			var rezult = _petManager.Update(updatePetModel.UpdatedId, pet);
+			if (!rezult.IsComplete)
+				return BadRequest(rezult.Errors);
+
+			return Ok();
+		}
+
+		[HttpPut("feed")]
+		public IActionResult Feed(int petId, int feederId)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest();
+			}
+
+			var rezult = _petManager.Feed(petId, feederId);
+
+			if (!rezult.IsComplete)
+				return BadRequest(rezult.Errors);
+
+			return Ok();
+		}
+
+		[HttpPut("drink")]
+		public IActionResult GiveDrink(int petId, int drinkerId)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest();
+			}
+
+			var rezult = _petManager.GiveDrink(petId, drinkerId);
 
 			if (!rezult.IsComplete)
 				return BadRequest(rezult.Errors);
