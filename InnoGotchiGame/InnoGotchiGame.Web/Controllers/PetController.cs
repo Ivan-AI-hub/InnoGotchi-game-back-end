@@ -86,6 +86,22 @@ namespace InnoGotchiGame.Web.Controllers
 			return Ok();
 		}
 
+		[HttpPut("dead")]
+		public IActionResult SetDeadStatus(int petId)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest();
+			}
+
+			var rezult = _petManager.SetDeadStatus(petId);
+
+			if (!rezult.IsComplete)
+				return BadRequest(rezult.Errors);
+
+			return Ok();
+		}
+
 		[HttpGet]
 		public IEnumerable<PetDTO> Get(PetFiltrator? filtrator = null, PetSorter? sorter = null)
 		{
