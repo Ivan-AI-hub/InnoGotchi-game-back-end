@@ -11,11 +11,12 @@ namespace InnoGotchiGame.Persistence.EntityConfigurations
 			builder.HasOne(d => d.RequestSender)
 				.WithMany(p => p.SentColaborations)
 				.HasForeignKey(d => d.RequestSenderId)
-				.OnDelete(DeleteBehavior.NoAction);
+				.OnDelete(DeleteBehavior.Cascade);
 
 			builder.HasOne(d => d.RequestReceiver)
 				.WithMany(p => p.AcceptedColaborations)
-				.HasForeignKey(d => d.RequestReceiverId);
+				.HasForeignKey(d => d.RequestReceiverId)
+				.OnDelete(DeleteBehavior.ClientCascade);
 		}
 	}
 }

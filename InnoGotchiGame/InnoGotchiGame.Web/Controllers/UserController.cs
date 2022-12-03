@@ -59,11 +59,26 @@ namespace InnoGotchiGame.Web.Controllers
 			return Ok();
 		}
 
+		[HttpDelete]
+		public IActionResult Delete(int userId)
+		{
+			if (!ModelState.IsValid)
+			{
+				return BadRequest();
+			}
+
+			var rezult = _userManager.Delete(userId);
+			if (!rezult.IsComplete)
+				return BadRequest(rezult.Errors);
+
+			return NoContent();
+		}
+
 		[HttpGet]
-		public IActionResult Get(UserFiltrator? filtrator = null, UserSorter? sorter = null)
+		public IEnumerable<UserDTO> Get(UserFiltrator? filtrator = null, UserSorter? sorter = null)
 		{
 			var users = _userManager.GetUsers(filtrator, sorter);
-			return new ObjectResult(users);
+			return users;
 		}
 
 		[HttpGet("{userId}")]
