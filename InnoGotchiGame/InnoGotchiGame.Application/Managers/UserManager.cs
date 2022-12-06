@@ -37,21 +37,16 @@ namespace InnoGotchiGame.Application.Managers
 			return managerRezult;
 		}
 
-		public ManagerRezult Update(int updatedId, UserDTO newUser)
+		public ManagerRezult UpdateData(int updatedId, UserDTO newUser)
 		{
 			ManagerRezult managerRezult = new ManagerRezult();
 			var dataUser = _mapper.Map<User>(newUser);
 
 			if (CheckUserId(updatedId, managerRezult))
 			{
-				if (newUser.Password == String.Empty || newUser.Password == null)
-				{
-					dataUser.PasswordHach = _repository.GetItemById(updatedId).PasswordHach;
-				}
-				else
-				{
-					dataUser.PasswordHach = StringToHach(newUser.Password);
-				}
+				var oldUser = _repository.GetItemById(updatedId);
+				dataUser.Email = oldUser.Email;
+				dataUser.PasswordHach = oldUser.PasswordHach;
 
 				var validationRezult = _validator.Validate(dataUser);
 				managerRezult = new ManagerRezult(validationRezult);
@@ -64,7 +59,33 @@ namespace InnoGotchiGame.Application.Managers
 			return managerRezult;
 		}
 
-		public ManagerRezult Delete(int deletedId)
+        public ManagerRezult UpdatePassword(int updatedId, string oldPassword, string newPassword)
+        {
+            ManagerRezult managerRezult = new ManagerRezult();
+            if (CheckUserId(updatedId, managerRezult))
+            {
+                var dataUser = _repository.GetItemById(updatedId);
+                if(dataUser.PasswordHach == StringToHach(oldPassword))
+				{ 
+                    dataUser.PasswordHach = StringToHach(newPassword);
+                }
+				else
+				{
+					managerRezult.Errors.Add("Old and new password are not equal");
+				}
+
+                var validationRezult = _validator.Validate(dataUser);
+                managerRezult = new ManagerRezult(validationRezult);
+                if (validationRezult.IsValid)
+                {
+                    _repository.Update(updatedId, dataUser);
+                    _repository.Save();
+                }
+            }
+            return managerRezult;
+        }
+
+        public ManagerRezult Delete(int deletedId)
 		{
 			var managerRez = new ManagerRezult();
 			if (CheckUserId(deletedId, managerRez))

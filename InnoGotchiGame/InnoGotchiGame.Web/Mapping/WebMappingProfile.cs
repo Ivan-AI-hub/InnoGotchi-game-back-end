@@ -11,7 +11,7 @@ namespace InnoGotchiGame.Web.Mapping
 		public WebMappingProfile()
 		{
 			CreateMap<AddUserModel, UserDTO>();
-			CreateMap<UpdateUserModel, UserDTO>();
+			CreateMap<UpdateUserDataModel, UserDTO>();
 
 			CreateMap<UpdatePetFarmModel, PetFarmDTO>();
 			CreateMap<AddPetFarmModel, PetFarmDTO>();

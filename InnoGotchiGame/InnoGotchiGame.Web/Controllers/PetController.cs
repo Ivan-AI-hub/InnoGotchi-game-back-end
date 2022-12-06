@@ -4,11 +4,13 @@ using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Web.Models.Pets;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchiGame.Web.Controllers
 {
-	[Route("/api/pets")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Route("/api/pets")]
 	public class PetController : BaseController
 	{
 		private PetManager _petManager;

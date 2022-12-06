@@ -1,9 +1,11 @@
 ﻿using InnoGotchiGame.Application.Managers;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchiGame.Web.Controllers
 {
-	[Route("/api/colaborators")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Route("/api/colaborators")]
 	public class ColaborationRequestController : BaseController
 	{
 		private ColaborationRequestManager _requestManager;

@@ -8,9 +8,11 @@ using InnoGotchiGame.Application.Filtrators;
 using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Web.Models.Users;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InnoGotchiGame.Web.Controllers
 {
+	[Authorize(AuthenticationSchemes = "Bearer")]
 	[Route("api/users")]
 	public class UserController : BaseController
 	{
@@ -23,8 +25,15 @@ namespace InnoGotchiGame.Web.Controllers
 			_mapper = mapper;
 		}
 
+		/// <summary>
+		/// Creates a User
+		/// </summary>
+		/// <param name="addUserModel"></param>
 		[HttpPost]
-		public IActionResult Post(AddUserModel addUserModel)
+		[AllowAnonymous]
+		[ProducesResponseType(200)]
+		[ProducesResponseType(typeof(List<string>), 400)]
+		public IActionResult Post([FromBody]AddUserModel addUserModel)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -40,26 +49,59 @@ namespace InnoGotchiGame.Web.Controllers
 			return Ok();
 		}
 
-		[HttpPut]
-		public IActionResult Put(UpdateUserModel updateUserModel)
+		/// <summary>
+		/// Updates a User data
+		/// </summary>
+		/// <param name="updateUserModel"></param>
+		[HttpPut("data")]
+		[ProducesResponseType(202)]
+		[ProducesResponseType(typeof(List<string>), 400)]
+		public IActionResult PutData([FromBody]UpdateUserDataModel updateUserModel)
 		{
-			updateUserModel.Password = updateUserModel.Password ?? "";
-			if (!ModelState.IsValid)
-			{
-				return BadRequest();
-			}
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
 
-			UserDTO user = _mapper.Map<UserDTO>(updateUserModel);
+            UserDTO user = _mapper.Map<UserDTO>(updateUserModel);
 
-			var rezult = _userManager.Update(updateUserModel.UpdatedId, user);
+			var rezult = _userManager.UpdateData(updateUserModel.UpdatedId, user);
 
 			if (!rezult.IsComplete)
 				return BadRequest(rezult.Errors);
 
-			return Ok();
+			return Accepted();
 		}
 
-		[HttpDelete]
+        /// <summary>
+        /// Updates a User data
+        /// </summary>
+        /// <param name="updateUserModel"></param>
+        [HttpPut("password")]
+        [ProducesResponseType(202)]
+        [ProducesResponseType(typeof(List<string>), 400)]
+        public IActionResult PutPassword([FromBody] UpdateUserPasswordModel updateUserModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var rezult = _userManager.UpdatePassword(updateUserModel.UpdatedId, updateUserModel.OldPassword, updateUserModel.NewPassword);
+
+            if (!rezult.IsComplete)
+                return BadRequest(rezult.Errors);
+
+            return Accepted();
+        }
+
+        /// <summary>
+        /// Deletes a User
+        /// </summary>
+        /// <param name="userId"></param>
+        [HttpDelete("{userId}")]
+		[ProducesResponseType(204)]
+		[ProducesResponseType(typeof(List<string>), 400)]
 		public IActionResult Delete(int userId)
 		{
 			if (!ModelState.IsValid)
@@ -74,14 +116,23 @@ namespace InnoGotchiGame.Web.Controllers
 			return NoContent();
 		}
 
+		/// <param name="filtrator">Filtration rules</param>
+		/// <param name="sorter">Sorting rules</param>
+		/// <returns>All users from database</returns>
 		[HttpGet]
-		public IEnumerable<UserDTO> Get(UserFiltrator? filtrator = null, UserSorter? sorter = null)
+        [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
+		public IActionResult Get(UserFiltrator? filtrator = null, UserSorter? sorter = null)
 		{
+			var a = User;
 			var users = _userManager.GetUsers(filtrator, sorter);
-			return users;
+			return Ok(users);
 		}
 
+		/// <param name="userId"></param>
+		/// <returns>a user with same Id</returns>
 		[HttpGet("{userId}")]
+		[ProducesResponseType(typeof(UserDTO), 200)]
+		[ProducesResponseType(typeof(string), 400)]
 		public IActionResult GetById(int userId)
 		{
 			var user = _userManager.GetUserById(userId);
@@ -91,51 +142,44 @@ namespace InnoGotchiGame.Web.Controllers
 			return new ObjectResult(user);
 		}
 
-		[HttpPost("token")]
+        /// <param name="userId"></param>
+        /// <returns>a user with same Id</returns>
+        [HttpGet("Authorized")]
+        [ProducesResponseType(typeof(UserDTO), 200)]
+        [ProducesResponseType(typeof(string), 400)]
+        public IActionResult GetAuthorizeUser()
+        {
+			var userId = int.Parse(User.FindFirstValue("Id"));
+            var user = _userManager.GetUserById(userId);
+
+            return new ObjectResult(user);
+        }
+
+        /// <param name="email"></param>
+        /// <param name="password"></param>
+        /// <returns>access token for user witn same email and password</returns>
+        [HttpPost("token")]
+		[AllowAnonymous]
+		[ProducesResponseType(200)]
+		[ProducesResponseType(typeof(string), 400)]
 		public IActionResult Token(string email, string password)
 		{
-			var identity = GetIdentity(email, password);
-			if (identity == null)
+            UserDTO? user = _userManager.FindUserInDb(email, password);
+			if (user == null)
 			{
 				return BadRequest(new { errorText = "Invalid email or password." });
 			}
 
-			var now = DateTime.UtcNow;
-			// создаем JWT-токен
-			var jwt = new JwtSecurityToken(
-					issuer: AuthOptions.ISSUER,
-					audience: AuthOptions.AUDIENCE,
-					notBefore: now,
-					claims: identity.Claims,
-					expires: now.Add(TimeSpan.FromMinutes(AuthOptions.LIFETIME)),
-					signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-			var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
+            var claims = new List<Claim> { new Claim(ClaimTypes.Email, user.Email), new Claim("Id", user.Id.ToString()) };
 
-			var response = new
-			{
-				access_token = encodedJwt,
-				username = identity.Name
-			};
+            var jwt = new JwtSecurityToken(
+                    issuer: AuthOptions.ISSUER,
+                    audience: AuthOptions.AUDIENCE,
+                    claims: claims,
+                    expires: DateTime.UtcNow.Add(TimeSpan.FromDays(1)),
+                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
 
-			return Json(response);
-		}
-
-		private ClaimsIdentity GetIdentity(string email, string password)
-		{
-			UserDTO? user = _userManager.FindUserInDb(email, password);
-			if (user != null)
-			{
-				var claims = new List<Claim>
-				{
-					new Claim(ClaimsIdentity.DefaultNameClaimType, user.Email)
-				};
-				ClaimsIdentity claimsIdentity =
-				new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
-					ClaimsIdentity.DefaultRoleClaimType);
-				return claimsIdentity;
-			}
-
-			return null;
+            return new JsonResult(new JwtSecurityTokenHandler().WriteToken(jwt));
 		}
 	}
 }
