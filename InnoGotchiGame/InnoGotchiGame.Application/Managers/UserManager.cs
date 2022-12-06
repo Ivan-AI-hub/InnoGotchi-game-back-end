@@ -5,6 +5,8 @@ using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace InnoGotchiGame.Application.Managers
 {
@@ -50,7 +52,7 @@ namespace InnoGotchiGame.Application.Managers
 
 				var validationRezult = _validator.Validate(dataUser);
 				managerRezult = new ManagerRezult(validationRezult);
-				if (validationRezult.IsValid)
+				if (managerRezult.IsComplete)
 				{
 					_repository.Update(updatedId, dataUser);
 					_repository.Save();
@@ -65,6 +67,9 @@ namespace InnoGotchiGame.Application.Managers
             if (CheckUserId(updatedId, managerRezult))
             {
                 var dataUser = _repository.GetItemById(updatedId);
+
+                var validationRezult = _validator.Validate(dataUser);
+                managerRezult = new ManagerRezult(validationRezult);
                 if(dataUser.PasswordHach == StringToHach(oldPassword))
 				{ 
                     dataUser.PasswordHach = StringToHach(newPassword);
@@ -74,9 +79,8 @@ namespace InnoGotchiGame.Application.Managers
 					managerRezult.Errors.Add("Old and new password are not equal");
 				}
 
-                var validationRezult = _validator.Validate(dataUser);
-                managerRezult = new ManagerRezult(validationRezult);
-                if (validationRezult.IsValid)
+
+                if (managerRezult.IsComplete)
                 {
                     _repository.Update(updatedId, dataUser);
                     _repository.Save();
@@ -107,7 +111,7 @@ namespace InnoGotchiGame.Application.Managers
 
 		public UserDTO? FindUserInDb(string email, string password)
 		{
-			int passwordHach = StringToHach(password);
+			string passwordHach = StringToHach(password);
 			var user = _repository.GetItem(x => x.Email == email && x.PasswordHach == passwordHach);
 			if (user != null)
 				return _mapper.Map<UserDTO>(user);
@@ -128,16 +132,19 @@ namespace InnoGotchiGame.Application.Managers
 			return QueryableUserToUserDTO(users);
 		}
 
-		private int StringToHach(string read)
+		private string StringToHach(string password)
 		{
-			int hashedValue = 3074457;
-			for (int i = 0; i < read.Length; i++)
-			{
-				hashedValue += read[i];
-				hashedValue *= 3074457;
-			}
-			return hashedValue;
-		}
+            using (var hashAlg = MD5.Create())
+            {
+                byte[] hash = hashAlg.ComputeHash(Encoding.UTF8.GetBytes(password));
+                var builder = new StringBuilder(hash.Length * 2);
+                for (int i = 0; i < hash.Length; i++)
+                {
+                    builder.Append(hash[i].ToString("X2"));
+                }
+                return builder.ToString();
+            }
+        }
 
 		private bool CheckUserId(int userId, ManagerRezult rezult)
 		{

@@ -110,12 +110,12 @@ namespace InnoGotchiGame.Tests
 				Password = "Test_1234"
 			};
 			manager.Add(user);
-			user.Email = "updateNew@gmail.com";
+			user.FirstName = "SecondUpdate";
 
-			var rez = manager.Update(user.Id, user);
+			var rez = manager.UpdateData(user.Id, user);
 
 			Assert.True(rez.IsComplete);
-			Assert.Equal("updateNew@gmail.com", manager.GetUserById(user.Id)?.Email);
+			Assert.Equal("SecondUpdate", manager.GetUserById(user.Id)?.FirstName);
 		}
 
 		[Fact]
@@ -132,9 +132,9 @@ namespace InnoGotchiGame.Tests
 				Password = "Test_1234"
 			};
 			manager.Add(user);
-			user.Email = "wrongEmail";
+			user.FirstName = "";
 
-			var rez = manager.Update(user.Id, user);
+			var rez = manager.UpdateData(user.Id, user);
 
 			Assert.False(rez.IsComplete);
 		}
@@ -152,7 +152,7 @@ namespace InnoGotchiGame.Tests
 				Password = "Test_1234"
 			};
 
-			var rez = manager.Update(100, user);
+			var rez = manager.UpdateData(100, user);
 
 			Assert.False(rez.IsComplete);
 		}
