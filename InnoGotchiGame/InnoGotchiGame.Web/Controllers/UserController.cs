@@ -119,18 +119,29 @@ namespace InnoGotchiGame.Web.Controllers
 		/// <param name="filtrator">Filtration rules</param>
 		/// <param name="sorter">Sorting rules</param>
 		/// <returns>All users from database</returns>
-		[HttpGet]
+		[HttpGet("{pageSize}/{pageNumber}")]
+		[AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
-		public IActionResult Get(UserFiltrator? filtrator = null, UserSorter? sorter = null)
+		public IActionResult GetPage(int pageSize, int pageNumber, [FromBody] FiltrationViewModel filtration)
 		{
-			var a = User;
-			var users = _userManager.GetUsers(filtrator, sorter);
+			var users = _userManager.GetUsersPage(pageSize, pageNumber, filtration.Filtrator, filtration.Sorter);
 			return Ok(users);
 		}
 
-		/// <param name="userId"></param>
-		/// <returns>a user with same Id</returns>
-		[HttpGet("{userId}")]
+        /// <param name="filtrator">Filtration rules</param>
+        /// <param name="sorter">Sorting rules</param>
+        /// <returns>All users from database</returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
+        public IActionResult Get([FromBody]FiltrationViewModel filtration)
+        {
+            var users = _userManager.GetUsers(filtration.Filtrator, filtration.Sorter);
+            return Ok(users);
+        }
+
+        /// <param name="userId"></param>
+        /// <returns>a user with same Id</returns>
+        [HttpGet("{userId}")]
 		[ProducesResponseType(typeof(UserDTO), 200)]
 		[ProducesResponseType(typeof(string), 400)]
 		public IActionResult GetById(int userId)
