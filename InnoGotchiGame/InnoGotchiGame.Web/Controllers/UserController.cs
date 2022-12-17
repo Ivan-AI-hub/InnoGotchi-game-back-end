@@ -1,61 +1,61 @@
-﻿using InnoGotchiGame.Application.Managers;
+﻿using AutoMapper;
+using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
+using InnoGotchiGame.Web.Models.Users;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using InnoGotchiGame.Web.Models.Users;
-using AutoMapper;
-using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
 
 namespace InnoGotchiGame.Web.Controllers
 {
-	[Authorize(AuthenticationSchemes = "Bearer")]
-	[Route("api/users")]
-	public class UserController : BaseController
-	{
-		private UserManager _userManager;
-		private IMapper _mapper;
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Route("api/users")]
+    public class UserController : BaseController
+    {
+        private UserManager _userManager;
+        private IMapper _mapper;
 
-		public UserController(UserManager manager, IMapper mapper)
-		{
-			_userManager = manager;
-			_mapper = mapper;
-		}
+        public UserController(UserManager manager, IMapper mapper)
+        {
+            _userManager = manager;
+            _mapper = mapper;
+        }
 
-		/// <summary>
-		/// Creates a User
-		/// </summary>
-		/// <param name="addUserModel"></param>
-		[HttpPost]
-		[AllowAnonymous]
-		[ProducesResponseType(200)]
-		[ProducesResponseType(typeof(List<string>), 400)]
-		public IActionResult Post([FromBody]AddUserModel addUserModel)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest();
-			}
+        /// <summary>
+        /// Creates a User
+        /// </summary>
+        /// <param name="addUserModel"></param>
+        [HttpPost]
+        [AllowAnonymous]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(List<string>), 400)]
+        public IActionResult Post([FromBody] AddUserModel addUserModel)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
 
-			UserDTO user = _mapper.Map<UserDTO>(addUserModel);
+            UserDTO user = _mapper.Map<UserDTO>(addUserModel);
 
-			var rezult = _userManager.Add(user);
-			if (!rezult.IsComplete)
-				return BadRequest(rezult.Errors);
+            var rezult = _userManager.Add(user);
+            if (!rezult.IsComplete)
+                return BadRequest(rezult.Errors);
 
-			return Ok();
-		}
+            return Ok();
+        }
 
-		/// <summary>
-		/// Updates a User data
-		/// </summary>
-		/// <param name="updateUserModel"></param>
-		[HttpPut("data")]
-		[ProducesResponseType(202)]
-		[ProducesResponseType(typeof(List<string>), 400)]
-		public IActionResult PutData([FromBody]UpdateUserDataModel updateUserModel)
-		{
+        /// <summary>
+        /// Updates a User data
+        /// </summary>
+        /// <param name="updateUserModel"></param>
+        [HttpPut("data")]
+        [ProducesResponseType(202)]
+        [ProducesResponseType(typeof(List<string>), 400)]
+        public IActionResult PutData([FromBody] UpdateUserDataModel updateUserModel)
+        {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
@@ -63,13 +63,13 @@ namespace InnoGotchiGame.Web.Controllers
 
             UserDTO user = _mapper.Map<UserDTO>(updateUserModel);
 
-			var rezult = _userManager.UpdateData(updateUserModel.UpdatedId, user);
+            var rezult = _userManager.UpdateData(updateUserModel.UpdatedId, user);
 
-			if (!rezult.IsComplete)
-				return BadRequest(rezult.Errors);
+            if (!rezult.IsComplete)
+                return BadRequest(rezult.Errors);
 
-			return Accepted();
-		}
+            return Accepted();
+        }
 
         /// <summary>
         /// Updates a User data
@@ -98,40 +98,40 @@ namespace InnoGotchiGame.Web.Controllers
         /// </summary>
         /// <param name="userId"></param>
         [HttpDelete("{userId}")]
-		[ProducesResponseType(204)]
-		[ProducesResponseType(typeof(List<string>), 400)]
-		public IActionResult Delete(int userId)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest();
-			}
+        [ProducesResponseType(204)]
+        [ProducesResponseType(typeof(List<string>), 400)]
+        public IActionResult Delete(int userId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
 
-			var rezult = _userManager.Delete(userId);
-			if (!rezult.IsComplete)
-				return BadRequest(rezult.Errors);
+            var rezult = _userManager.Delete(userId);
+            if (!rezult.IsComplete)
+                return BadRequest(rezult.Errors);
 
-			return NoContent();
-		}
+            return NoContent();
+        }
 
-		/// <param name="filtrator">Filtration rules</param>
-		/// <param name="sorter">Sorting rules</param>
-		/// <returns>All users from database</returns>
-		[HttpGet("{pageSize}/{pageNumber}")]
-		[AllowAnonymous]
+        /// <param name="filtrator">Filtration rules</param>
+        /// <param name="sorter">Sorting rules</param>
+        /// <returns>All users from database</returns>
+        [HttpGet("{pageSize}/{pageNumber}")]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
-		public IActionResult GetPage(int pageSize, int pageNumber, [FromBody] UserFiltrationViewModel filtration)
-		{
-			var users = _userManager.GetUsersPage(pageSize, pageNumber, filtration.Filtrator, filtration.Sorter);
-			return Ok(users);
-		}
+        public IActionResult GetPage(int pageSize, int pageNumber, [FromBody] UserFiltrationViewModel filtration)
+        {
+            var users = _userManager.GetUsersPage(pageSize, pageNumber, filtration.Filtrator, filtration.Sorter);
+            return Ok(users);
+        }
 
         /// <param name="filtrator">Filtration rules</param>
         /// <param name="sorter">Sorting rules</param>
         /// <returns>All users from database</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
-        public IActionResult Get([FromBody]UserFiltrationViewModel filtration)
+        public IActionResult Get([FromBody] UserFiltrationViewModel filtration)
         {
             var users = _userManager.GetUsers(filtration.Filtrator, filtration.Sorter);
             return Ok(users);
@@ -140,16 +140,16 @@ namespace InnoGotchiGame.Web.Controllers
         /// <param name="userId"></param>
         /// <returns>a user with same Id</returns>
         [HttpGet("{userId}")]
-		[ProducesResponseType(typeof(UserDTO), 200)]
-		[ProducesResponseType(typeof(string), 400)]
-		public IActionResult GetById(int userId)
-		{
-			var user = _userManager.GetUserById(userId);
-			if (user == null)
-				return BadRequest(new { errorText = "Invalid id." });
+        [ProducesResponseType(typeof(UserDTO), 200)]
+        [ProducesResponseType(typeof(string), 400)]
+        public IActionResult GetById(int userId)
+        {
+            var user = _userManager.GetUserById(userId);
+            if (user == null)
+                return BadRequest(new { errorText = "Invalid id." });
 
-			return new ObjectResult(user);
-		}
+            return new ObjectResult(user);
+        }
 
         /// <param name="userId"></param>
         /// <returns>a user with same Id</returns>
@@ -158,7 +158,7 @@ namespace InnoGotchiGame.Web.Controllers
         [ProducesResponseType(typeof(string), 400)]
         public IActionResult GetAuthorizeUser()
         {
-			var userId = int.Parse(User.FindFirstValue("Id"));
+            var userId = int.Parse(User.FindFirstValue("Id"));
             var user = _userManager.GetUserById(userId);
 
             return new ObjectResult(user);
@@ -168,16 +168,16 @@ namespace InnoGotchiGame.Web.Controllers
         /// <param name="password"></param>
         /// <returns>access token for user witn same email and password</returns>
         [HttpPost("token")]
-		[AllowAnonymous]
-		[ProducesResponseType(200)]
-		[ProducesResponseType(typeof(string), 400)]
-		public IActionResult Token(string email, string password)
-		{
+        [AllowAnonymous]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(string), 400)]
+        public IActionResult Token(string email, string password)
+        {
             UserDTO? user = _userManager.FindUserInDb(email, password);
-			if (user == null)
-			{
-				return BadRequest(new { errorText = "Invalid email or password." });
-			}
+            if (user == null)
+            {
+                return BadRequest(new { errorText = "Invalid email or password." });
+            }
 
             var claims = new List<Claim> { new Claim(ClaimTypes.Email, user.Email), new Claim("Id", user.Id.ToString()) };
 
@@ -189,6 +189,6 @@ namespace InnoGotchiGame.Web.Controllers
                     signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
 
             return new JsonResult(new JwtSecurityTokenHandler().WriteToken(jwt));
-		}
-	}
+        }
+    }
 }

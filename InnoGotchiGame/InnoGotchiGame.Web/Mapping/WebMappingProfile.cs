@@ -6,18 +6,18 @@ using InnoGotchiGame.Web.Models.Users;
 
 namespace InnoGotchiGame.Web.Mapping
 {
-	public class WebMappingProfile : Profile
-	{
-		public WebMappingProfile()
-		{
-			CreateMap<AddUserModel, UserDTO>();
-			CreateMap<UpdateUserDataModel, UserDTO>();
+    public class WebMappingProfile : Profile
+    {
+        public WebMappingProfile()
+        {
+            CreateMap<AddUserModel, UserDTO>();
+            CreateMap<UpdateUserDataModel, UserDTO>();
 
-			CreateMap<UpdatePetFarmModel, PetFarmDTO>();
-			CreateMap<AddPetFarmModel, PetFarmDTO>();
+            CreateMap<UpdatePetFarmModel, PetFarmDTO>();
+            CreateMap<AddPetFarmModel, PetFarmDTO>();
 
-			CreateMap<UpdatePetModel, PetDTO>();
-			CreateMap<AddPetModel, PetDTO>();
-		}
-	}
+            CreateMap<UpdatePetModel, PetDTO>();
+            CreateMap<AddPetModel, PetDTO>();
+        }
+    }
 }

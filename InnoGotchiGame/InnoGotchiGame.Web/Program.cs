@@ -2,16 +2,16 @@ using AutoMapper;
 using FluentValidation;
 using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Mappings;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using InnoGotchiGame.Application.Validators;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence;
 using InnoGotchiGame.Persistence.Interfaces;
 using InnoGotchiGame.Persistence.Repositories;
-using Microsoft.EntityFrameworkCore;
 using InnoGotchiGame.Web;
-using Microsoft.IdentityModel.Tokens;
 using InnoGotchiGame.Web.Mapping;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -75,8 +75,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-	app.UseSwagger();
-	app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();

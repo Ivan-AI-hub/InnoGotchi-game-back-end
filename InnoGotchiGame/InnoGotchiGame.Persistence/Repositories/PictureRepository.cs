@@ -1,6 +1,5 @@
 ﻿using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
-using System;
 
 namespace InnoGotchiGame.Persistence.Repositories
 {
@@ -19,7 +18,7 @@ namespace InnoGotchiGame.Persistence.Repositories
         public bool Delete(int id)
         {
             var picture = _context.Pictures.FirstOrDefault(x => x.Id == id);
-            if(picture != null)
+            if (picture != null)
             {
                 _context.Pictures.Remove(picture);
                 return true;

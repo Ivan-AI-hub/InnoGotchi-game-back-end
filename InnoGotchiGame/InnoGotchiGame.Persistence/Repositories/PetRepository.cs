@@ -4,63 +4,63 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Persistence.Repositories
 {
-	public class PetRepository : IRepository<Pet>
-	{
-		private InnoGotchiGameContext _context;
-		public PetRepository(InnoGotchiGameContext context)
-		{
-			_context = context;
-		}
-		public Pet? GetItemById(int id)
-		{
-			return GetItems().FirstOrDefault(x => x.Id == id);
-		}
+    public class PetRepository : IRepository<Pet>
+    {
+        private InnoGotchiGameContext _context;
+        public PetRepository(InnoGotchiGameContext context)
+        {
+            _context = context;
+        }
+        public Pet? GetItemById(int id)
+        {
+            return GetItems().FirstOrDefault(x => x.Id == id);
+        }
 
-		public bool IsItemExist(int id)
-		{
-			return _context.Pets.Any(x => x.Id == id);
-		}
+        public bool IsItemExist(int id)
+        {
+            return _context.Pets.Any(x => x.Id == id);
+        }
 
-		public Pet? GetItem(Func<Pet, bool> predicate)
-		{
-			return GetItems().FirstOrDefault(predicate);
-		}
+        public Pet? GetItem(Func<Pet, bool> predicate)
+        {
+            return GetItems().FirstOrDefault(predicate);
+        }
 
-		public int Add(Pet item)
-		{
-			return _context.Pets.Add(item).Entity.Id;
-		}
+        public int Add(Pet item)
+        {
+            return _context.Pets.Add(item).Entity.Id;
+        }
 
-		public void Update(int updatedId, Pet item)
-		{
-			item.Id = updatedId;
-			_context.Pets.Update(item);
-		}
+        public void Update(int updatedId, Pet item)
+        {
+            item.Id = updatedId;
+            _context.Pets.Update(item);
+        }
 
-		public bool Delete(int id)
-		{
-			var pet = GetItemById(id);
-			if (pet != null)
-			{
-				_context.Pets.Remove(pet);
-				return true;
-			}
-			return false;
-		}
+        public bool Delete(int id)
+        {
+            var pet = GetItemById(id);
+            if (pet != null)
+            {
+                _context.Pets.Remove(pet);
+                return true;
+            }
+            return false;
+        }
 
 
-		public IQueryable<Pet> GetItems()
-		{
-			var pets = _context.Pets
-				.Include(x => x.Farm)
-					.ThenInclude(x => x.Owner);
+        public IQueryable<Pet> GetItems()
+        {
+            var pets = _context.Pets
+                .Include(x => x.Farm)
+                    .ThenInclude(x => x.Owner);
 
-			return pets;
-		}
+            return pets;
+        }
 
-		public void Save()
-		{
-			_context.SaveChanges();
-		}
-	}
+        public void Save()
+        {
+            _context.SaveChanges();
+        }
+    }
 }

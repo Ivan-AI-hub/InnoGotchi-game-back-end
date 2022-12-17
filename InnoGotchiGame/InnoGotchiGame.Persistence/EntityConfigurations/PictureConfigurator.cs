@@ -1,6 +1,6 @@
 ﻿using InnoGotchiGame.Domain;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InnoGotchiGame.Persistence.EntityConfigurations
 {

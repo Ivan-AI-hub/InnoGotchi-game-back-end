@@ -4,60 +4,60 @@ using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Persistence.Repositories
 {
-	public class ColaborationRequestRepository : IRepository<ColaborationRequest>
-	{
-		private InnoGotchiGameContext _context;
-		public ColaborationRequestRepository(InnoGotchiGameContext context)
-		{
-			_context = context;
-		}
+    public class ColaborationRequestRepository : IRepository<ColaborationRequest>
+    {
+        private InnoGotchiGameContext _context;
+        public ColaborationRequestRepository(InnoGotchiGameContext context)
+        {
+            _context = context;
+        }
 
-		public int Add(ColaborationRequest item)
-		{
-			return _context.ColaborationRequests.Add(item).Entity.Id;
-		}
+        public int Add(ColaborationRequest item)
+        {
+            return _context.ColaborationRequests.Add(item).Entity.Id;
+        }
 
-		public bool Delete(int id)
-		{
-			var request = GetItemById(id);
-			if (request == null)
-				return false;
+        public bool Delete(int id)
+        {
+            var request = GetItemById(id);
+            if (request == null)
+                return false;
 
-			_context.ColaborationRequests.Remove(request);
-			return true;
-		}
+            _context.ColaborationRequests.Remove(request);
+            return true;
+        }
 
-		public ColaborationRequest? GetItem(Func<ColaborationRequest, bool> predicate)
-		{
-			return GetItems().FirstOrDefault(predicate);
-		}
+        public ColaborationRequest? GetItem(Func<ColaborationRequest, bool> predicate)
+        {
+            return GetItems().FirstOrDefault(predicate);
+        }
 
-		public ColaborationRequest? GetItemById(int id)
-		{
-			return GetItems().FirstOrDefault(x => x.Id == id);
-		}
+        public ColaborationRequest? GetItemById(int id)
+        {
+            return GetItems().FirstOrDefault(x => x.Id == id);
+        }
 
-		public IQueryable<ColaborationRequest> GetItems()
-		{
-			return _context.ColaborationRequests.Include(x => x.RequestReceiver).Include(x => x.RequestSender);
-		}
+        public IQueryable<ColaborationRequest> GetItems()
+        {
+            return _context.ColaborationRequests.Include(x => x.RequestReceiver).Include(x => x.RequestSender);
+        }
 
-		public bool IsItemExist(int id)
-		{
-			if (_context.ColaborationRequests.Any(x => x.Id == id))
-				return true;
-			return false;
-		}
+        public bool IsItemExist(int id)
+        {
+            if (_context.ColaborationRequests.Any(x => x.Id == id))
+                return true;
+            return false;
+        }
 
-		public void Save()
-		{
-			_context.SaveChanges();
-		}
+        public void Save()
+        {
+            _context.SaveChanges();
+        }
 
-		public void Update(int updatedId, ColaborationRequest item)
-		{
-			item.Id = updatedId;
-			_context.ColaborationRequests.Update(item);
-		}
-	}
+        public void Update(int updatedId, ColaborationRequest item)
+        {
+            item.Id = updatedId;
+            _context.ColaborationRequests.Update(item);
+        }
+    }
 }

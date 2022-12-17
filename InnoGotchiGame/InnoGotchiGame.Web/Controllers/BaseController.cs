@@ -2,8 +2,8 @@
 
 namespace InnoGotchiGame.Web.Controllers
 {
-	[Route("/api")]
-	public class BaseController : Controller
-	{
-	}
+    [Route("/api")]
+    public class BaseController : Controller
+    {
+    }
 }
