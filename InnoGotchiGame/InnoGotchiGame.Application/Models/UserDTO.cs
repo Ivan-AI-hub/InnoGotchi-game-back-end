@@ -19,6 +19,7 @@ namespace InnoGotchiGame.Application.Models
 		public List<ColaborationRequestDTO> AcceptedColaborations { get; set; }
 		public IEnumerable<ColaborationRequestDTO> UnconfirmedRequest => GetUnconfirmedInvites();
 		public IEnumerable<PetFarmDTO?> CollaboratedFarms  => GetUserColaborators().Select(x => x.OwnPetFarm);
+		public IEnumerable<int> CollaboratersId  => GetUserColaborators().Select(x => x.Id);
 
 		public UserDTO()
 		{
