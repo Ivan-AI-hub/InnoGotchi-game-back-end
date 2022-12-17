@@ -11,7 +11,7 @@ namespace InnoGotchiGame.Domain
 		public string Email { get; set; }
 		public string PasswordHach { get; set; }
 
-		public string? PhotoFileLink { get; set; }
+		public Picture? Picture { get; set; }
 		public int OwnPetFarmId { get; set; }
 		public PetFarm? OwnPetFarm { get; set; }
 

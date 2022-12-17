@@ -2,9 +2,9 @@
 {
 	public record PetView
 	{
-		public string BodyFileLink { get; set; }
-		public string EyeFileLink { get; set; }
-		public string NoseFileLink { get; set; }
-		public string MouthFileLink { get; set; }
+		public Picture BodyPicture { get; set; }
+		public Picture EyePicture { get; set; }
+		public Picture NosePicture { get; set; }
+		public Picture MouthPicture { get; set; }
 	}
 }
