@@ -13,6 +13,8 @@ namespace InnoGotchiGame.Persistence.EntityConfigurations
 			builder.HasOne(p => p.OwnPetFarm)
 				.WithOne(d => d.Owner)
 				.HasForeignKey<PetFarm>(x => x.OwnerId);
+
+			builder.HasOne(user => user.Picture).WithMany();
 		}
 	}
 }

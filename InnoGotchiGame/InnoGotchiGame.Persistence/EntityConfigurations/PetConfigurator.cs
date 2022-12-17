@@ -8,7 +8,13 @@ namespace InnoGotchiGame.Persistence.EntityConfigurations
 	{
 		public void Configure(EntityTypeBuilder<Pet> builder)
 		{
-			builder.OwnsOne(p => p.View);
+			builder.OwnsOne(p => p.View, view =>
+			{
+				view.HasOne(x => x.BodyPicture).WithMany();
+				view.HasOne(x => x.EyePicture).WithMany();
+				view.HasOne(x => x.NosePicture).WithMany();
+				view.HasOne(x => x.MouthPicture).WithMany();
+			});
 			builder.OwnsOne(p => p.Statistic, cb =>
 			{
 				cb.HasIndex(x => x.Name).IsUnique();
