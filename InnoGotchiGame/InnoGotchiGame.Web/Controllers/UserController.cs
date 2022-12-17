@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
-using InnoGotchiGame.Application.Filtrators;
-using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Web.Models.Users;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
@@ -122,7 +120,7 @@ namespace InnoGotchiGame.Web.Controllers
 		[HttpGet("{pageSize}/{pageNumber}")]
 		[AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
-		public IActionResult GetPage(int pageSize, int pageNumber, [FromBody] FiltrationViewModel filtration)
+		public IActionResult GetPage(int pageSize, int pageNumber, [FromBody] UserFiltrationViewModel filtration)
 		{
 			var users = _userManager.GetUsersPage(pageSize, pageNumber, filtration.Filtrator, filtration.Sorter);
 			return Ok(users);
@@ -133,7 +131,7 @@ namespace InnoGotchiGame.Web.Controllers
         /// <returns>All users from database</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
-        public IActionResult Get([FromBody]FiltrationViewModel filtration)
+        public IActionResult Get([FromBody]UserFiltrationViewModel filtration)
         {
             var users = _userManager.GetUsers(filtration.Filtrator, filtration.Sorter);
             return Ok(users);

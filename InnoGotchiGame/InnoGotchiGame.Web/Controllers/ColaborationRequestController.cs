@@ -16,26 +16,26 @@ namespace InnoGotchiGame.Web.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult AddCollaborator(int senderId, int receipientId)
+		public IActionResult AddCollaborator(int senderId, int recipientId)
 		{
 			if (!ModelState.IsValid)
 			{
 				return BadRequest();
 			}
-			var rezult = _requestManager.SendColaborationRequest(senderId, receipientId);
+			var rezult = _requestManager.SendColaborationRequest(senderId, recipientId);
 			if (!rezult.IsComplete)
 				return BadRequest(rezult.Errors);
 
 			return Ok();
 		}
-		[HttpPut("confirm")]
-		public IActionResult ConfirmRequest(int requestId, int receipientId)
+		[HttpPut("{requestId}/confirm")]
+		public IActionResult ConfirmRequest(int requestId, int recipientId)
 		{
 			if (!ModelState.IsValid)
 			{
 				return BadRequest();
 			}
-			var rezult = _requestManager.ConfirmRequest(requestId, receipientId);
+			var rezult = _requestManager.ConfirmRequest(requestId, recipientId);
 
 			if (!rezult.IsComplete)
 				return BadRequest(rezult.Errors);
@@ -43,7 +43,7 @@ namespace InnoGotchiGame.Web.Controllers
 			return Ok();
 		}
 
-		[HttpPut("reject")]
+		[HttpPut("{requestId}/reject")]
 		public IActionResult RejectRequest(int requestId, int participantId)
 		{
 			if (!ModelState.IsValid)
@@ -57,7 +57,7 @@ namespace InnoGotchiGame.Web.Controllers
 			return Ok();
 		}
 
-		[HttpDelete]
+		[HttpDelete("{requestId}")]
 		public IActionResult DeleteRequest(int requestId)
 		{
 			if (!ModelState.IsValid)

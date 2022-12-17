@@ -1,8 +1,5 @@
-﻿using AutoMapper;
-using InnoGotchiGame.Application.Filtrators;
-using InnoGotchiGame.Application.Managers;
+﻿using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
-using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Web.Models.PetFarms;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,12 +11,10 @@ namespace InnoGotchiGame.Web.Controllers
 	public class PetFarmController : BaseController
 	{
 		private PetFarmManager _farmManager;
-		private IMapper _mapper;
 
-		public PetFarmController(PetFarmManager farmManager, IMapper mapper)
+		public PetFarmController(PetFarmManager farmManager)
 		{
 			_farmManager = farmManager;
-			_mapper = mapper;
 		}
 
 		/// <summary>
@@ -29,7 +24,7 @@ namespace InnoGotchiGame.Web.Controllers
 		[HttpPost]
 		[ProducesResponseType(200)]
 		[ProducesResponseType(typeof(List<string>), 400)]
-		public IActionResult Post(AddPetFarmModel addFarmModel)
+		public IActionResult Post([FromBody]AddPetFarmModel addFarmModel)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -50,7 +45,7 @@ namespace InnoGotchiGame.Web.Controllers
 		[HttpPut]
 		[ProducesResponseType(202)]
 		[ProducesResponseType(typeof(List<string>), 400)]
-		public IActionResult Put(UpdatePetFarmModel updatePetFarmModel)
+		public IActionResult Put([FromBody]UpdatePetFarmModel updatePetFarmModel)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -70,9 +65,9 @@ namespace InnoGotchiGame.Web.Controllers
 		/// <returns>All users from database</returns>
 		[HttpGet]
 		[ProducesResponseType(typeof(IEnumerable<PetFarmDTO>),200)]
-		public IActionResult Get(PetFarmFiltrator? filtrator = null, PetFarmSorter? sorter = null)
+		public IActionResult Get([FromBody] FarmFiltrationViewModel filtration)
 		{
-			var farms = _farmManager.GetPetFarms(filtrator, sorter);
+			var farms = _farmManager.GetPetFarms(filtration.Filtrator, filtration.Sorter);
 			return new ObjectResult(farms);
 		}
 

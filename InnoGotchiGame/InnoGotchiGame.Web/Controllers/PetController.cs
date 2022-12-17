@@ -23,7 +23,7 @@ namespace InnoGotchiGame.Web.Controllers
 		}
 
 		[HttpPost]
-		public IActionResult Post(AddPetModel addPetModel)
+		public IActionResult Post([FromBody]AddPetModel addPetModel)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -41,7 +41,7 @@ namespace InnoGotchiGame.Web.Controllers
 		}
 
 		[HttpPut]
-		public IActionResult Put(UpdatePetModel updatePetModel)
+		public IActionResult Put([FromBody]UpdatePetModel updatePetModel)
 		{
 			if (!ModelState.IsValid)
 			{
@@ -56,7 +56,7 @@ namespace InnoGotchiGame.Web.Controllers
 			return Ok();
 		}
 
-		[HttpPut("feed")]
+		[HttpPut("{petId}/feed")]
 		public IActionResult Feed(int petId, int feederId)
 		{
 			if (!ModelState.IsValid)
@@ -72,7 +72,7 @@ namespace InnoGotchiGame.Web.Controllers
 			return Ok();
 		}
 
-		[HttpPut("drink")]
+		[HttpPut("{petId}/drink")]
 		public IActionResult GiveDrink(int petId, int drinkerId)
 		{
 			if (!ModelState.IsValid)
@@ -88,7 +88,7 @@ namespace InnoGotchiGame.Web.Controllers
 			return Ok();
 		}
 
-		[HttpPut("dead")]
+		[HttpPut("{petId}/dead")]
 		public IActionResult SetDeadStatus(int petId)
 		{
 			if (!ModelState.IsValid)
@@ -105,20 +105,27 @@ namespace InnoGotchiGame.Web.Controllers
 		}
 
 		[HttpGet]
-		public IEnumerable<PetDTO> Get(PetFiltrator? filtrator = null, PetSorter? sorter = null)
+		public IEnumerable<PetDTO> Get([FromBody] PetFiltrationViewModel filtration)
 		{
-			var Pets = _petManager.GetPets(filtrator, sorter);
-			return Pets;
+			var pets = _petManager.GetPets(filtration.Filtrator, filtration.Sorter);
+			return pets;
 		}
 
-		[HttpGet("{PetId}")]
-		public IActionResult GetById(int PetId)
+        [HttpGet("{pageSize}/{pageNumber}")]
+        public IEnumerable<PetDTO> GetPage(int pageSize, int pageNumber, PetFiltrationViewModel filtration)
+        {
+            var pets = _petManager.GetPetsPage(pageSize, pageNumber, filtration.Filtrator, filtration.Sorter);
+            return pets;
+        }
+
+        [HttpGet("{petId}")]
+		public IActionResult GetById(int petId)
 		{
-			var Pet = _petManager.GetPetById(PetId);
-			if (Pet == null)
+			var pet = _petManager.GetPetById(petId);
+			if (pet == null)
 				return BadRequest(new { errorText = "Invalid id." });
 
-			return new ObjectResult(Pet);
+			return new ObjectResult(pet);
 		}
 	}
 }
