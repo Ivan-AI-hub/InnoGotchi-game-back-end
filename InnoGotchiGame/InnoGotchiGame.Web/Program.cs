@@ -30,6 +30,10 @@ builder.Services.AddTransient<AbstractValidator<User>, UserValidator>();
 builder.Services.AddTransient<IRepository<User>, UserRepository>();
 builder.Services.AddTransient<UserManager>();
 
+builder.Services.AddTransient<AbstractValidator<Picture>, PictureValidator>();
+builder.Services.AddTransient<IRepository<Picture>, PictureRepository>();
+builder.Services.AddTransient<PictureManager>();
+
 builder.Services.AddTransient<IRepository<ColaborationRequest>, ColaborationRequestRepository>();
 builder.Services.AddTransient<ColaborationRequestManager>();
 
