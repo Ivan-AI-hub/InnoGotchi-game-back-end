@@ -1,34 +1,32 @@
 ﻿using InnoGotchiGame.Application.Sorters.Base;
+using InnoGotchiGame.Application.Sorters.SortRules;
 using InnoGotchiGame.Domain;
 
 namespace InnoGotchiGame.Application.Sorters
 {
     public class PetSorter : Sorter<Pet>
 	{
-		public bool IsAgeSort { get; set; }
-		public bool IsDrinkSort { get; set; }
-		public bool IsFeedingSort { get; set; }
-		public bool IsDescendingSort { get; set; }
+        public PetSortRule SortRule { get; set; }
 
-		internal override IQueryable<Pet> Sort(IQueryable<Pet> pets)
+        internal override IQueryable<Pet> Sort(IQueryable<Pet> pets)
 		{
 			if (!IsDescendingSort)
 			{
-				if (IsAgeSort)
+				if (SortRule == PetSortRule.Age)
 					return pets.OrderBy(x => x.Statistic.BornDate);
-				else if (IsDrinkSort)
+				else if (SortRule == PetSortRule.Drink)
 					return pets.OrderBy(x => x.Statistic.DateLastDrink);
-				else if (IsFeedingSort)
+				else if (SortRule == PetSortRule.Feeding)
 					return pets.OrderBy(x => x.Statistic.DateLastFeed);
 			}
 			else
 			{
-				if (IsAgeSort)
-					return pets.OrderByDescending(x => x.Statistic.BornDate);
-				else if (IsDrinkSort)
-					return pets.OrderByDescending(x => x.Statistic.DateLastDrink);
-				else if (IsFeedingSort)
-					return pets.OrderByDescending(x => x.Statistic.DateLastFeed);
+                if (SortRule == PetSortRule.Age)
+                    return pets.OrderByDescending(x => x.Statistic.BornDate);
+                else if (SortRule == PetSortRule.Drink)
+                    return pets.OrderByDescending(x => x.Statistic.DateLastDrink);
+                else if (SortRule == PetSortRule.Feeding)
+                    return pets.OrderByDescending(x => x.Statistic.DateLastFeed);
 			}
 			return pets;
 		}

@@ -1,28 +1,23 @@
 ﻿using InnoGotchiGame.Application.Sorters.Base;
+using InnoGotchiGame.Application.Sorters.SortRules;
 using InnoGotchiGame.Domain;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace InnoGotchiGame.Application.Sorters
 {
 	public class PetFarmSorter : Sorter<PetFarm>
 	{
-		public bool IsNameSort { get; set; } = true;
-		public bool IsDescendingSort { get; set; } = false;
+		public PetFarmSortRule SortRule { get; set; }
 
-		internal override IQueryable<PetFarm> Sort(IQueryable<PetFarm> petFarms)
+        internal override IQueryable<PetFarm> Sort(IQueryable<PetFarm> petFarms)
 		{
 			if (!IsDescendingSort)
 			{
-				if (IsNameSort)
+				if (SortRule == PetFarmSortRule.Name)
 					return petFarms.OrderBy(x => x.Name);
 			}
 			else
 			{
-				if (IsNameSort)
+				if (SortRule == PetFarmSortRule.Name)
 					return petFarms.OrderByDescending(x => x.Name);
 			}
 			return petFarms;
