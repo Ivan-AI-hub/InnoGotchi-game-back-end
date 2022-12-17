@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using InnoGotchiGame.Application.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace InnoGotchiGame.Web.Models.Users
 {
@@ -12,6 +13,6 @@ namespace InnoGotchiGame.Web.Models.Users
 		public string Email { get; set; }
 		[Required]
 		public string Password { get; set; }
-		public string? PhotoFileLink { get; set; }
+		public PictureDTO? Picture { get; set; }
 	}
 }

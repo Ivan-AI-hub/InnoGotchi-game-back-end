@@ -9,9 +9,9 @@ namespace InnoGotchiGame.Application.Models
 		public string LastName { get; set; }
 		public string Email { get; set; }
 		public string Password { get; set; }
-		public string? PhotoFileLink { get; set; }
+        public PictureDTO? Picture { get; set; }
 
-		public PetFarmDTO? OwnPetFarm { get; set; }
+        public PetFarmDTO? OwnPetFarm { get; set; }
 
 		[JsonIgnore]
 		public List<ColaborationRequestDTO> SentColaborations { get; set; }
