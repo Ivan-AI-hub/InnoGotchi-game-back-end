@@ -19,7 +19,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{07E7F376
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchiGame.Tests", "InnoGotchiGame.Tests\InnoGotchiGame.Tests.csproj", "{807336D7-CFFF-4EFD-B4E1-378B6B6AD3DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InnoGotchiGame.Web", "InnoGotchiGame.Web\InnoGotchiGame.Web.csproj", "{1A61636C-0C4F-4280-9A78-C3CB939533C3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InnoGotchiGame.Web", "InnoGotchiGame.Web\InnoGotchiGame.Web.csproj", "{1A61636C-0C4F-4280-9A78-C3CB939533C3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

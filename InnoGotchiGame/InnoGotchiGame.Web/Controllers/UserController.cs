@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using InnoGotchiGame.Application.Filtrators;
 using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
+using InnoGotchiGame.Application.Sorters;
+using InnoGotchiGame.Application.Sorters.SortRules;
 using InnoGotchiGame.Web.Models.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
@@ -121,9 +124,14 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpGet("{pageSize}/{pageNumber}")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
-        public IActionResult GetPage(int pageSize, int pageNumber, [FromBody] UserFiltrationViewModel filtration)
+        public IActionResult GetPage(int pageSize, int pageNumber,
+                                    string sortField = "LastName", bool isDescendingSort = false,
+                                    string firstName = "", string lastName = "",
+                                    string email = "", int petFarmId = -1)
         {
-            var users = _userManager.GetUsersPage(pageSize, pageNumber, filtration.Filtrator, filtration.Sorter);
+            var filtrator = GetFiltrator(firstName, lastName, email, petFarmId);
+            var sorter = GetSorter(sortField, isDescendingSort);
+            var users = _userManager.GetUsersPage(pageSize, pageNumber, filtrator, sorter);
             return Ok(users);
         }
 
@@ -131,10 +139,15 @@ namespace InnoGotchiGame.Web.Controllers
         /// <param name="sorter">Sorting rules</param>
         /// <returns>All users from database</returns>
         [HttpGet]
+        [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
-        public IActionResult Get([FromBody] UserFiltrationViewModel filtration)
+        public IActionResult Get(string sortField = "LastName", bool isDescendingSort = false,
+                                    string firstName = "", string lastName = "",
+                                    string email = "", int petFarmId = -1)
         {
-            var users = _userManager.GetUsers(filtration.Filtrator, filtration.Sorter);
+            var filtrator = GetFiltrator(firstName, lastName, email, petFarmId);
+            var sorter = GetSorter(sortField, isDescendingSort);
+            var users = _userManager.GetUsers(filtrator, sorter);
             return Ok(users);
         }
 
@@ -195,6 +208,26 @@ namespace InnoGotchiGame.Web.Controllers
                 User = user
             };
             return Json(token);
+        }
+
+        private UserSorter GetSorter(string sortRule, bool isDescendingSort)
+        {
+            var sorter = new UserSorter();
+            sorter.SortRule = Enum.Parse<UserSortRule>(sortRule);
+            sorter.IsDescendingSort = isDescendingSort;
+            return sorter;
+        }
+        private UserFiltrator GetFiltrator(string firstName, string lastName, string email, int petFarmId)
+        {
+            var filtrator = new UserFiltrator()
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Email = email,
+                PetFarmId = petFarmId
+            };
+
+            return filtrator;
         }
     }
 }
