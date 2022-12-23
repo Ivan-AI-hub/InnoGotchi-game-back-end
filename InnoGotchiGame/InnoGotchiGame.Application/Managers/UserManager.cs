@@ -49,6 +49,10 @@ namespace InnoGotchiGame.Application.Managers
                 var oldUser = _repository.GetItemById(updatedId);
                 dataUser.Email = oldUser.Email;
                 dataUser.PasswordHach = oldUser.PasswordHach;
+                if(oldUser.Picture != null)
+                {
+                    dataUser.Picture.Id = oldUser.Picture.Id;
+                }
 
                 var validationRezult = _validator.Validate(dataUser);
                 managerRezult = new ManagerRezult(validationRezult);

@@ -3,6 +3,7 @@ using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Web.Models.Users;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -185,10 +186,15 @@ namespace InnoGotchiGame.Web.Controllers
                     issuer: AuthOptions.ISSUER,
                     audience: AuthOptions.AUDIENCE,
                     claims: claims,
-                    expires: DateTime.UtcNow.Add(TimeSpan.FromDays(1)),
+                    expires: DateTime.UtcNow.Add(TimeSpan.FromHours(AuthOptions.LIFETIME)),
                     signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
 
-            return new JsonResult(new JwtSecurityTokenHandler().WriteToken(jwt));
+            var token = new AuthorizeModel
+            {
+                AccessToken = new JwtSecurityTokenHandler().WriteToken(jwt),
+                User = user
+            };
+            return Json(token);
         }
     }
 }

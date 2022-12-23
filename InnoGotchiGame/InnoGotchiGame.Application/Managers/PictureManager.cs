@@ -26,6 +26,7 @@ namespace InnoGotchiGame.Application.Managers
             if (validationRezult.IsValid && IsUniqueName(pictureData.Name, rezult))
             {
                 picture.Id = _repository.Add(pictureData);
+                _repository.Save();
             }
             return rezult;
         }
@@ -38,6 +39,7 @@ namespace InnoGotchiGame.Application.Managers
             if (validationRezult.IsValid && CheckPictureId(updatedId, rezult) && IsUniqueName(pictureData.Name, rezult))
             {
                 _repository.Update(updatedId, pictureData);
+                _repository.Save();
                 picture.Id = updatedId;
             }
             return rezult;

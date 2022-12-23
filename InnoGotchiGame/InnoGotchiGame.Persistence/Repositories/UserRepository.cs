@@ -53,6 +53,7 @@ namespace InnoGotchiGame.Persistence.Repositories
         public IQueryable<User> GetItems()
         {
             var users = _context.Users
+                .Include(x => x.Picture)
                 .Include(x => x.OwnPetFarm)
                     .ThenInclude(x => x.Pets)
                 .Include(x => x.SentColaborations)
