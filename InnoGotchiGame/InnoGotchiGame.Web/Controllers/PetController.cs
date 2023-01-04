@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchiGame.Web.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("/api/pets")]
     public class PetController : BaseController
     {
@@ -23,10 +22,6 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] AddPetModel addPetModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
 
             PetDTO pet = _mapper.Map<PetDTO>(addPetModel);
             pet.Statistic = new PetStatisticDTO() { Name = addPetModel.Name };

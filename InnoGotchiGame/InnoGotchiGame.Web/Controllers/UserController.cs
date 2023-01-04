@@ -14,7 +14,6 @@ using System.Security.Claims;
 
 namespace InnoGotchiGame.Web.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/users")]
     public class UserController : BaseController
     {

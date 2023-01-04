@@ -17,9 +17,9 @@ namespace InnoGotchiGame.Application.Models
         public List<ColaborationRequestDTO> SentColaborations { get; set; }
         [JsonIgnore]
         public List<ColaborationRequestDTO> AcceptedColaborations { get; set; }
-        public IEnumerable<ColaborationRequestDTO> UnconfirmedRequest => GetUnconfirmedInvites();
-        public IEnumerable<PetFarmDTO?> CollaboratedFarms => GetUserColaborators().Select(x => x.OwnPetFarm);
-        public IEnumerable<int> CollaboratersId => GetUserColaborators().Select(x => x.Id);
+        public IEnumerable<ColaborationRequestDTO> UnconfirmedRequests => GetUnconfirmedInvites();
+        public IEnumerable<ColaborationRequestDTO> RejectedRequests => GetRejectedInvites();
+        public IEnumerable<UserDTO> Collaborators => GetUserColaborators();
 
         public UserDTO()
         {
@@ -42,6 +42,11 @@ namespace InnoGotchiGame.Application.Models
         public IEnumerable<ColaborationRequestDTO> GetUnconfirmedInvites()
         {
             var invites = AcceptedColaborations.Where(x => x.Status == ColaborationRequestStatusDTO.Undefined);
+            return invites;
+        }
+        public IEnumerable<ColaborationRequestDTO> GetRejectedInvites()
+        {
+            var invites = SentColaborations.Where(x => x.Status == ColaborationRequestStatusDTO.NotColaborators);
             return invites;
         }
     }

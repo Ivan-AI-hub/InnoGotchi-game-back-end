@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchiGame.Web.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
     [Route("/api/farms")]
     public class PetFarmController : BaseController
     {

@@ -44,9 +44,10 @@ namespace InnoGotchiGame.Web.Controllers
             return Ok();
         }
 
-        [HttpGet]
-        public IEnumerable<PictureDTO> Get(string nameTemplate)
+        [HttpGet("getAll/{nameTemplate}")]
+        public IEnumerable<PictureDTO> Get(string? nameTemplate)
         {
+            nameTemplate = nameTemplate ?? "";
             var pictures = _manager.GetAll(nameTemplate);
             return pictures;
         }

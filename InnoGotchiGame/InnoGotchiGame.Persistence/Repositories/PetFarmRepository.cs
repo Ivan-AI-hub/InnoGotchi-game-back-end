@@ -51,7 +51,8 @@ namespace InnoGotchiGame.Persistence.Repositories
         {
             var petFarms = _context.PetFarms
                 .Include(x => x.Owner)
-                .Include(x => x.Pets);
+                .Include(x => x.Pets)
+                    .ThenInclude(x => x.View.BodyPicture);
 
 
             return petFarms;
