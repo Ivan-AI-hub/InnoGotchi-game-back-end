@@ -43,12 +43,11 @@ namespace InnoGotchiGame.Tests
             {
                 FirstName = "First",
                 LastName = "Last",
-                Email = "test_user@gmail.com",
-                Password = "Test_1234"
+                Email = "test_user@gmail.com"
             };
 
 
-            var rez = manager.Add(user);
+            var rez = manager.Add(user, "Test_1234");
 
 
             Assert.True(rez.IsComplete);
@@ -64,12 +63,11 @@ namespace InnoGotchiGame.Tests
             {
                 FirstName = "First",
                 LastName = "Last",
-                Email = "test_user712@gmail.com",
-                Password = "Test_1234"
+                Email = "test_user712@gmail.com"
             };
 
 
-            manager.Add(user);
+            manager.Add(user, "Test_1234");
             var rez = manager.Delete(user.Id);
 
             Assert.True(rez.IsComplete, String.Concat(rez.Errors));
@@ -85,12 +83,11 @@ namespace InnoGotchiGame.Tests
             {
                 FirstName = "First",
                 LastName = "Last",
-                Email = "wrongMail",
-                Password = "Test_1234"
+                Email = "wrongMail"
             };
 
 
-            var rez = manager.Add(user);
+            var rez = manager.Add(user, "Test_1234");
 
 
             Assert.False(rez.IsComplete);
@@ -106,10 +103,9 @@ namespace InnoGotchiGame.Tests
             {
                 FirstName = "FirstUpdate",
                 LastName = "LastUpdate",
-                Email = "update@gmail.com",
-                Password = "Test_1234"
+                Email = "update@gmail.com"
             };
-            manager.Add(user);
+            manager.Add(user, "Test_1234");
             user.FirstName = "SecondUpdate";
 
             var rez = manager.UpdateData(user.Id, user);
@@ -128,10 +124,9 @@ namespace InnoGotchiGame.Tests
             {
                 FirstName = "FirstUpdate",
                 LastName = "LastUpdate",
-                Email = "update@gmail.com",
-                Password = "Test_1234"
+                Email = "update@gmail.com"
             };
-            manager.Add(user);
+            manager.Add(user, "Test_1234");
             user.FirstName = "";
 
             var rez = manager.UpdateData(user.Id, user);
@@ -148,8 +143,7 @@ namespace InnoGotchiGame.Tests
             {
                 FirstName = "FirstUpdate",
                 LastName = "LastUpdate",
-                Email = "update@gmail.com",
-                Password = "Test_1234"
+                Email = "update@gmail.com"
             };
 
             var rez = manager.UpdateData(100, user);
@@ -169,13 +163,12 @@ namespace InnoGotchiGame.Tests
                 {
                     FirstName = "Test" + i,
                     LastName = "Test" + i,
-                    Email = $"update{i}@gmail.com",
-                    Password = "Test_1234"
+                    Email = $"update{i}@gmail.com"
                 };
                 users.Add(user);
             }
 
-            users.ForEach(x => manager.Add(x));
+            users.ForEach(x => manager.Add(x, "Test_1234"));
 
             var dataBaseUsers = manager.GetUsers().ToList();
 
