@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
@@ -60,9 +61,11 @@ namespace InnoGotchiGame.Application.Managers
             return picture;
         }
 
-        public IEnumerable<PictureDTO> GetAll(string nameTemplate = "")
+        public IEnumerable<PictureDTO> GetAll(Filtrator<Picture>? filtrator)
         {
-            var pictures = _repository.GetItems().Where(x => x.Name.Contains(nameTemplate)).OrderBy(x => x.Name);
+            var pictures = _repository.GetItems();
+            pictures = filtrator != null ? filtrator.Filter(pictures) : pictures;
+            pictures = pictures.OrderBy(x => x.Name);
             return _mapper.Map<IEnumerable<PictureDTO>>(pictures);
 
         }

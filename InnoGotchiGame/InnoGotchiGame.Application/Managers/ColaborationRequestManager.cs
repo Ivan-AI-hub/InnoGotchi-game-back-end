@@ -1,6 +1,4 @@
-﻿
-using AutoMapper;
-using InnoGotchiGame.Domain;
+﻿using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
 
 namespace InnoGotchiGame.Application.Managers
@@ -8,12 +6,10 @@ namespace InnoGotchiGame.Application.Managers
     public class ColaborationRequestManager
     {
         private IRepository<ColaborationRequest> _repository;
-        private IMapper _mapper;
 
-        public ColaborationRequestManager(IRepository<ColaborationRequest> repository, IMapper mapper)
+        public ColaborationRequestManager(IRepository<ColaborationRequest> repository)
         {
             _repository = repository;
-            _mapper = mapper;
         }
 
         public ManagerRezult SendColaborationRequest(int senderId, int recipientId)

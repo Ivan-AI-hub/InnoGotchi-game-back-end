@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using InnoGotchiGame.Application.Filtrators;
+using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Application.Models;
-using InnoGotchiGame.Application.Sorters;
+using InnoGotchiGame.Application.Sorters.Base;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
 
@@ -140,33 +140,25 @@ namespace InnoGotchiGame.Application.Managers
             return pet;
         }
 
-        public IEnumerable<PetDTO> GetPets(PetFiltrator? filtrator = null, PetSorter? sorter = null)
+        public IEnumerable<PetDTO> GetPets(Filtrator<Pet>? filtrator = null, Sorter<Pet>? sorter = null)
         {
             var pets = GetPetsQuary(filtrator, sorter);
-            return QueryablePetToPetDTO(pets);
+            return _mapper.Map<IEnumerable<PetDTO>>(pets);
         }
 
-        public IEnumerable<PetDTO> GetPetsPage(int pageSize, int pageNumber, PetFiltrator? filtrator = null, PetSorter? sorter = null)
+        public IEnumerable<PetDTO> GetPetsPage(int pageSize, int pageNumber, Filtrator<Pet>? filtrator = null, Sorter<Pet>? sorter = null)
         {
             var pets = GetPetsQuary(filtrator, sorter);
             pets = pets.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
-            return QueryablePetToPetDTO(pets);
+            return _mapper.Map<IEnumerable<PetDTO>>(pets);
         }
 
-        private IQueryable<Pet> GetPetsQuary(PetFiltrator? filtrator = null, PetSorter? sorter = null)
+        private IQueryable<Pet> GetPetsQuary(Filtrator<Pet>? filtrator = null, Sorter<Pet>? sorter = null)
         {
             var pets = _repository.GetItems();
             pets = filtrator != null ? filtrator.Filter(pets) : pets;
             pets = sorter != null ? sorter.Sort(pets) : pets;
             return pets;
-        }
-
-        private IEnumerable<PetDTO> QueryablePetToPetDTO(IQueryable<Pet> pets)
-        {
-            var DTOPets = new List<PetDTO>();
-            foreach (var pet in pets)
-                DTOPets.Add(_mapper.Map<PetDTO>(pet));
-            return DTOPets;
         }
 
         private bool IsUniqueName(string name, ManagerRezult managerRezult)

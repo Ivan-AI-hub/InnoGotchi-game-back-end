@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using InnoGotchiGame.Application.Filtrators;
+using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Application.Models;
-using InnoGotchiGame.Application.Sorters;
+using InnoGotchiGame.Application.Sorters.Base;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
 using System.Security.Cryptography;
@@ -23,10 +23,10 @@ namespace InnoGotchiGame.Application.Managers
             _validator = validator;
         }
 
-        public ManagerRezult Add(UserDTO user)
+        public ManagerRezult Add(UserDTO user, string password)
         {
             var dataUser = _mapper.Map<User>(user);
-            dataUser.PasswordHach = StringToHach(user.Password);
+            dataUser.PasswordHach = StringToHach(password);
 
             var validationRezult = _validator.Validate(dataUser);
             var managerRezult = new ManagerRezult(validationRezult);
@@ -123,17 +123,17 @@ namespace InnoGotchiGame.Application.Managers
                 return null;
         }
 
-        public IEnumerable<UserDTO> GetUsers(UserFiltrator? filtrator = null, UserSorter? sorter = null)
+        public IEnumerable<UserDTO> GetUsers(Filtrator<User>? filtrator = null, Sorter<User>? sorter = null)
         {
             var users = GetUsersQuary(filtrator, sorter);
-            return QueryableUserToUserDTO(users);
+            return _mapper.Map<IEnumerable<UserDTO>>(users);
         }
 
-        public IEnumerable<UserDTO> GetUsersPage(int pageSize, int pageNumber, UserFiltrator? filtrator = null, UserSorter? sorter = null)
+        public IEnumerable<UserDTO> GetUsersPage(int pageSize, int pageNumber, Filtrator<User>? filtrator = null, Sorter<User>? sorter = null)
         {
             var users = GetUsersQuary(filtrator, sorter);
             users = users.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
-            return QueryableUserToUserDTO(users);
+            return _mapper.Map<IEnumerable<UserDTO>>(users);
         }
 
         private string StringToHach(string password)
@@ -171,20 +171,12 @@ namespace InnoGotchiGame.Application.Managers
             return true;
         }
 
-        private IQueryable<User> GetUsersQuary(UserFiltrator? filtrator = null, UserSorter? sorter = null)
+        private IQueryable<User> GetUsersQuary(Filtrator<User>? filtrator = null, Sorter<User>? sorter = null)
         {
             var users = _repository.GetItems();
             users = filtrator != null ? filtrator.Filter(users) : users;
             users = sorter != null ? sorter.Sort(users) : users;
             return users;
-        }
-
-        private IEnumerable<UserDTO> QueryableUserToUserDTO(IQueryable<User> users)
-        {
-            var DTOUsers = new List<UserDTO>();
-            foreach (var user in users)
-                DTOUsers.Add(_mapper.Map<UserDTO>(user));
-            return DTOUsers;
         }
     }
 }

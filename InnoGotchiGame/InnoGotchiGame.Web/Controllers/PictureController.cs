@@ -1,4 +1,5 @@
-﻿using InnoGotchiGame.Application.Managers;
+﻿using InnoGotchiGame.Application.Filtrators;
+using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -44,11 +45,10 @@ namespace InnoGotchiGame.Web.Controllers
             return Ok();
         }
 
-        [HttpGet("getAll/{nameTemplate}")]
-        public IEnumerable<PictureDTO> Get(string? nameTemplate)
+        [HttpGet]
+        public IEnumerable<PictureDTO> Get(PictureFiltrator filtrator)
         {
-            nameTemplate = nameTemplate ?? "";
-            var pictures = _manager.GetAll(nameTemplate);
+            var pictures = _manager.GetAll(filtrator);
             return pictures;
         }
 

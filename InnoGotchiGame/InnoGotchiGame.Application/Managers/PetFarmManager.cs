@@ -1,8 +1,8 @@
 ﻿using AutoMapper;
 using FluentValidation;
-using InnoGotchiGame.Application.Filtrators;
+using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Application.Models;
-using InnoGotchiGame.Application.Sorters;
+using InnoGotchiGame.Application.Sorters.Base;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
 
@@ -74,17 +74,17 @@ namespace InnoGotchiGame.Application.Managers
             return farm;
         }
 
-        public IEnumerable<PetFarmDTO> GetPetFarms(PetFarmFiltrator? filtrator = null, PetFarmSorter? sorter = null)
+        public IEnumerable<PetFarmDTO> GetPetFarms(Filtrator<PetFarm>? filtrator = null, Sorter<PetFarm>? sorter = null)
         {
             var farms = GetPetFarmsQuary(filtrator, sorter);
-            return QueryablePetFarmToPetFarmDTO(farms);
+            return _mapper.Map<IEnumerable<PetFarmDTO>>(farms);
         }
 
-        public IEnumerable<PetFarmDTO> GetPetFarmsPage(int pageSize, int pageNumber, PetFarmFiltrator? filtrator = null, PetFarmSorter? sorter = null)
+        public IEnumerable<PetFarmDTO> GetPetFarmsPage(int pageSize, int pageNumber, Filtrator<PetFarm>? filtrator = null, Sorter<PetFarm>? sorter = null)
         {
             var farms = GetPetFarmsQuary(filtrator, sorter);
             farms = farms.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
-            return QueryablePetFarmToPetFarmDTO(farms);
+            return _mapper.Map<IEnumerable<PetFarmDTO>>(farms);
         }
 
         private bool IsUniqueName(string name, ManagerRezult managerRezult)
@@ -98,20 +98,12 @@ namespace InnoGotchiGame.Application.Managers
             return true;
         }
 
-        private IQueryable<PetFarm> GetPetFarmsQuary(PetFarmFiltrator? filtrator = null, PetFarmSorter? sorter = null)
+        private IQueryable<PetFarm> GetPetFarmsQuary(Filtrator<PetFarm>? filtrator = null, Sorter<PetFarm>? sorter = null)
         {
             var farms = _repository.GetItems();
             farms = filtrator != null ? filtrator.Filter(farms) : farms;
             farms = sorter != null ? sorter.Sort(farms) : farms;
             return farms;
-        }
-
-        private IEnumerable<PetFarmDTO> QueryablePetFarmToPetFarmDTO(IQueryable<PetFarm> farms)
-        {
-            var DTOFarms = new List<PetFarmDTO>();
-            foreach (var PetFarm in farms)
-                DTOFarms.Add(_mapper.Map<PetFarmDTO>(PetFarm));
-            return DTOFarms;
         }
 
         private bool CheckFarmId(int id, ManagerRezult rezult)

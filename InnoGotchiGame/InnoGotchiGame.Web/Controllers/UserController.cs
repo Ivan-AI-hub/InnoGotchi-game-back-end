@@ -43,7 +43,7 @@ namespace InnoGotchiGame.Web.Controllers
 
             UserDTO user = _mapper.Map<UserDTO>(addUserModel);
 
-            var rezult = _userManager.Add(user);
+            var rezult = _userManager.Add(user, addUserModel.Password);
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
 
