@@ -13,7 +13,7 @@ namespace InnoGotchiGame.Persistence.Repositories
         }
         public Pet? GetItemById(int id)
         {
-            return GetItems().FirstOrDefault(x => x.Id == id);
+            return GetFullData().FirstOrDefault(x => x.Id == id);
         }
 
         public bool IsItemExist(int id)
@@ -23,7 +23,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 
         public Pet? GetItem(Func<Pet, bool> predicate)
         {
-            return GetItems().FirstOrDefault(predicate);
+            return GetFullData().FirstOrDefault(predicate);
         }
 
         public int Add(Pet item)
@@ -51,10 +51,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 
         public IQueryable<Pet> GetItems()
         {
-            var pets = _context.Pets
-                .Include(x => x.Farm)
-                    .ThenInclude(x => x.Owner)
-                .Include(x => x.View.BodyPicture);
+            var pets = GetOnlyDiscribeData();
 
             return pets;
         }
@@ -62,6 +59,30 @@ namespace InnoGotchiGame.Persistence.Repositories
         public void Save()
         {
             _context.SaveChanges();
+        }
+
+        private IQueryable<Pet> GetFullData()
+        {
+            var pets = _context.Pets
+                 .Include(x => x.Farm)
+                     .ThenInclude(x => x.Owner)
+                 .Include(x => x.Farm.Owner.AcceptedColaborations)
+                    .ThenInclude(x => x.RequestSender)
+                 .Include(x => x.Farm.Owner.SentColaborations)
+                    .ThenInclude(x => x.RequestReceiver)
+                 .Include(x => x.View.BodyPicture);
+
+
+            return pets;
+        }
+
+        private IQueryable<Pet> GetOnlyDiscribeData()
+        {
+            var pets = _context.Pets
+                .Include(x => x.View.BodyPicture);
+
+
+            return pets;
         }
     }
 }

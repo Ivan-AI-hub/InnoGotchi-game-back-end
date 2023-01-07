@@ -14,7 +14,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 
         public User? GetItemById(int id)
         {
-            return GetItems().FirstOrDefault(x => x.Id == id);
+            return GetFullData().FirstOrDefault(x => x.Id == id);
         }
 
         public bool IsItemExist(int id)
@@ -24,7 +24,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 
         public User? GetItem(Func<User, bool> predicate)
         {
-            return GetItems().FirstOrDefault(predicate);
+            return GetFullData().FirstOrDefault(predicate);
         }
 
         public int Add(User item)
@@ -52,16 +52,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 
         public IQueryable<User> GetItems()
         {
-            var users = _context.Users
-                .Include(x => x.Picture)
-                .Include(x => x.OwnPetFarm)
-                    .ThenInclude(x => x.Pets)
-                .Include(x => x.SentColaborations)
-                    .ThenInclude(x => x.RequestReceiver)
-                        .ThenInclude(x => x.OwnPetFarm)
-                .Include(x => x.AcceptedColaborations)
-                    .ThenInclude(x => x.RequestSender)
-                        .ThenInclude(x => x.OwnPetFarm);
+            var users = GetOnlyDiscribeData();
 
 
             return users;
@@ -70,6 +61,29 @@ namespace InnoGotchiGame.Persistence.Repositories
         public void Save()
         {
             _context.SaveChanges();
+        }
+
+        private IQueryable<User> GetFullData()
+        {
+            var users = _context.Users
+                .Include(x => x.Picture)
+                .Include(x => x.OwnPetFarm)
+                    .ThenInclude(x => x.Pets)
+                .Include(x => x.SentColaborations)
+                    .ThenInclude(x => x.RequestReceiver)
+                .Include(x => x.AcceptedColaborations)
+                    .ThenInclude(x => x.RequestSender);
+
+
+            return users;
+        }
+
+        private IQueryable<User> GetOnlyDiscribeData()
+        {
+            var users = _context.Users.Include(x => x.Picture);
+
+
+            return users;
         }
     }
 }

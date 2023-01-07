@@ -26,11 +26,11 @@ namespace InnoGotchiGame.Application.Managers
             var dataPet = _mapper.Map<Pet>(pet);
 
             dataPet.FarmId = farmId;
-            dataPet.Statistic.BornDate = DateTime.Now;
+            dataPet.Statistic.BornDate = DateTime.UtcNow;
             dataPet.Statistic.IsAlive = true;
-            dataPet.Statistic.FirstHappinessDay = DateTime.Now;
-            dataPet.Statistic.DateLastFeed = DateTime.Now;
-            dataPet.Statistic.DateLastDrink = DateTime.Now;
+            dataPet.Statistic.FirstHappinessDay = DateTime.UtcNow;
+            dataPet.Statistic.DateLastFeed = DateTime.UtcNow;
+            dataPet.Statistic.DateLastDrink = DateTime.UtcNow;
             dataPet.Statistic.FeedingCount = 1;
             dataPet.Statistic.DrinkingCount = 1;
 
@@ -72,7 +72,7 @@ namespace InnoGotchiGame.Application.Managers
                 if (dataPet.Farm.Owner.Id == feederId || dataPet.Farm.Owner.GetUserColaborators().Any(x => x.Id == feederId))
                 {
                     dataPet.Statistic.FeedingCount++;
-                    dataPet.Statistic.DateLastFeed = DateTime.Now;
+                    dataPet.Statistic.DateLastFeed = DateTime.UtcNow;
 
                     _repository.Update(id, dataPet);
                     _repository.Save();
@@ -95,7 +95,7 @@ namespace InnoGotchiGame.Application.Managers
                 if (dataPet.Farm.Owner.Id == drinkerId || dataPet.Farm.Owner.GetUserColaborators().Any(x => x.Id == drinkerId))
                 {
                     dataPet.Statistic.DrinkingCount++;
-                    dataPet.Statistic.DateLastDrink = DateTime.Now;
+                    dataPet.Statistic.DateLastDrink = DateTime.UtcNow;
 
                     _repository.Update(id, dataPet);
                     _repository.Save();
@@ -114,7 +114,7 @@ namespace InnoGotchiGame.Application.Managers
             if (CheckPetId(id, managerRez) && IsPetAlive(id, managerRez))
             {
                 var dataPet = _repository.GetItemById(id);
-                dataPet.Statistic.DeadDate = DateTime.Now;
+                dataPet.Statistic.DeadDate = DateTime.UtcNow;
                 dataPet.Statistic.IsAlive = false;
 
                 _repository.Update(id, dataPet);

@@ -123,12 +123,9 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpGet("{pageSize}/{pageNumber}")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
-        public IActionResult GetPage(int pageSize, int pageNumber,
-                                    string sortField = "LastName", bool isDescendingSort = false,
-                                    string firstName = "", string lastName = "",
-                                    string email = "", int petFarmId = -1)
+        public IActionResult GetPage(int pageSize, int pageNumber, UserFiltrator filtrator,
+                                    string sortField = "LastName", bool isDescendingSort = false)
         {
-            var filtrator = GetFiltrator(firstName, lastName, email, petFarmId);
             var sorter = GetSorter(sortField, isDescendingSort);
             var users = _userManager.GetUsersPage(pageSize, pageNumber, filtrator, sorter);
             return Ok(users);
@@ -140,11 +137,8 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpGet]
         [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
-        public IActionResult Get(string sortField = "LastName", bool isDescendingSort = false,
-                                    string firstName = "", string lastName = "",
-                                    string email = "", int petFarmId = -1)
+        public IActionResult Get(UserFiltrator filtrator, string sortField = "LastName", bool isDescendingSort = false)
         {
-            var filtrator = GetFiltrator(firstName, lastName, email, petFarmId);
             var sorter = GetSorter(sortField, isDescendingSort);
             var users = _userManager.GetUsers(filtrator, sorter);
             return Ok(users);
@@ -215,18 +209,6 @@ namespace InnoGotchiGame.Web.Controllers
             sorter.SortRule = Enum.Parse<UserSortRule>(sortRule);
             sorter.IsDescendingSort = isDescendingSort;
             return sorter;
-        }
-        private UserFiltrator GetFiltrator(string firstName, string lastName, string email, int petFarmId)
-        {
-            var filtrator = new UserFiltrator()
-            {
-                FirstName = firstName,
-                LastName = lastName,
-                Email = email,
-                PetFarmId = petFarmId
-            };
-
-            return filtrator;
         }
     }
 }

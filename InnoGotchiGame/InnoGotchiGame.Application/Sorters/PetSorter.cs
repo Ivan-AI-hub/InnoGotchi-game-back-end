@@ -18,6 +18,8 @@ namespace InnoGotchiGame.Application.Sorters
                     return pets.OrderBy(x => x.Statistic.DateLastDrink);
                 else if (SortRule == PetSortRule.Feeding)
                     return pets.OrderBy(x => x.Statistic.DateLastFeed);
+                else if (SortRule == PetSortRule.happinessDays)
+                    return pets.OrderBy(x => x.Statistic.FirstHappinessDay);
             }
             else
             {
@@ -27,6 +29,8 @@ namespace InnoGotchiGame.Application.Sorters
                     return pets.OrderByDescending(x => x.Statistic.DateLastDrink);
                 else if (SortRule == PetSortRule.Feeding)
                     return pets.OrderByDescending(x => x.Statistic.DateLastFeed);
+                else if (SortRule == PetSortRule.happinessDays)
+                    return pets.OrderByDescending(x => x.Statistic.FirstHappinessDay);
             }
             return pets;
         }

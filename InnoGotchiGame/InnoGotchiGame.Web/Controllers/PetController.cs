@@ -1,6 +1,9 @@
 ﻿using AutoMapper;
+using InnoGotchiGame.Application.Filtrators;
 using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
+using InnoGotchiGame.Application.Sorters.SortRules;
+using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Web.Models.Pets;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -98,16 +101,19 @@ namespace InnoGotchiGame.Web.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<PetDTO> Get([FromBody] PetFiltrationViewModel filtration)
+        public IEnumerable<PetDTO> Get( PetFiltrator filtrator, string sortField = "Age", bool isDescendingSort = false)
         {
-            var pets = _petManager.GetPets(filtration.Filtrator, filtration.Sorter);
+            var sorter = GetSorter(sortField, isDescendingSort);
+            var pets = _petManager.GetPets(filtrator, sorter);
             return pets;
         }
 
         [HttpGet("{pageSize}/{pageNumber}")]
-        public IEnumerable<PetDTO> GetPage(int pageSize, int pageNumber, PetFiltrationViewModel filtration)
+        public IEnumerable<PetDTO> GetPage(int pageSize, int pageNumber, PetFiltrator filtrator,
+            string sortField = "Age", bool isDescendingSort = false)
         {
-            var pets = _petManager.GetPetsPage(pageSize, pageNumber, filtration.Filtrator, filtration.Sorter);
+            var sorter = GetSorter(sortField, isDescendingSort);
+            var pets = _petManager.GetPetsPage(pageSize, pageNumber, filtrator, sorter);
             return pets;
         }
 
@@ -119,6 +125,14 @@ namespace InnoGotchiGame.Web.Controllers
                 return BadRequest(new { errorText = "Invalid id." });
 
             return new ObjectResult(pet);
+        }
+
+        private PetSorter GetSorter(string sortRule, bool isDescendingSort)
+        {
+            var sorter = new PetSorter();
+            sorter.SortRule = Enum.Parse<PetSortRule>(sortRule);
+            sorter.IsDescendingSort = isDescendingSort;
+            return sorter;
         }
     }
 }

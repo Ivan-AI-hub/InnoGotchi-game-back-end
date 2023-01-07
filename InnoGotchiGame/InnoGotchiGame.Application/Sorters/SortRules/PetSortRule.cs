@@ -4,6 +4,7 @@
     {
         Age,
         Drink,
-        Feeding
+        Feeding,
+        happinessDays
     }
 }
