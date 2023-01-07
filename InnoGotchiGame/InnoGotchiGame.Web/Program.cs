@@ -9,6 +9,7 @@ using InnoGotchiGame.Persistence.Interfaces;
 using InnoGotchiGame.Persistence.Repositories;
 using InnoGotchiGame.Web;
 using InnoGotchiGame.Web.Mapping;
+using InnoGotchiGame.Web.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -92,7 +93,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware<BasePetViewInitializer>();
 app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
