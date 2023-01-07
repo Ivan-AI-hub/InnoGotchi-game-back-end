@@ -14,6 +14,12 @@ namespace InnoGotchiGame.Application.Validators
             RuleFor(picture => picture.Image)
                 .NotEmpty()
                 .NotNull();
+            RuleFor(picture => picture.Description)
+                .NotEmpty()
+                .NotNull();
+            RuleFor(picture => picture.Format)
+                .NotEmpty()
+                .NotNull();
         }
     }
 }

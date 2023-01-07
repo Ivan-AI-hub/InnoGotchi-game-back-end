@@ -31,12 +31,5 @@
             friends.AddRange(SentColaborations.Where(whereFunc).Select(x => x.RequestReceiver));
             return friends;
         }
-
-        /// <returns>All unconfirmed invitations to be colaborators</returns>
-        public IEnumerable<ColaborationRequest> GetUnconfirmedInvites()
-        {
-            var invites = AcceptedColaborations.Where(x => x.Status == ColaborationRequestStatus.Undefined);
-            return invites;
-        }
     }
 }

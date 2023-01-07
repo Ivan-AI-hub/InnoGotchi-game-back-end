@@ -10,10 +10,7 @@ namespace InnoGotchiGame.Persistence.EntityConfigurations
         {
             builder.OwnsOne(p => p.View, view =>
             {
-                view.HasOne(x => x.BodyPicture).WithMany().OnDelete(DeleteBehavior.NoAction);
-                view.HasOne(x => x.EyePicture).WithMany().OnDelete(DeleteBehavior.NoAction);
-                view.HasOne(x => x.NosePicture).WithMany().OnDelete(DeleteBehavior.NoAction);
-                view.HasOne(x => x.MouthPicture).WithMany().OnDelete(DeleteBehavior.NoAction);
+                view.HasOne(x => x.Picture).WithMany().OnDelete(DeleteBehavior.SetNull);
             });
             builder.OwnsOne(p => p.Statistic, cb =>
             {

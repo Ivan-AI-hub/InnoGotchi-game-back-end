@@ -70,7 +70,7 @@ namespace InnoGotchiGame.Persistence.Repositories
                     .ThenInclude(x => x.RequestSender)
                  .Include(x => x.Farm.Owner.SentColaborations)
                     .ThenInclude(x => x.RequestReceiver)
-                 .Include(x => x.View.BodyPicture);
+                 .Include(x => x.View.Picture);
 
 
             return pets;
@@ -79,7 +79,7 @@ namespace InnoGotchiGame.Persistence.Repositories
         private IQueryable<Pet> GetOnlyDiscribeData()
         {
             var pets = _context.Pets
-                .Include(x => x.View.BodyPicture);
+                .Include(x => x.View.Picture);
 
 
             return pets;

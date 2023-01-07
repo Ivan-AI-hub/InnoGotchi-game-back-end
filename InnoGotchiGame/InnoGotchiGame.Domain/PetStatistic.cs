@@ -11,17 +11,5 @@
         public DateTime FirstHappinessDay { get; set; }
         public DateTime DateLastFeed { get; set; }
         public DateTime DateLastDrink { get; set; }
-
-        public int GetAlivesDays()
-        {
-            if(DeadDate == null)
-            {
-                return (DateTime.UtcNow - BornDate).Days;
-            }
-            else
-            {
-                return (DeadDate - BornDate).Value.Days;
-            }
-        }
     }
 }
