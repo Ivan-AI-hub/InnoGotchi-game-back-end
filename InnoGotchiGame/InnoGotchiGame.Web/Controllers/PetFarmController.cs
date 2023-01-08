@@ -18,7 +18,6 @@ namespace InnoGotchiGame.Web.Controllers
         /// <summary>
         /// Creates a farm
         /// </summary>
-        /// <param name="addFarmModel"></param>
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(List<string>), 400)]
@@ -30,6 +29,7 @@ namespace InnoGotchiGame.Web.Controllers
             }
 
             var rezult = _farmManager.Add(addFarmModel.OwnerId, addFarmModel.Name);
+            
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
 
@@ -37,9 +37,8 @@ namespace InnoGotchiGame.Web.Controllers
         }
 
         /// <summary>
-        /// updated a farm
+        /// updates a farm
         /// </summary>
-        /// <param name="updatePetFarmModel"></param>
         [HttpPut]
         [ProducesResponseType(202)]
         [ProducesResponseType(typeof(List<string>), 400)]
@@ -60,7 +59,7 @@ namespace InnoGotchiGame.Web.Controllers
 
         /// <param name="filtrator">Filtration rules</param>
         /// <param name="sorter">Sorting rules</param>
-        /// <returns>All users from database</returns>
+        /// <returns>All farms from database</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<PetFarmDTO>), 200)]
         public IActionResult Get([FromBody] FarmFiltrationViewModel filtration)

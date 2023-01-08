@@ -21,7 +21,12 @@ namespace InnoGotchiGame.Web.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Creates a pet
+        /// </summary>
         [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(List<string>), 400)]
         public IActionResult Post([FromBody] AddPetModel addPetModel)
         {
             var rezult = _petManager.Add(addPetModel.FarmId, addPetModel.Name, addPetModel.View);
@@ -31,7 +36,12 @@ namespace InnoGotchiGame.Web.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Updates a pet
+        /// </summary>
         [HttpPut]
+        [ProducesResponseType(202)]
+        [ProducesResponseType(typeof(List<string>), 400)]
         public IActionResult Put([FromBody] UpdatePetModel updatePetModel)
         {
             if (!ModelState.IsValid)
@@ -44,10 +54,17 @@ namespace InnoGotchiGame.Web.Controllers
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
 
-            return Ok();
+            return Accepted();
         }
 
+        /// <summary>
+        /// Feeds a pet with a special id
+        /// </summary>
+        /// <param name="petId">Pet id</param>
+        /// <param name="feederId">id of the user who initiated the feeding</param>
         [HttpPut("{petId}/feed")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(List<string>), 400)]
         public IActionResult Feed(int petId, int feederId)
         {
             if (!ModelState.IsValid)
@@ -63,7 +80,14 @@ namespace InnoGotchiGame.Web.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Gives a drink to a pet with a special id
+        /// </summary>
+        /// <param name="petId">Pet id</param>
+        /// <param name="drinkerId">id of the user who initiated the drinking</param>
         [HttpPut("{petId}/drink")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(List<string>), 400)]
         public IActionResult GiveDrink(int petId, int drinkerId)
         {
             if (!ModelState.IsValid)
@@ -79,7 +103,13 @@ namespace InnoGotchiGame.Web.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Sets the dead status to the pet
+        /// </summary>
+        /// <param name="petId">Pet id</param>
         [HttpPut("{petId}/dead")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(List<string>), 400)]
         public IActionResult SetDeadStatus(int petId)
         {
             if (!ModelState.IsValid)
@@ -95,7 +125,9 @@ namespace InnoGotchiGame.Web.Controllers
             return Ok();
         }
 
+        /// <returns>Filtered and sorted list of pets</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<PetDTO>), 200)]
         public IEnumerable<PetDTO> Get(PetFiltrator filtrator, string sortField = "Age", bool isDescendingSort = false)
         {
             var sorter = GetSorter(sortField, isDescendingSort);
@@ -103,7 +135,9 @@ namespace InnoGotchiGame.Web.Controllers
             return pets;
         }
 
+        /// <returns>A filtered and sorted page containing <paramref name="pageSize"/> pets</returns>
         [HttpGet("{pageSize}/{pageNumber}")]
+        [ProducesResponseType(typeof(IEnumerable<PetDTO>), 200)]
         public IEnumerable<PetDTO> GetPage(int pageSize, int pageNumber, PetFiltrator filtrator,
             string sortField = "Age", bool isDescendingSort = false)
         {
@@ -112,7 +146,9 @@ namespace InnoGotchiGame.Web.Controllers
             return pets;
         }
 
+        /// <returns>pet with special <paramref name="petId"/> </returns>
         [HttpGet("{petId}")]
+        [ProducesResponseType(typeof(PetDTO), 200)]
         public IActionResult GetById(int petId)
         {
             var pet = _petManager.GetPetById(petId);

@@ -13,7 +13,14 @@ namespace InnoGotchiGame.Web.Controllers
             _requestManager = requestManager;
         }
 
+        /// <summary>
+        /// Create a collaborating request from <paramref name="senderId"/> to <paramref name="recipientId"/>
+        /// </summary>
+        /// <param name="senderId">id of the sending user</param>
+        /// <param name="recipientId">id of the recipient user</param>
         [HttpPost]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(List<string>), 400)]
         public IActionResult AddCollaborator(int senderId, int recipientId)
         {
             if (!ModelState.IsValid)
@@ -26,7 +33,15 @@ namespace InnoGotchiGame.Web.Controllers
 
             return Ok();
         }
+
+        /// <summary>
+        /// Confirms the request for colaboration
+        /// </summary>
+        /// <param name="requestId">id of the request</param>
+        /// <param name="recipientId">id of the recipient user</param>
         [HttpPut("{requestId}/confirm")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(List<string>), 400)]
         public IActionResult ConfirmRequest(int requestId, int recipientId)
         {
             if (!ModelState.IsValid)
@@ -41,7 +56,14 @@ namespace InnoGotchiGame.Web.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Rejects the request for colaboration
+        /// </summary>
+        /// <param name="requestId">id of the request</param>
+        /// <param name="participantId">id of the participant</param>
         [HttpPut("{requestId}/reject")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(List<string>), 400)]
         public IActionResult RejectRequest(int requestId, int participantId)
         {
             if (!ModelState.IsValid)
@@ -55,7 +77,13 @@ namespace InnoGotchiGame.Web.Controllers
             return Ok();
         }
 
+        /// <summary>
+        /// Deletes the request for colaboration
+        /// </summary>
+        /// <param name="requestId">id of the request</param>
         [HttpDelete("{requestId}")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(List<string>), 400)]
         public IActionResult DeleteRequest(int requestId)
         {
             if (!ModelState.IsValid)
