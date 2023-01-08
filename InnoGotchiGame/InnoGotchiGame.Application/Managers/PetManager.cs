@@ -8,6 +8,9 @@ using InnoGotchiGame.Persistence.Interfaces;
 
 namespace InnoGotchiGame.Application.Managers
 {
+    /// <summary>
+    /// Manager for working with a pet 
+    /// </summary>
     public class PetManager
     {
         private AbstractValidator<Pet> _validator;
@@ -21,22 +24,35 @@ namespace InnoGotchiGame.Application.Managers
             _mapper = mapper;
         }
 
-        public ManagerRezult Add(int farmId, PetDTO pet)
+        /// <summary>
+        /// Creates a pet for the <paramref name="farmId"/> farm
+        /// </summary>
+        /// <param name="farmId">id of the farm containing the pet</param>
+        /// <param name="name">Pet name</param>
+        /// <returns>Result of method execution</returns>
+        public ManagerRezult Add(int farmId, string name, PetViewDTO? view)
         {
-            var dataPet = _mapper.Map<Pet>(pet);
+            var dataPet = new Pet()
+            {
+                FarmId = farmId,
+                View = _mapper.Map<PetView>(view)
+            };
 
-            dataPet.FarmId = farmId;
-            dataPet.Statistic.BornDate = DateTime.UtcNow;
-            dataPet.Statistic.IsAlive = true;
-            dataPet.Statistic.FirstHappinessDay = DateTime.UtcNow;
-            dataPet.Statistic.DateLastFeed = DateTime.UtcNow;
-            dataPet.Statistic.DateLastDrink = DateTime.UtcNow;
-            dataPet.Statistic.FeedingCount = 1;
-            dataPet.Statistic.DrinkingCount = 1;
+            dataPet.Statistic = new PetStatistic()
+            {
+                Name = name,
+                BornDate = DateTime.UtcNow,
+                IsAlive = true,
+                FirstHappinessDay = DateTime.UtcNow,
+                DateLastFeed = DateTime.UtcNow,
+                DateLastDrink = DateTime.UtcNow,
+                FeedingCount = 1,
+                DrinkingCount = 1
+            };
 
             var validationRezult = _validator.Validate(dataPet);
             var managerRezult = new ManagerRezult(validationRezult);
-            if (validationRezult.IsValid && IsUniqueName(pet.Statistic.Name, managerRezult))
+            if (validationRezult.IsValid && IsUniqueName(name, managerRezult))
             {
                 _repository.Add(dataPet);
                 _repository.Save();
@@ -44,6 +60,12 @@ namespace InnoGotchiGame.Application.Managers
             return managerRezult;
         }
 
+        /// <summary>
+        /// Updates the pet name with a special <paramref name="id"/> 
+        /// </summary>
+        /// <param name="id">Pet id</param>
+        /// <param name="name">New name for the pet</param>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult Update(int id, string name)
         {
 
@@ -63,6 +85,12 @@ namespace InnoGotchiGame.Application.Managers
             return managerRez;
         }
 
+        /// <summary>
+        /// Feeds a pet with a special id
+        /// </summary>
+        /// <param name="id">Pet id</param>
+        /// <param name="feederId">id of the user who initiated the feeding</param>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult Feed(int id, int feederId)
         {
             var managerRez = new ManagerRezult();
@@ -86,6 +114,12 @@ namespace InnoGotchiGame.Application.Managers
             return managerRez;
         }
 
+        /// <summary>
+        /// Gives a drink to a  pet with a special id
+        /// </summary>
+        /// <param name="id">Pet id</param>
+        /// <param name="drinkerId">id of the user who initiated the drinking</param>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult GiveDrink(int id, int drinkerId)
         {
             var managerRez = new ManagerRezult();
@@ -108,6 +142,11 @@ namespace InnoGotchiGame.Application.Managers
             return managerRez;
         }
 
+        /// <summary>
+        /// Sets the dead status to the pet
+        /// </summary>
+        /// <param name="id">Pet id</param>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult SetDeadStatus(int id)
         {
             var managerRez = new ManagerRezult();
@@ -123,6 +162,11 @@ namespace InnoGotchiGame.Application.Managers
             return managerRez;
         }
 
+        /// <summary>
+        /// Deletes the pet 
+        /// </summary>
+        /// <param name="id">Pet id</param>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult Delete(int id)
         {
             var managerRez = new ManagerRezult();
@@ -133,6 +177,7 @@ namespace InnoGotchiGame.Application.Managers
             return managerRez;
         }
 
+        /// <returns>pet with special <paramref name="id"/> </returns>
         public PetDTO? GetPetById(int id)
         {
             var petData = _repository.GetItemById(id);
@@ -140,12 +185,14 @@ namespace InnoGotchiGame.Application.Managers
             return pet;
         }
 
+        /// <returns>Filtered and sorted list of pets</returns>
         public IEnumerable<PetDTO> GetPets(Filtrator<Pet>? filtrator = null, Sorter<Pet>? sorter = null)
         {
             var pets = GetPetsQuary(filtrator, sorter);
             return _mapper.Map<IEnumerable<PetDTO>>(pets);
         }
 
+        /// <returns>A filtered and sorted page containing <paramref name="pageSize"/> pets</returns>
         public IEnumerable<PetDTO> GetPetsPage(int pageSize, int pageNumber, Filtrator<Pet>? filtrator = null, Sorter<Pet>? sorter = null)
         {
             var pets = GetPetsQuary(filtrator, sorter);

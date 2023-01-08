@@ -17,7 +17,7 @@ namespace InnoGotchiGame.Application.Filtrators
         {
             query = query.Where(x => x.Statistic.Name.Contains(Name));
 
-            if(DaysAlive != -1)
+            if (DaysAlive != -1)
             {
                 var AliveDate = (DateTime.UtcNow - new TimeSpan(DaysAlive, 0, 0, 0)).Date;
                 query = query.Where(x => x.Statistic.BornDate < AliveDate);

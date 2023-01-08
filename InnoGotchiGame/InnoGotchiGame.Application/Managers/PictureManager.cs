@@ -7,6 +7,9 @@ using InnoGotchiGame.Persistence.Interfaces;
 
 namespace InnoGotchiGame.Application.Managers
 {
+    /// <summary>
+    /// Manager for working with a picture
+    /// </summary>
     public class PictureManager
     {
         private AbstractValidator<Picture> _validator;
@@ -19,6 +22,10 @@ namespace InnoGotchiGame.Application.Managers
             _validator = validator;
         }
 
+        /// <summary>
+        /// Adds <paramref name="picture"/> to database
+        /// </summary>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult Add(PictureDTO picture)
         {
             var pictureData = _mapper.Map<Picture>(picture);
@@ -32,19 +39,30 @@ namespace InnoGotchiGame.Application.Managers
             return rezult;
         }
 
-        public ManagerRezult Update(int updatedId, PictureDTO picture)
+        /// <summary>
+        /// Updates the picture with a special id
+        /// </summary>
+        /// <param name="updatedId">Id of the picture being updated</param>
+        /// <returns>Result of method execution</returns>
+        public ManagerRezult Update(int updatedId, PictureDTO newPicture)
         {
-            var pictureData = _mapper.Map<Picture>(picture);
+            var pictureData = _mapper.Map<Picture>(newPicture);
             var validationRezult = _validator.Validate(pictureData);
             var rezult = new ManagerRezult(validationRezult);
             if (validationRezult.IsValid && CheckPictureId(updatedId, rezult) && IsUniqueName(pictureData.Name, rezult))
             {
                 _repository.Update(updatedId, pictureData);
                 _repository.Save();
-                picture.Id = updatedId;
+                newPicture.Id = updatedId;
             }
             return rezult;
         }
+
+        /// <summary>
+        /// Deletes the picture
+        /// </summary>
+        /// <param name="id">Picture id</param>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult Delete(int id)
         {
             var managerRez = new ManagerRezult();
@@ -55,12 +73,14 @@ namespace InnoGotchiGame.Application.Managers
             return managerRez;
         }
 
+        /// <returns>picture with special <paramref name="id"/> </returns>
         public PictureDTO? GetById(int id)
         {
             var picture = _mapper.Map<PictureDTO>(_repository.GetItemById(id));
             return picture;
         }
 
+        /// <returns>Filtered list of pictures</returns>
         public IEnumerable<PictureDTO> GetAll(Filtrator<Picture>? filtrator)
         {
             var pictures = _repository.GetItems();

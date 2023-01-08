@@ -1,5 +1,4 @@
 ﻿using InnoGotchiGame.Application.Managers;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchiGame.Web.Controllers

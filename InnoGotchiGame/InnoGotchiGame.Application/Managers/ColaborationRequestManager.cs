@@ -3,6 +3,9 @@ using InnoGotchiGame.Persistence.Interfaces;
 
 namespace InnoGotchiGame.Application.Managers
 {
+    /// <summary>
+    /// Manager for working on collaborating requests
+    /// </summary>
     public class ColaborationRequestManager
     {
         private IRepository<ColaborationRequest> _repository;
@@ -12,25 +15,38 @@ namespace InnoGotchiGame.Application.Managers
             _repository = repository;
         }
 
+        /// <summary>
+        /// Create a collaborating request from <paramref name="senderId"/> to <paramref name="recipientId"/>
+        /// </summary>
+        /// <param name="senderId">id of the sending user</param>
+        /// <param name="recipientId">id of the recipient user</param>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult SendColaborationRequest(int senderId, int recipientId)
         {
             var rezult = new ManagerRezult();
             var request = new ColaborationRequest() { RequestSenderId = senderId, RequestReceiverId = recipientId, Status = ColaborationRequestStatus.Undefined };
 
-            try
+            var isSingleRequest = _repository.GetItem(x => x.RequestSenderId == senderId && x.RequestReceiverId == recipientId ||
+                                                           x.RequestReceiverId == senderId && x.RequestSenderId == recipientId) == null;
+            if (isSingleRequest)
             {
                 _repository.Add(request);
                 _repository.Save();
             }
-            catch (Exception ex)
+            else
             {
-                if (ex.InnerException != null)
-                    rezult.Errors.Add(ex.InnerException.Message);
-                rezult.Errors.Add(ex.Message);
+                rezult.Errors.Add("The collaborating request for these users already exists");
             }
+
             return rezult;
         }
 
+        /// <summary>
+        /// Confirms the request for colaboration
+        /// </summary>
+        /// <param name="requestId">id of the request</param>
+        /// <param name="recipientId">id of the recipient user</param>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult ConfirmRequest(int requestId, int recipientId)
         {
             var rezult = new ManagerRezult();
@@ -56,6 +72,12 @@ namespace InnoGotchiGame.Application.Managers
             return rezult;
         }
 
+        /// <summary>
+        /// Rejects the request for colaboration
+        /// </summary>
+        /// <param name="requestId">id of the request</param>
+        /// <param name="participantId">id of the participant</param>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult RejectRequest(int requestId, int participantId)
         {
             var rezult = new ManagerRezult();
@@ -82,6 +104,11 @@ namespace InnoGotchiGame.Application.Managers
             return rezult;
         }
 
+        /// <summary>
+        /// Deletes the request for colaboration
+        /// </summary>
+        /// <param name="requestId">id of the request</param>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult DeleteRequest(int requestId)
         {
             var rezult = new ManagerRezult();

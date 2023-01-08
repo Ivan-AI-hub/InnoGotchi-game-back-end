@@ -2,10 +2,9 @@
 using InnoGotchiGame.Application.Filtrators;
 using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
-using InnoGotchiGame.Application.Sorters.SortRules;
 using InnoGotchiGame.Application.Sorters;
+using InnoGotchiGame.Application.Sorters.SortRules;
 using InnoGotchiGame.Web.Models.Pets;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchiGame.Web.Controllers
@@ -25,11 +24,7 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPost]
         public IActionResult Post([FromBody] AddPetModel addPetModel)
         {
-
-            PetDTO pet = _mapper.Map<PetDTO>(addPetModel);
-            pet.Statistic = new PetStatisticDTO() { Name = addPetModel.Name };
-
-            var rezult = _petManager.Add(addPetModel.FarmId, pet);
+            var rezult = _petManager.Add(addPetModel.FarmId, addPetModel.Name, addPetModel.View);
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
 
@@ -101,7 +96,7 @@ namespace InnoGotchiGame.Web.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<PetDTO> Get( PetFiltrator filtrator, string sortField = "Age", bool isDescendingSort = false)
+        public IEnumerable<PetDTO> Get(PetFiltrator filtrator, string sortField = "Age", bool isDescendingSort = false)
         {
             var sorter = GetSorter(sortField, isDescendingSort);
             var pets = _petManager.GetPets(filtrator, sorter);

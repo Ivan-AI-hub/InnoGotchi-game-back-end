@@ -8,6 +8,9 @@ using InnoGotchiGame.Persistence.Interfaces;
 
 namespace InnoGotchiGame.Application.Managers
 {
+    /// <summary>
+    /// Manager for working with a pet farm
+    /// </summary>
     public class PetFarmManager
     {
         private AbstractValidator<PetFarm> _validator;
@@ -21,6 +24,12 @@ namespace InnoGotchiGame.Application.Managers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Creates a pet farm for the <paramref name="ownerId"/> user with the name <paramref name="name"/>
+        /// </summary>
+        /// <param name="ownerId">Id of the user who owns the farm</param>
+        /// <param name="name">Farm name</param>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult Add(int ownerId, string name)
         {
             var dataFarm = new PetFarm();
@@ -38,6 +47,12 @@ namespace InnoGotchiGame.Application.Managers
             return rezult;
         }
 
+        /// <summary>
+        /// Updates the farm name with a special <paramref name="id"/> 
+        /// </summary>
+        /// <param name="id">Farm id</param>
+        /// <param name="newName">New name for the farm</param>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult UpdateName(int id, string newName)
         {
 
@@ -57,6 +72,11 @@ namespace InnoGotchiGame.Application.Managers
             return managerRez;
         }
 
+        /// <summary>
+        /// Deletes the pet farm
+        /// </summary>
+        /// <param name="id">Farm id</param>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult Delete(int id)
         {
             var managerRez = new ManagerRezult();
@@ -67,6 +87,7 @@ namespace InnoGotchiGame.Application.Managers
             return managerRez;
         }
 
+        /// <returns>farm with special <paramref name="id"/> </returns>
         public PetFarmDTO? GetFarmById(int id)
         {
             var dataFarm = _repository.GetItemById(id);
@@ -74,12 +95,14 @@ namespace InnoGotchiGame.Application.Managers
             return farm;
         }
 
+        /// <returns>Filtered and sorted list of farms</returns>
         public IEnumerable<PetFarmDTO> GetPetFarms(Filtrator<PetFarm>? filtrator = null, Sorter<PetFarm>? sorter = null)
         {
             var farms = GetPetFarmsQuary(filtrator, sorter);
             return _mapper.Map<IEnumerable<PetFarmDTO>>(farms);
         }
 
+        /// <returns>A filtered and sorted page containing <paramref name="pageSize"/> farms</returns>
         public IEnumerable<PetFarmDTO> GetPetFarmsPage(int pageSize, int pageNumber, Filtrator<PetFarm>? filtrator = null, Sorter<PetFarm>? sorter = null)
         {
             var farms = GetPetFarmsQuary(filtrator, sorter);

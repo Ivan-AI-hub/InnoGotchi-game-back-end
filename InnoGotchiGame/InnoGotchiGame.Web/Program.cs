@@ -19,14 +19,14 @@ var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.AddCors(options =>
 {
-	options.AddPolicy(name: MyAllowSpecificOrigins,
-					  policy =>
-					  {
-						  policy.WithOrigins("https://localhost:7192",
-											 "http://localhost:5058")
+    options.AddPolicy(name: MyAllowSpecificOrigins,
+                      policy =>
+                      {
+                          policy.WithOrigins("https://localhost:7192",
+                                             "http://localhost:5058")
                                             .AllowAnyHeader()
                                             .AllowAnyMethod();
-					  });
+                      });
 });
 
 

@@ -10,6 +10,9 @@ using System.Text;
 
 namespace InnoGotchiGame.Application.Managers
 {
+    /// <summary>
+    /// Manager for working with a user
+    /// </summary>
     public class UserManager
     {
         private AbstractValidator<User> _validator;
@@ -23,6 +26,10 @@ namespace InnoGotchiGame.Application.Managers
             _validator = validator;
         }
 
+        /// <summary>
+        /// Adds <paramref name="user"/> to database
+        /// </summary>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult Add(UserDTO user, string password)
         {
             var dataUser = _mapper.Map<User>(user);
@@ -39,6 +46,11 @@ namespace InnoGotchiGame.Application.Managers
             return managerRezult;
         }
 
+        /// <summary>
+        /// Updates user data
+        /// </summary>
+        /// <param name="updatedId">User id</param>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult UpdateData(int updatedId, UserDTO newUser)
         {
             ManagerRezult managerRezult = new ManagerRezult();
@@ -49,7 +61,7 @@ namespace InnoGotchiGame.Application.Managers
                 var oldUser = _repository.GetItemById(updatedId);
                 dataUser.Email = oldUser.Email;
                 dataUser.PasswordHach = oldUser.PasswordHach;
-                if(oldUser.Picture != null)
+                if (oldUser.Picture != null)
                 {
                     dataUser.Picture.Id = oldUser.Picture.Id;
                 }
@@ -65,6 +77,11 @@ namespace InnoGotchiGame.Application.Managers
             return managerRezult;
         }
 
+        /// <summary>
+        /// Updates user password
+        /// </summary>
+        /// <param name="updatedId">User id</param>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult UpdatePassword(int updatedId, string oldPassword, string newPassword)
         {
             ManagerRezult managerRezult = new ManagerRezult();
@@ -93,6 +110,11 @@ namespace InnoGotchiGame.Application.Managers
             return managerRezult;
         }
 
+        /// <summary>
+        /// Deletes the user
+        /// </summary>
+        /// <param name="deletedId">User id</param>
+        /// <returns>Result of method execution</returns>
         public ManagerRezult Delete(int deletedId)
         {
             var managerRez = new ManagerRezult();
@@ -104,6 +126,7 @@ namespace InnoGotchiGame.Application.Managers
             return managerRez;
         }
 
+        /// <returns>user with special <paramref name="id"/> </returns>
         public UserDTO? GetUserById(int userId)
         {
             var user = _repository.GetItemById(userId);
@@ -113,6 +136,10 @@ namespace InnoGotchiGame.Application.Managers
                 return null;
         }
 
+        /// <summary>
+        /// Searches for a user in the database
+        /// </summary>
+        /// <returns>Finded user or null</returns>
         public UserDTO? FindUserInDb(string email, string password)
         {
             string passwordHach = StringToHach(password);
@@ -123,12 +150,14 @@ namespace InnoGotchiGame.Application.Managers
                 return null;
         }
 
+        /// <returns>Filtered and sorted list of users</returns>
         public IEnumerable<UserDTO> GetUsers(Filtrator<User>? filtrator = null, Sorter<User>? sorter = null)
         {
             var users = GetUsersQuary(filtrator, sorter);
             return _mapper.Map<IEnumerable<UserDTO>>(users);
         }
 
+        /// <returns>A filtered and sorted page containing <paramref name="pageSize"/> users</returns>
         public IEnumerable<UserDTO> GetUsersPage(int pageSize, int pageNumber, Filtrator<User>? filtrator = null, Sorter<User>? sorter = null)
         {
             var users = GetUsersQuary(filtrator, sorter);

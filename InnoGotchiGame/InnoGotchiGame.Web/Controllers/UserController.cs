@@ -6,7 +6,6 @@ using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Application.Sorters.SortRules;
 using InnoGotchiGame.Web.Models.Users;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
