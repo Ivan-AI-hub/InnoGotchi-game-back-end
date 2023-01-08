@@ -14,20 +14,21 @@ namespace InnoGotchiGame.Web.Controllers
         }
 
         /// <summary>
-        /// Create a collaborating request from <paramref name="senderId"/> to <paramref name="recipientId"/>
+        /// Create a collaborating request from authorize user to <paramref name="recipientId"/>
         /// </summary>
-        /// <param name="senderId">id of the sending user</param>
         /// <param name="recipientId">id of the recipient user</param>
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult AddCollaborator(int senderId, int recipientId)
+        public IActionResult AddCollaborator(int recipientId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            var rezult = _requestManager.SendColaborationRequest(senderId, recipientId);
+
+            int userId = GetAuthUserId();
+            var rezult = _requestManager.SendColaborationRequest(userId, recipientId);
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
 
@@ -37,18 +38,18 @@ namespace InnoGotchiGame.Web.Controllers
         /// <summary>
         /// Confirms the request for colaboration
         /// </summary>
-        /// <param name="requestId">id of the request</param>
-        /// <param name="recipientId">id of the recipient user</param>
+        /// <param name="requestId">id of the request</param>d
         [HttpPut("{requestId}/confirm")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult ConfirmRequest(int requestId, int recipientId)
+        public IActionResult ConfirmRequest(int requestId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            var rezult = _requestManager.ConfirmRequest(requestId, recipientId);
+            int userId = GetAuthUserId();
+            var rezult = _requestManager.ConfirmRequest(requestId, userId);
 
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
@@ -60,17 +61,17 @@ namespace InnoGotchiGame.Web.Controllers
         /// Rejects the request for colaboration
         /// </summary>
         /// <param name="requestId">id of the request</param>
-        /// <param name="participantId">id of the participant</param>
         [HttpPut("{requestId}/reject")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult RejectRequest(int requestId, int participantId)
+        public IActionResult RejectRequest(int requestId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            var rezult = _requestManager.RejectRequest(requestId, participantId);
+            int userId = GetAuthUserId();
+            var rezult = _requestManager.RejectRequest(requestId, userId);
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
 

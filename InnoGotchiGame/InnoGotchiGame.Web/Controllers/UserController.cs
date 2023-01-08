@@ -116,9 +116,7 @@ namespace InnoGotchiGame.Web.Controllers
             return NoContent();
         }
 
-        /// <param name="filtrator">Filtration rules</param>
-        /// <param name="sorter">Sorting rules</param>
-        /// <returns>All users from database</returns>
+        /// <returns>A filtered and sorted page containing <paramref name="pageSize"/> users</returns>
         [HttpGet("{pageSize}/{pageNumber}")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
@@ -130,9 +128,7 @@ namespace InnoGotchiGame.Web.Controllers
             return Ok(users);
         }
 
-        /// <param name="filtrator">Filtration rules</param>
-        /// <param name="sorter">Sorting rules</param>
-        /// <returns>All users from database</returns>
+        /// <returns>Filtered and sorted list of users</returns>
         [HttpGet]
         [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
@@ -157,14 +153,13 @@ namespace InnoGotchiGame.Web.Controllers
             return new ObjectResult(user);
         }
 
-        /// <param name="userId"></param>
-        /// <returns>a user with same Id</returns>
+        /// <returns>Authorized user</returns>
         [HttpGet("Authorized")]
         [ProducesResponseType(typeof(UserDTO), 200)]
         [ProducesResponseType(typeof(string), 400)]
         public IActionResult GetAuthorizeUser()
         {
-            var userId = int.Parse(User.FindFirstValue("Id"));
+            var userId = GetAuthUserId();
             var user = _userManager.GetUserById(userId);
 
             return new ObjectResult(user);
@@ -185,7 +180,11 @@ namespace InnoGotchiGame.Web.Controllers
                 return BadRequest(new { errorText = "Invalid email or password." });
             }
 
-            var claims = new List<Claim> { new Claim(ClaimTypes.Email, user.Email), new Claim("Id", user.Id.ToString()) };
+            var claims = new List<Claim> 
+            { 
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(nameof(TokenClaims.UserId), user.Id.ToString())
+            };
 
             var jwt = new JwtSecurityToken(
                     issuer: AuthOptions.ISSUER,

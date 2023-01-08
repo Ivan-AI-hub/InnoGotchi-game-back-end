@@ -28,7 +28,8 @@ namespace InnoGotchiGame.Web.Controllers
                 return BadRequest();
             }
 
-            var rezult = _farmManager.Add(addFarmModel.OwnerId, addFarmModel.Name);
+            var userId = GetAuthUserId();
+            var rezult = _farmManager.Add(userId, addFarmModel.Name);
             
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
@@ -55,17 +56,6 @@ namespace InnoGotchiGame.Web.Controllers
                 return BadRequest(rezult.Errors);
 
             return Accepted();
-        }
-
-        /// <param name="filtrator">Filtration rules</param>
-        /// <param name="sorter">Sorting rules</param>
-        /// <returns>All farms from database</returns>
-        [HttpGet]
-        [ProducesResponseType(typeof(IEnumerable<PetFarmDTO>), 200)]
-        public IActionResult Get([FromBody] FarmFiltrationViewModel filtration)
-        {
-            var farms = _farmManager.GetPetFarms(filtration.Filtrator, filtration.Sorter);
-            return new ObjectResult(farms);
         }
 
         /// <param name="farmId"></param>

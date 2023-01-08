@@ -13,12 +13,10 @@ namespace InnoGotchiGame.Web.Controllers
     public class PetController : BaseController
     {
         private PetManager _petManager;
-        private IMapper _mapper;
 
-        public PetController(PetManager petManager, IMapper mapper)
+        public PetController(PetManager petManager)
         {
             _petManager = petManager;
-            _mapper = mapper;
         }
 
         /// <summary>
@@ -61,18 +59,18 @@ namespace InnoGotchiGame.Web.Controllers
         /// Feeds a pet with a special id
         /// </summary>
         /// <param name="petId">Pet id</param>
-        /// <param name="feederId">id of the user who initiated the feeding</param>
         [HttpPut("{petId}/feed")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult Feed(int petId, int feederId)
+        public IActionResult Feed(int petId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var rezult = _petManager.Feed(petId, feederId);
+            var userId = GetAuthUserId();
+            var rezult = _petManager.Feed(petId, userId);
 
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
@@ -84,18 +82,18 @@ namespace InnoGotchiGame.Web.Controllers
         /// Gives a drink to a pet with a special id
         /// </summary>
         /// <param name="petId">Pet id</param>
-        /// <param name="drinkerId">id of the user who initiated the drinking</param>
         [HttpPut("{petId}/drink")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult GiveDrink(int petId, int drinkerId)
+        public IActionResult GiveDrink(int petId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var rezult = _petManager.GiveDrink(petId, drinkerId);
+            var userId = GetAuthUserId();
+            var rezult = _petManager.GiveDrink(petId, userId);
 
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
