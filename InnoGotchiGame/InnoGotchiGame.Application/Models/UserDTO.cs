@@ -9,7 +9,7 @@ namespace InnoGotchiGame.Application.Models
         public string LastName { get; set; }
         public string Email { get; set; }
         public PictureDTO? Picture { get; set; }
-        public int OwnPetFarmId { get; set; }
+        public int OwnPetFarmId => OwnPetFarm != null ? OwnPetFarm.Id : 0;
         public PetFarmDTO? OwnPetFarm { get; set; }
 
         [JsonIgnore]

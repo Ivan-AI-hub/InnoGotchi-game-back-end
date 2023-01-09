@@ -1,11 +1,10 @@
-﻿using InnoGotchiGame.Domain;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchiGame.Web.Controllers
 {
     [Route("/api")]
-    [Authorize("Bearer")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class BaseController : Controller
     {
         protected int GetAuthUserId()

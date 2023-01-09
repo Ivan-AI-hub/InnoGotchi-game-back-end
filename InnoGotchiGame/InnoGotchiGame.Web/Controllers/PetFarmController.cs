@@ -1,5 +1,8 @@
-﻿using InnoGotchiGame.Application.Managers;
+﻿using InnoGotchiGame.Application.Filtrators;
+using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
+using InnoGotchiGame.Application.Sorters.SortRules;
+using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Web.Models.PetFarms;
 using Microsoft.AspNetCore.Mvc;
 
@@ -58,6 +61,17 @@ namespace InnoGotchiGame.Web.Controllers
             return Accepted();
         }
 
+        /// <param name="filtrator">Filtration rules</param>
+        /// <returns>All farms from database</returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<PetFarmDTO>), 200)]
+        public IActionResult Get(PetFarmFiltrator filtrator, string sortField = "Name", bool isDescendingSort = false)
+        {
+            var sorter = GetSorter(sortField, isDescendingSort);
+            var farms = _farmManager.GetPetFarms(filtrator, sorter);
+            return new ObjectResult(farms);
+        }
+
         /// <param name="farmId"></param>
         /// <returns>a farm with same Id</returns>
         [HttpGet("{farmId}")]
@@ -70,6 +84,14 @@ namespace InnoGotchiGame.Web.Controllers
                 return BadRequest(new { errorText = "Invalid id." });
 
             return new ObjectResult(farm);
+        }
+
+        private PetFarmSorter GetSorter(string sortRule, bool isDescendingSort)
+        {
+            var sorter = new PetFarmSorter();
+            sorter.SortRule = Enum.Parse<PetFarmSortRule>(sortRule);
+            sorter.IsDescendingSort = isDescendingSort;
+            return sorter;
         }
     }
 }
