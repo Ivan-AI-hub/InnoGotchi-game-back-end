@@ -10,8 +10,6 @@ namespace InnoGotchiGame.Application.Models
         public DateTime CreateDate { get; set; }
 
         public int OwnerId { get; set; }
-        [JsonIgnore]
-        public UserDTO Owner { get; set; }
 
         public List<PetDTO> Pets { get; }
 

@@ -12,5 +12,10 @@ namespace InnoGotchiGame.Domain
         public User Owner { get; set; }
 
         public List<Pet> Pets { get; }
+
+        public PetFarm()
+        {
+            Pets = new List<Pet>();
+        }
     }
 }

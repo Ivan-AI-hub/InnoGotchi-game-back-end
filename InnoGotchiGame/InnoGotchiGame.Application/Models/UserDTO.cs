@@ -1,12 +1,16 @@
-﻿using System.Text.Json.Serialization;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace InnoGotchiGame.Application.Models
 {
     public class UserDTO
     {
         public int Id { get; set; }
+        [MaxLength(20)]
         public string FirstName { get; set; }
+        [MaxLength(20)]
         public string LastName { get; set; }
+        [EmailAddress]
         public string Email { get; set; }
         public PictureDTO? Picture { get; set; }
         public int OwnPetFarmId => OwnPetFarm != null ? OwnPetFarm.Id : 0;
@@ -20,10 +24,13 @@ namespace InnoGotchiGame.Application.Models
         public IEnumerable<ColaborationRequestDTO> RejectedRequests => GetRejectedInvites();
         public IEnumerable<UserDTO> Collaborators => GetUserColaborators();
 
-        public UserDTO()
+        public UserDTO(string firstName, string lastName, string email)
         {
             SentColaborations = new List<ColaborationRequestDTO>();
             AcceptedColaborations = new List<ColaborationRequestDTO>();
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
         }
 
         /// <returns>All colaborators of user</returns>

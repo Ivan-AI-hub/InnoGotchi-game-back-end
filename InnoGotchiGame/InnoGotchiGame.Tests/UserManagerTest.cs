@@ -1,4 +1,7 @@
+using AutoFixture;
+using AutoFixture.AutoMoq;
 using AutoMapper;
+using FluentAssertions;
 using FluentValidation;
 using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Mappings;
@@ -7,126 +10,80 @@ using InnoGotchiGame.Application.Validators;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
 using InnoGotchiGame.Persistence.Repositories;
-using Microsoft.EntityFrameworkCore.Diagnostics;
+using InnoGotchiGame.Web.Mapping;
 
 namespace InnoGotchiGame.Tests
 {
     public class UserManagerTest
     {
-        private DbContextOptions<InnoGotchiGameContext> _contextOptions;
-        private InnoGotchiGameContext _context;
-        private IRepository<User> _repository;
-        private AbstractValidator<User> _validator;
-        private IMapper _mapper;
+        private static int emailId;
+        private IFixture _fixture;
 
         public UserManagerTest()
         {
-            _contextOptions = new DbContextOptionsBuilder<InnoGotchiGameContext>()
+            var contextOptions = new DbContextOptionsBuilder<InnoGotchiGameContext>()
                             .UseInMemoryDatabase("UserManagerTest")
-                            .ConfigureWarnings(b => b.Ignore(InMemoryEventId.TransactionIgnoredWarning))
                             .Options;
 
-            _context = new InnoGotchiGameContext(_contextOptions);
-            _repository = new UserRepository(_context);
-            _validator = new UserValidator();
-            var mapperConfig = new MapperConfiguration(config => config.AddProfile(new AssemblyMappingProfile()));
-            _mapper = new Mapper(mapperConfig);
+            var context = new InnoGotchiGameContext(contextOptions);
+            _fixture = new Fixture().Customize(new AutoMoqCustomization());
+            _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
+                    .ForEach(b => _fixture.Behaviors.Remove(b));
+            _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+
+            _fixture.Register<IRepository<User>>(() => new UserRepository(context));
+            _fixture.Register<AbstractValidator<User>>(() => new UserValidator());
+            
+            var config = new MapperConfiguration(cnf => cnf.AddProfiles(new List<Profile>() { new AssemblyMappingProfile(), new WebMappingProfile() }));
+            _fixture.Register<IMapper>(() => new Mapper(config));
         }
 
         [Fact]
         public void Add_Valid_User()
         {
-            UserManager manager = new UserManager(_repository, _mapper, _validator);
-
-
-            var user = new UserDTO()
-            {
-                FirstName = "First",
-                LastName = "Last",
-                Email = "test_user@gmail.com"
-            };
-
+            
+            var user = GetValidUser();
+            var manager = _fixture.Create<UserManager>();
 
             var rez = manager.Add(user, "Test_1234");
-
-
-            Assert.True(rez.IsComplete);
-        }
-
-        [Fact]
-        public void Delete_Valid_User()
-        {
-            UserManager manager = new UserManager(_repository, _mapper, _validator);
-
-
-            var user = new UserDTO()
-            {
-                FirstName = "First",
-                LastName = "Last",
-                Email = "test_user712@gmail.com"
-            };
-
-
-            manager.Add(user, "Test_1234");
-            var rez = manager.Delete(user.Id);
-
             Assert.True(rez.IsComplete, String.Concat(rez.Errors));
         }
 
         [Fact]
-        public void Add_Unvalid_User()
+        public void Add_Invalid_User()
         {
-            UserManager manager = new UserManager(_repository, _mapper, _validator);
-
-
-            var user = new UserDTO()
-            {
-                FirstName = "First",
-                LastName = "Last",
-                Email = "wrongMail"
-            };
-
+            var user = GetInvalidUser();
+            var manager = _fixture.Create<UserManager>();
 
             var rez = manager.Add(user, "Test_1234");
 
-
-            Assert.False(rez.IsComplete);
+            Assert.False(rez.IsComplete, String.Concat(rez.Errors));
         }
 
         [Fact]
-        public void Update_Valid_User()
+        public void Update_Data_Valid()
         {
-            UserManager manager = new UserManager(_repository, _mapper, _validator);
+            var user = GetValidUser();
+            var manager = _fixture.Create<UserManager>();
 
-
-            var user = new UserDTO()
-            {
-                FirstName = "FirstUpdate",
-                LastName = "LastUpdate",
-                Email = "update@gmail.com"
-            };
             manager.Add(user, "Test_1234");
+
             user.FirstName = "SecondUpdate";
 
             var rez = manager.UpdateData(user.Id, user);
 
-            Assert.True(rez.IsComplete);
-            Assert.Equal("SecondUpdate", manager.GetUserById(user.Id)?.FirstName);
+            Assert.True(rez.IsComplete, String.Concat(rez.Errors));
+            manager.GetUserById(user.Id)!.FirstName.Should().Be("SecondUpdate");
         }
 
         [Fact]
-        public void Update_Unvalid_User()
+        public void Update_Data_Invalid()
         {
-            UserManager manager = new UserManager(_repository, _mapper, _validator);
+            var user = GetValidUser();
+            var manager = _fixture.Create<UserManager>();
 
-
-            var user = new UserDTO()
-            {
-                FirstName = "FirstUpdate",
-                LastName = "LastUpdate",
-                Email = "update@gmail.com"
-            };
             manager.Add(user, "Test_1234");
+
             user.FirstName = "";
 
             var rez = manager.UpdateData(user.Id, user);
@@ -135,16 +92,41 @@ namespace InnoGotchiGame.Tests
         }
 
         [Fact]
+        public void Update_Password_Valid()
+        {
+            var user = GetValidUser();
+            var manager = _fixture.Create<UserManager>();
+
+            var firstPassword = _fixture.Create<string>();
+            var secondPassword = _fixture.Create<string>();
+            manager.Add(user, firstPassword);
+
+            var rez = manager.UpdatePassword(user.Id, firstPassword, secondPassword);
+
+            Assert.True(rez.IsComplete, String.Concat(rez.Errors));
+        }
+
+        [Fact]
+        public void Update_Password_InValid()
+        {
+            var user = GetValidUser();
+            var manager = _fixture.Create<UserManager>();
+
+            var firstPassword = _fixture.Create<string>();
+            var secondPassword = _fixture.Create<string>();
+
+            manager.Add(user, firstPassword);
+
+            var rez = manager.UpdatePassword(user.Id, secondPassword, firstPassword);
+
+            Assert.False(rez.IsComplete, String.Concat(rez.Errors));
+        }
+
+        [Fact]
         public void Update_non_existent_id()
         {
-            UserManager manager = new UserManager(_repository, _mapper, _validator);
-
-            var user = new UserDTO()
-            {
-                FirstName = "FirstUpdate",
-                LastName = "LastUpdate",
-                Email = "update@gmail.com"
-            };
+            var user = GetValidUser();
+            var manager = _fixture.Create<UserManager>();
 
             var rez = manager.UpdateData(100, user);
 
@@ -152,19 +134,27 @@ namespace InnoGotchiGame.Tests
         }
 
         [Fact]
-        public void Get_users()
+        public void Delete_Valid_User()
         {
-            UserManager manager = new UserManager(_repository, _mapper, _validator);
+            var user = GetValidUser();
+            var manager = _fixture.Create<UserManager>();
+
+            manager.Add(user, "Test_1234");
+            var rez = manager.Delete(user.Id);
+
+            Assert.True(rez.IsComplete, String.Concat(rez.Errors));
+        }
+
+        [Fact]
+        public void Get_Users_Successfully()
+        {
+            
+            var manager = _fixture.Create<UserManager>();
             var users = new List<UserDTO>();
             int usersCount = 4;
             for (int i = 0; i < usersCount; i++)
             {
-                var user = new UserDTO()
-                {
-                    FirstName = "Test" + i,
-                    LastName = "Test" + i,
-                    Email = $"update{i}@gmail.com"
-                };
+                var user = GetValidUser();
                 users.Add(user);
             }
 
@@ -174,8 +164,43 @@ namespace InnoGotchiGame.Tests
 
             for (int i = 0; i < users.Count; i++)
             {
-                Assert.Equal(users[i].FirstName, dataBaseUsers.FirstOrDefault(x => x.Id == users[i].Id)?.FirstName);
+                users[i].FirstName.Should().Be(dataBaseUsers.FirstOrDefault(x => x.Id == users[i].Id)?.FirstName);
             }
+        }
+
+        [Fact]
+        public void FindUser_Successfully()
+        {
+
+            var user = GetValidUser();
+            var password = _fixture.Create<string>();
+            var manager = _fixture.Create<UserManager>();
+
+            manager.Add(user, password);
+            var findedUser = manager.FindUserInDb(user.Email, password);
+
+            findedUser!.Email.Should().Be(user.Email);
+            findedUser.Id.Should().Be(user.Id);
+        }
+
+        private UserDTO GetValidUser()
+        {
+            var user = GetInvalidUser();
+            user.Email = $"test{emailId}@mail.com";
+            emailId++;
+            return user;
+        }
+
+        private UserDTO GetInvalidUser()
+        {
+            var user = _fixture.Build<UserDTO>()
+                .Without(x => x.Id)
+                .Without(x => x.OwnPetFarm)
+                .Without(x => x.Picture)
+                .Without(x => x.AcceptedColaborations)
+                .Without(x => x.SentColaborations)
+                .Create();
+            return user;
         }
     }
 }
