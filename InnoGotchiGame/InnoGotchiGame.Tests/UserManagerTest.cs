@@ -1,17 +1,3 @@
-using AutoFixture;
-using AutoFixture.AutoMoq;
-using AutoMapper;
-using FluentAssertions;
-using FluentValidation;
-using InnoGotchiGame.Application.Managers;
-using InnoGotchiGame.Application.Mappings;
-using InnoGotchiGame.Application.Models;
-using InnoGotchiGame.Application.Validators;
-using InnoGotchiGame.Domain;
-using InnoGotchiGame.Persistence.Interfaces;
-using InnoGotchiGame.Persistence.Repositories;
-using InnoGotchiGame.Web.Mapping;
-
 namespace InnoGotchiGame.Tests
 {
     public class UserManagerTest
@@ -34,7 +20,7 @@ namespace InnoGotchiGame.Tests
             _fixture.Register<IRepository<User>>(() => new UserRepository(context));
             _fixture.Register<AbstractValidator<User>>(() => new UserValidator());
             
-            var config = new MapperConfiguration(cnf => cnf.AddProfiles(new List<Profile>() { new AssemblyMappingProfile(), new WebMappingProfile() }));
+            var config = new MapperConfiguration(cnf => cnf.AddProfiles(new List<Profile>() { new AssemblyMappingProfile()}));
             _fixture.Register<IMapper>(() => new Mapper(config));
         }
 
