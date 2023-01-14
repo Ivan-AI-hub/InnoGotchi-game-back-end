@@ -13,12 +13,16 @@ namespace InnoGotchiGame.Persistence.Repositories
         }
         public Pet? GetItemById(int id)
         {
-            return GetFullData().FirstOrDefault(x => x.Id == id);
+            return GetItem(x => x.Id == id);
         }
-
         public bool IsItemExist(int id)
         {
-            return _context.Pets.Any(x => x.Id == id);
+            return IsItemExist(x => x.Id == id);
+        }
+
+        public bool IsItemExist(Func<Pet, bool> func)
+        {
+            return _context.Pets.Any(func);
         }
 
         public Pet? GetItem(Func<Pet, bool> predicate)
@@ -80,7 +84,6 @@ namespace InnoGotchiGame.Persistence.Repositories
         {
             var pets = _context.Pets
                 .Include(x => x.View.Picture);
-
 
             return pets;
         }

@@ -112,8 +112,7 @@ namespace InnoGotchiGame.Application.Managers
 
         private bool IsUniqueName(string name, ManagerRezult managerRezult)
         {
-            var quary = GetPetFarmsQuary();
-            if (quary.Any(x => x.Name == name))
+            if (_repository.IsItemExist(x => x.Name == name))
             {
                 managerRezult.Errors.Add("A farm with the same Name already exists in the database");
                 return false;

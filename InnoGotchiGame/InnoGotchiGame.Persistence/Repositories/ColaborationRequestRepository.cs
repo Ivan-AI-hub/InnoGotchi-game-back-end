@@ -44,9 +44,11 @@ namespace InnoGotchiGame.Persistence.Repositories
 
         public bool IsItemExist(int id)
         {
-            if (_context.ColaborationRequests.Any(x => x.Id == id))
-                return true;
-            return false;
+            return IsItemExist(x => x.Id == id);
+        }
+        public bool IsItemExist(Func<ColaborationRequest, bool> func)
+        {
+            return _context.ColaborationRequests.Any(func);
         }
 
         public void Save()

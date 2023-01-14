@@ -6,6 +6,8 @@
         public T? GetItemById(int id);
 
         /// <returns>true if the element exists, and false if not</returns>
+        public bool IsItemExist(Func<T, bool> func);
+        /// <returns>true if the element exists, and false if not</returns>
         public bool IsItemExist(int id);
 
         /// <param name="predicate">Special predicate for element search</param>

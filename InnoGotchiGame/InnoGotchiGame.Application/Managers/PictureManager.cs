@@ -92,8 +92,7 @@ namespace InnoGotchiGame.Application.Managers
 
         private bool IsUniqueName(string name, ManagerRezult managerRezult)
         {
-            var quary = _repository.GetItems();
-            if (quary.Any(x => x.Name == name))
+            if (_repository.IsItemExist(x => x.Name == name))
             {
                 managerRezult.Errors.Add("A picture with the same Name already exists in the database");
                 return false;

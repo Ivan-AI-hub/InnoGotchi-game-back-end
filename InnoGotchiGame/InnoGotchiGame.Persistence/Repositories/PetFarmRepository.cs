@@ -18,8 +18,14 @@ namespace InnoGotchiGame.Persistence.Repositories
         }
         public bool IsItemExist(int id)
         {
-            return _context.PetFarms.Any(x => x.Id == id);
+            return IsItemExist(x => x.Id == id);
         }
+
+        public bool IsItemExist(Func<PetFarm, bool> func)
+        {
+            return _context.PetFarms.Any(func);
+        }
+
         public PetFarm? GetItem(Func<PetFarm, bool> predicate)
         {
             return GetItems().FirstOrDefault(predicate);

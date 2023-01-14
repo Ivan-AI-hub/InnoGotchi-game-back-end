@@ -43,7 +43,12 @@ namespace InnoGotchiGame.Persistence.Repositories
 
         public bool IsItemExist(int id)
         {
-            return _context.Pictures.Any(x => x.Id == id);
+            return IsItemExist(x => x.Id == id);
+        }
+
+        public bool IsItemExist(Func<Picture, bool> func)
+        {
+            return _context.Pictures.Any(func);
         }
 
         public void Save()

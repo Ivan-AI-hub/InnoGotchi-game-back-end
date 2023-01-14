@@ -191,8 +191,7 @@ namespace InnoGotchiGame.Application.Managers
 
         private bool IsUniqueEmail(string email, ManagerRezult managerRezult)
         {
-            var quary = GetUsersQuary();
-            if (quary.Any(x => x.Email == email))
+            if (_repository.IsItemExist(x => x.Email == email))
             {
                 managerRezult.Errors.Add("A user with the same Email already exists in the database");
                 return false;

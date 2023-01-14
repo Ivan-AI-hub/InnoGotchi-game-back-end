@@ -70,7 +70,7 @@ namespace InnoGotchiGame.Application.Managers
         {
 
             var managerRez = new ManagerRezult();
-            if (CheckPetId(id, managerRez) && IsPetAlive(id, managerRez))
+            if (IsPetAlive(id, managerRez))
             {
                 var dataPet = _repository.GetItemById(id);
                 dataPet.Statistic.Name = name;
@@ -94,7 +94,7 @@ namespace InnoGotchiGame.Application.Managers
         public ManagerRezult Feed(int id, int feederId)
         {
             var managerRez = new ManagerRezult();
-            if (CheckPetId(id, managerRez) && IsPetAlive(id, managerRez))
+            if (IsPetAlive(id, managerRez))
             {
                 var dataPet = _repository.GetItemById(id);
                 if (dataPet.Farm.Owner.Id == feederId || dataPet.Farm.Owner.GetUserColaborators().Any(x => x.Id == feederId))
@@ -123,7 +123,7 @@ namespace InnoGotchiGame.Application.Managers
         public ManagerRezult GiveDrink(int id, int drinkerId)
         {
             var managerRez = new ManagerRezult();
-            if (CheckPetId(id, managerRez) && IsPetAlive(id, managerRez))
+            if (IsPetAlive(id, managerRez))
             {
                 var dataPet = _repository.GetItemById(id);
                 if (dataPet.Farm.Owner.Id == drinkerId || dataPet.Farm.Owner.GetUserColaborators().Any(x => x.Id == drinkerId))
@@ -150,10 +150,10 @@ namespace InnoGotchiGame.Application.Managers
         public ManagerRezult SetDeadStatus(int id)
         {
             var managerRez = new ManagerRezult();
-            if (CheckPetId(id, managerRez) && IsPetAlive(id, managerRez))
+            if (IsPetAlive(id, managerRez))
             {
                 var dataPet = _repository.GetItemById(id);
-                dataPet.Statistic.DeadDate = DateTime.UtcNow;
+                dataPet!.Statistic.DeadDate = DateTime.UtcNow;
                 dataPet.Statistic.IsAlive = false;
 
                 _repository.Update(id, dataPet);
@@ -210,8 +210,7 @@ namespace InnoGotchiGame.Application.Managers
 
         private bool IsUniqueName(string name, ManagerRezult managerRezult)
         {
-            var quary = GetPetsQuary();
-            if (quary.Any(x => x.Statistic.Name == name))
+            if (_repository.IsItemExist(x => x.Statistic.Name == name))
             {
                 managerRezult.Errors.Add("A pet with the same Name already exists in the database");
                 return false;
@@ -228,14 +227,19 @@ namespace InnoGotchiGame.Application.Managers
             }
             return true;
         }
+
         private bool IsPetAlive(int id, ManagerRezult rezult)
         {
-            if (_repository.GetItemById(id).Statistic.IsAlive == false)
+            if (CheckPetId(id, rezult))
             {
+                if (_repository.GetItemById(id)!.Statistic.IsAlive != false)
+                {
+                    return true;
+                }
+
                 rezult.Errors.Add("The pet dead already");
-                return false;
             }
-            return true;
+            return false;
         }
     }
 }
