@@ -47,6 +47,7 @@ namespace InnoGotchiGame.Persistence.Repositories
         public bool Delete(int id)
         {
             var user = GetItemById(id);
+            _context.ChangeTracker.Clear();
             if (user != null)
             {
                 _context.Users.Remove(user);
@@ -71,6 +72,7 @@ namespace InnoGotchiGame.Persistence.Repositories
         private IQueryable<User> GetFullData()
         {
             var users = _context.Users
+                .AsNoTracking()
                 .Include(x => x.Picture)
                 .Include(x => x.OwnPetFarm)
                     .ThenInclude(x => x.Pets)
@@ -85,7 +87,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 
         private IQueryable<User> GetOnlyDiscribeData()
         {
-            var users = _context.Users.Include(x => x.Picture);
+            var users = _context.Users.AsNoTracking().Include(x => x.Picture);
 
 
             return users;

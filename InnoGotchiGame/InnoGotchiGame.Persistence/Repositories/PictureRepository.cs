@@ -1,5 +1,6 @@
 ﻿using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Persistence.Repositories
 {
@@ -18,6 +19,7 @@ namespace InnoGotchiGame.Persistence.Repositories
         public bool Delete(int id)
         {
             var picture = _context.Pictures.FirstOrDefault(x => x.Id == id);
+            _context.ChangeTracker.Clear();
             if (picture != null)
             {
                 _context.Pictures.Remove(picture);
@@ -38,7 +40,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 
         public IQueryable<Picture> GetItems()
         {
-            return _context.Pictures.AsQueryable();
+            return _context.Pictures.AsQueryable().AsNoTracking();
         }
 
         public bool IsItemExist(int id)
@@ -59,6 +61,7 @@ namespace InnoGotchiGame.Persistence.Repositories
         public void Update(int updatedId, Picture item)
         {
             item.Id = updatedId;
+            _context.ChangeTracker.Clear();
             _context.Pictures.Update(item);
         }
     }

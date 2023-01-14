@@ -39,12 +39,14 @@ namespace InnoGotchiGame.Persistence.Repositories
         public void Update(int updatedId, PetFarm item)
         {
             item.Id = updatedId;
+            _context.ChangeTracker.Clear();
             _context.PetFarms.Update(item);
         }
 
         public bool Delete(int id)
         {
             var petFarm = GetItemById(id);
+            _context.ChangeTracker.Clear();
             if (petFarm != null)
             {
                 _context.PetFarms.Remove(petFarm);
@@ -56,6 +58,7 @@ namespace InnoGotchiGame.Persistence.Repositories
         public IQueryable<PetFarm> GetItems()
         {
             var petFarms = _context.PetFarms
+                .AsNoTracking()
                 .Include(x => x.Owner)
                 .Include(x => x.Pets)
                     .ThenInclude(x => x.View.Picture);

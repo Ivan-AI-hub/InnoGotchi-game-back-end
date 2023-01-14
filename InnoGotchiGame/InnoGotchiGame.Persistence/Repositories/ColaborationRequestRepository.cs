@@ -20,6 +20,7 @@ namespace InnoGotchiGame.Persistence.Repositories
         public bool Delete(int id)
         {
             var request = GetItemById(id);
+            _context.ChangeTracker.Clear();
             if (request == null)
                 return false;
 
@@ -39,7 +40,10 @@ namespace InnoGotchiGame.Persistence.Repositories
 
         public IQueryable<ColaborationRequest> GetItems()
         {
-            return _context.ColaborationRequests.Include(x => x.RequestReceiver).Include(x => x.RequestSender);
+            return _context.ColaborationRequests
+                .AsNoTracking()
+                .Include(x => x.RequestReceiver)
+                .Include(x => x.RequestSender);
         }
 
         public bool IsItemExist(int id)
@@ -59,6 +63,7 @@ namespace InnoGotchiGame.Persistence.Repositories
         public void Update(int updatedId, ColaborationRequest item)
         {
             item.Id = updatedId;
+            _context.ChangeTracker.Clear();
             _context.ColaborationRequests.Update(item);
         }
     }
