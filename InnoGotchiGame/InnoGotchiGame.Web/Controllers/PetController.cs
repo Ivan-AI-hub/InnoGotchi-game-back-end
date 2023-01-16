@@ -108,14 +108,14 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut("{petId}/dead")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult SetDeadStatus(int petId)
+        public IActionResult SetDeadStatus(int petId, DateTime deadDate)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var rezult = _petManager.SetDeadStatus(petId);
+            var rezult = _petManager.SetDeadStatus(petId, deadDate);
 
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);

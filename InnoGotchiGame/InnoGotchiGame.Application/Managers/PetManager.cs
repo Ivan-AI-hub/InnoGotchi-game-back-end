@@ -149,13 +149,13 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="id">Pet id</param>
         /// <returns>Result of method execution</returns>
-        public ManagerRezult SetDeadStatus(int id)
+        public ManagerRezult SetDeadStatus(int id, DateTime deadDate)
         {
             var managerRez = new ManagerRezult();
             if (IsPetAlive(id, managerRez))
             {
                 var dataPet = _petRepository.GetItemById(id);
-                dataPet!.Statistic.DeadDate = DateTime.UtcNow;
+                dataPet!.Statistic.DeadDate = deadDate;
                 dataPet.Statistic.IsAlive = false;
 
                 _petRepository.Update(id, dataPet);
