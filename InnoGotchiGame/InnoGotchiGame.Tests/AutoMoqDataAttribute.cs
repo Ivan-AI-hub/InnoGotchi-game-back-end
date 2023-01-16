@@ -10,9 +10,6 @@ namespace InnoGotchiGame.Tests
         public AutoMoqDataAttribute()
             : base(new Fixture().Customize(new AutoMoqCustomization()))
         {
-            Fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
-                    .ForEach(b => Fixture.Behaviors.Remove(b));
-            Fixture.Behaviors.Add(new OmitOnRecursionBehavior());
         }
     }
 }

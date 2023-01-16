@@ -242,7 +242,8 @@ namespace InnoGotchiGame.Application.Managers
         {
             if (CheckPetId(id, rezult))
             {
-                if (_petRepository.GetItemById(id)!.Statistic.IsAlive != false)
+                var pet = _petRepository.GetItemById(id);
+                if (pet!.Statistic.IsAlive != false)
                 {
                     return true;
                 }

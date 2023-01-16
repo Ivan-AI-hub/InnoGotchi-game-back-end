@@ -9,5 +9,11 @@
 
         public int FarmId { get; set; }
         public PetFarm Farm { get; set; }
+
+        public Pet()
+        {
+            Statistic = new PetStatistic();
+            View = new PetView();
+        }
     }
 }
