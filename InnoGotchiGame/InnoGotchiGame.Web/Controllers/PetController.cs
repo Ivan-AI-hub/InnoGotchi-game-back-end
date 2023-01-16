@@ -79,6 +79,28 @@ namespace InnoGotchiGame.Web.Controllers
         }
 
         /// <summary>
+        /// Feeds a pet with a special id
+        /// </summary>
+        /// <param name="petId">Pet id</param>
+        [HttpPut("{petId}/resetHappinessDay")]
+        [ProducesResponseType(200)]
+        [ProducesResponseType(typeof(List<string>), 400)]
+        public IActionResult ResetHappinessDay(int petId)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest();
+            }
+
+            var rezult = _petManager.ResetHappinessDay(petId);
+
+            if (!rezult.IsComplete)
+                return BadRequest(rezult.Errors);
+
+            return Ok();
+        }
+
+        /// <summary>
         /// Gives a drink to a pet with a special id
         /// </summary>
         /// <param name="petId">Pet id</param>

@@ -165,6 +165,25 @@ namespace InnoGotchiGame.Application.Managers
         }
 
         /// <summary>
+        /// Resets HappinessDay for the pet
+        /// </summary>
+        /// <param name="id">Pet id</param>
+        /// <returns>Result of method execution</returns>
+        public ManagerRezult ResetHappinessDay(int id)
+        {
+            var managerRez = new ManagerRezult();
+            if (IsPetAlive(id, managerRez))
+            {
+                var dataPet = _petRepository.GetItemById(id);
+                dataPet!.Statistic.FirstHappinessDay = DateTime.UtcNow;
+
+                _petRepository.Update(id, dataPet);
+                _petRepository.Save();
+            }
+            return managerRez;
+        }
+
+        /// <summary>
         /// Deletes the pet 
         /// </summary>
         /// <param name="id">Pet id</param>
