@@ -113,7 +113,7 @@ namespace InnoGotchiGame.Tests
             var pet = GetValidPet(manager);
 
             //act
-            var rez = manager.SetDeadStatus(pet.Id);
+            var rez = manager.SetDeadStatus(pet.Id, DateTime.UtcNow);
             var newPet = manager.GetPetById(pet.Id);
             //assert
             Assert.True(rez.IsComplete, String.Concat(rez.Errors));
