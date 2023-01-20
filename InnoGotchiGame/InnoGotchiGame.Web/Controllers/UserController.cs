@@ -180,8 +180,8 @@ namespace InnoGotchiGame.Web.Controllers
                 return BadRequest(new { errorText = "Invalid email or password." });
             }
 
-            var claims = new List<Claim> 
-            { 
+            var claims = new List<Claim>
+            {
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(nameof(TokenClaims.UserId), user.Id.ToString())
             };

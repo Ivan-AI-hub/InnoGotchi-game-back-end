@@ -112,7 +112,7 @@ namespace InnoGotchiGame.Application.Managers
 
         private bool IsUniqueName(string name, ManagerRezult managerRezult)
         {
-            if (_repository.IsItemExist(x => x.Name == name))
+            if (_repository.IsItemExist(x => x.Name.ToLower() == name.ToLower()))
             {
                 managerRezult.Errors.Add("A farm with the same Name already exists in the database");
                 return false;

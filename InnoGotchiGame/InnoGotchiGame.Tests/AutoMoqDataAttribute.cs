@@ -1,7 +1,4 @@
-﻿using AutoFixture;
-using AutoFixture.AutoMoq;
-using AutoFixture.Xunit2;
-using InnoGotchiGame.Domain;
+﻿using AutoFixture.Xunit2;
 
 namespace InnoGotchiGame.Tests
 {

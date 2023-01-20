@@ -32,7 +32,7 @@ namespace InnoGotchiGame.Tests
                     Mock<AbstractValidator<Pet>> validator)
         {
             petRepository.Setup(x => x.IsItemExist(It.IsAny<int>())).Returns(true);
-            petRepository.Setup(x => x.GetItemById(It.IsAny<int>())).Returns(new Pet() { Statistic = new PetStatistic() { IsAlive = true} });
+            petRepository.Setup(x => x.GetItemById(It.IsAny<int>())).Returns(new Pet() { Statistic = new PetStatistic() { IsAlive = true } });
             var mock = new Mock<PetManager>(petRepository.Object, farmRepository.Object, mapper.Object, validator.Object);
             var controller = new PetController(mock.Object);
             var rezult = controller.Put(updateModel);

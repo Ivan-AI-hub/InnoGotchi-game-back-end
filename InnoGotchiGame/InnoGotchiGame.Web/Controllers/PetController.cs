@@ -1,5 +1,4 @@
-﻿using AutoMapper;
-using InnoGotchiGame.Application.Filtrators;
+﻿using InnoGotchiGame.Application.Filtrators;
 using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters;

@@ -1,8 +1,8 @@
 ﻿using InnoGotchiGame.Application.Filtrators;
 using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
-using InnoGotchiGame.Application.Sorters.SortRules;
 using InnoGotchiGame.Application.Sorters;
+using InnoGotchiGame.Application.Sorters.SortRules;
 using InnoGotchiGame.Web.Models.PetFarms;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,7 +33,7 @@ namespace InnoGotchiGame.Web.Controllers
 
             var userId = GetAuthUserId();
             var rezult = _farmManager.Add(userId, addFarmModel.Name);
-            
+
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
 

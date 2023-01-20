@@ -19,15 +19,15 @@ namespace InnoGotchiGame.Tests
 
             _fixture.Register<IRepository<User>>(() => new UserRepository(context));
             _fixture.Register<AbstractValidator<User>>(() => new UserValidator());
-            
-            var config = new MapperConfiguration(cnf => cnf.AddProfiles(new List<Profile>() { new AssemblyMappingProfile()}));
+
+            var config = new MapperConfiguration(cnf => cnf.AddProfiles(new List<Profile>() { new AssemblyMappingProfile() }));
             _fixture.Register<IMapper>(() => new Mapper(config));
         }
 
         [Fact]
         public void Add_Valid_User()
         {
-            
+
             var user = GetValidUser();
             var manager = _fixture.Create<UserManager>();
 
@@ -134,7 +134,7 @@ namespace InnoGotchiGame.Tests
         [Fact]
         public void Get_Users_Successfully()
         {
-            
+
             var manager = _fixture.Create<UserManager>();
             var users = new List<UserDTO>();
             int usersCount = 4;

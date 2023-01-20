@@ -231,7 +231,7 @@ namespace InnoGotchiGame.Application.Managers
 
         private bool IsUniqueName(string name, ManagerRezult managerRezult)
         {
-            if (_petRepository.IsItemExist(x => x.Statistic.Name == name))
+            if (_petRepository.IsItemExist(x => x.Statistic.Name.ToLower() == name.ToLower()))
             {
                 managerRezult.Errors.Add("A pet with the same Name already exists in the database");
                 return false;

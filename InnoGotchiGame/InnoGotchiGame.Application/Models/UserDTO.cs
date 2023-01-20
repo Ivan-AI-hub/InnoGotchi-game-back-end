@@ -33,6 +33,15 @@ namespace InnoGotchiGame.Application.Models
             Email = email;
         }
 
+        public UserDTO()
+        {
+            SentColaborations = new List<ColaborationRequestDTO>();
+            AcceptedColaborations = new List<ColaborationRequestDTO>();
+            FirstName = "";
+            LastName = "";
+            Email = "";
+        }
+
         /// <returns>All colaborators of user</returns>
         public IEnumerable<UserDTO> GetUserColaborators()
         {
