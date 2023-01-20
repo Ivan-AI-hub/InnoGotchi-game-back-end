@@ -17,17 +17,18 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+IEnumerable<string> allowedOrigins = builder.Configuration.GetSection("AllowedSpecificOrigins").AsEnumerable().Select(x => x.Value).Where(x => x != null)!;
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(name: MyAllowSpecificOrigins,
                       policy =>
                       {
-                          policy.WithOrigins("https://localhost:7192",
-                                             "http://localhost:5058")
+                          policy.WithOrigins(allowedOrigins.ToArray())
                                             .AllowAnyHeader()
                                             .AllowAnyMethod();
                       });
 });
+
 
 
 builder.Services.AddControllers().AddJsonOptions(options =>
