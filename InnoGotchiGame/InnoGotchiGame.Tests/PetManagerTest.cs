@@ -1,4 +1,5 @@
 ﻿using InnoGotchiGame.Application.Filtrators;
+using InnoGotchiGame.Persistence.Managers;
 
 namespace InnoGotchiGame.Tests
 {
@@ -17,57 +18,56 @@ namespace InnoGotchiGame.Tests
                     .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-            _fixture.Register<IRepository<Pet>>(() => new PetRepository(context));
+            _fixture.Register<IRepositoryManager>(() => new RepositoryManager(context));
             _fixture.Register<AbstractValidator<Pet>>(() => new PetValidator());
-            _fixture.Register<IRepository<PetFarm>>(() => new PetFarmRepository(context));
 
             var config = new MapperConfiguration(cnf => cnf.AddProfiles(new List<Profile>() { new AssemblyMappingProfile() }));
             _fixture.Register<IMapper>(() => new Mapper(config));
         }
 
         [Fact]
-        public void Add_Valid_Pet()
+        public async void Add_Valid_Pet()
         {
 
-            var farmId = GetFarmId();
+            var farmId = await GetFarmIdAsync();
             var petName = _fixture.Create<string>();
             var view = _fixture.Create<PetViewDTO>();
             var manager = _fixture.Create<PetManager>();
 
-            var rez = manager.Add(farmId, petName, view);
+            var rez = await manager.AddAsync(farmId, petName, view);
 
             Assert.True(rez.IsComplete, String.Concat(rez.Errors));
         }
 
         [Fact]
-        public void Add_Invalid_Pet()
+        public async void Add_Invalid_Pet()
         {
 
-            var farmId = GetFarmId();
+            var farmId = await GetFarmIdAsync();
             var petName = "";
             var view = _fixture.Create<PetViewDTO>();
             var manager = _fixture.Create<PetManager>();
 
-            var rez = manager.Add(farmId, petName, view);
+            var rez = await manager.AddAsync(farmId, petName, view);
 
             Assert.False(rez.IsComplete, String.Concat(rez.Errors));
         }
 
         [Fact]
-        public void Update_Successfully()
+        public async void Update_Successfully()
         {
             //arrange
             var manager = _fixture.Create<PetManager>();
-            var pet = GetValidPet(manager);
+            var pet = await GetValidPetAsync(manager);
             var petSecondName = _fixture.Create<string>();
 
             //act
 
-            var rez = manager.Update(pet.Id, petSecondName);
+            var rez = await manager.UpdateAsync(pet.Id, petSecondName);
             var updatedPet = new PetDTO();
             if (rez.IsComplete)
             {
-                updatedPet = manager.GetPets(new PetFiltrator() { Name = petSecondName }).First();
+                updatedPet = (await manager.GetPetsAsync(new PetFiltrator() { Name = petSecondName })).First();
             }
 
             //assert
@@ -76,54 +76,54 @@ namespace InnoGotchiGame.Tests
         }
 
         [Fact]
-        public void Feed_Successfully()
+        public async void Feed_Successfully()
         {
             //arrange
             var manager = _fixture.Create<PetManager>();
-            var pet = GetValidPet(manager);
+            var pet = await GetValidPetAsync(manager);
 
             //act
-            var rez = manager.Feed(pet.Id, pet.Farm.OwnerId);
-            var newPet = manager.GetPetById(pet.Id);
+            var rez = await manager.FeedAsync(pet.Id, pet.Farm.OwnerId);
+            var newPet = await manager.GetPetByIdAsync(pet.Id);
             //assert
             Assert.True(rez.IsComplete, String.Concat(rez.Errors));
             newPet!.Statistic.FeedingCount.Should().BeGreaterThan(pet.Statistic.FeedingCount);
         }
 
         [Fact]
-        public void Give_Drink_Successfully()
+        public async void Give_Drink_Successfully()
         {
             //arrange
             var manager = _fixture.Create<PetManager>();
-            var pet = GetValidPet(manager);
+            var pet = await GetValidPetAsync(manager);
 
             //act
-            var rez = manager.GiveDrink(pet.Id, pet.Farm.OwnerId);
-            var newPet = manager.GetPetById(pet.Id);
+            var rez = await manager.GiveDrinkAsync(pet.Id, pet.Farm.OwnerId);
+            var newPet = await manager.GetPetByIdAsync(pet.Id);
             //assert
             Assert.True(rez.IsComplete, String.Concat(rez.Errors));
             newPet!.Statistic.DrinkingCount.Should().BeGreaterThan(pet.Statistic.DrinkingCount);
         }
 
         [Fact]
-        public void Set_Dead_Status_Successfully()
+        public async void Set_Dead_Status_Successfully()
         {
             //arrange
             var manager = _fixture.Create<PetManager>();
-            var pet = GetValidPet(manager);
+            var pet = GetValidPetAsync(manager);
 
             //act
-            var rez = manager.SetDeadStatus(pet.Id, DateTime.UtcNow);
-            var newPet = manager.GetPetById(pet.Id);
+            var rez = await manager.SetDeadStatusAsync(pet.Id, DateTime.UtcNow);
+            var newPet = await manager.GetPetByIdAsync(pet.Id);
             //assert
             Assert.True(rez.IsComplete, String.Concat(rez.Errors));
             newPet!.Statistic.IsAlive.Should().BeFalse();
             newPet!.Statistic.DeadDate.Should().NotBeNull();
         }
 
-        private int GetFarmId()
+        private async Task<int> GetFarmIdAsync()
         {
-            var farmRepository = _fixture.Create<IRepository<PetFarm>>();
+            var repManager = _fixture.Create<IRepositoryManager>();
             var farm = _fixture.Build<PetFarm>()
                 .Without(x => x.Id)
                 .Without(x => x.OwnerId)
@@ -138,20 +138,20 @@ namespace InnoGotchiGame.Tests
                 .Without(x => x.SentColaborations)
                 .Create();
 
-            var farmId = farmRepository.Add(farm);
-            farmRepository.Save();
-            return farmId;
+            repManager.PetFarm.Create(farm);
+            await repManager.SaveAsync();
+            return farm.Id;
         }
 
-        private PetDTO GetValidPet(PetManager manager)
+        private async Task<PetDTO> GetValidPetAsync(PetManager manager)
         {
-            var farmId = GetFarmId();
+            var farmId = await GetFarmIdAsync();
             var name = _fixture.Create<string>();
             var view = _fixture.Create<PetViewDTO>();
 
-            manager.Add(farmId, name, view);
-            var pet = manager.GetPets(new PetFiltrator() { Name = name }).First();
-            return manager.GetPetById(pet.Id)!;
+            await manager.AddAsync(farmId, name, view);
+            var pet = (await manager.GetPetsAsync(new PetFiltrator() { Name = name })).First();
+            return await manager.GetPetByIdAsync(pet.Id);
         }
     }
 }

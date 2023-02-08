@@ -24,6 +24,7 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.ConfigureCors(builder.Configuration, MyAllowSpecificOrigins);
 builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureSqlContext(builder.Configuration);
+builder.Services.ConfigureRepositoryManager();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
@@ -35,21 +36,16 @@ var config = new MapperConfiguration(cnf => cnf.AddProfiles(new List<Profile>() 
 builder.Services.AddTransient<IMapper>(x => new Mapper(config));
 
 builder.Services.AddTransient<AbstractValidator<User>, UserValidator>();
-builder.Services.AddTransient<IRepository<User>, UserRepository>();
 builder.Services.AddTransient<UserManager>();
 
 builder.Services.AddTransient<AbstractValidator<Picture>, PictureValidator>();
-builder.Services.AddTransient<IRepository<Picture>, PictureRepository>();
 builder.Services.AddTransient<PictureManager>();
 
-builder.Services.AddTransient<IRepository<ColaborationRequest>, ColaborationRequestRepository>();
 builder.Services.AddTransient<ColaborationRequestManager>();
 
-builder.Services.AddTransient<IRepository<Pet>, PetRepository>();
 builder.Services.AddTransient<AbstractValidator<Pet>, PetValidator>();
 builder.Services.AddTransient<PetManager>();
 
-builder.Services.AddTransient<IRepository<PetFarm>, PetFarmRepository>();
 builder.Services.AddTransient<AbstractValidator<PetFarm>, PetFarmValidator>();
 builder.Services.AddTransient<PetFarmManager>();
 

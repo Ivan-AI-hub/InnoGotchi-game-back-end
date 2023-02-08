@@ -1,4 +1,6 @@
-﻿namespace InnoGotchiGame.Tests
+﻿using InnoGotchiGame.Persistence.Managers;
+
+namespace InnoGotchiGame.Tests
 {
     public class PetRepositoryTest
     {
@@ -16,37 +18,36 @@
                     .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-            _fixture.Register<PetRepository>(() => new PetRepository(context));
-            _fixture.Register<IRepository<PetFarm>>(() => new PetFarmRepository(context));
+            _fixture.Register<IRepositoryManager>(() => new RepositoryManager(context));
         }
 
         [Fact]
         public void Add_Successfuly()
         {
-            var repository = _fixture.Create<PetRepository>();
+            var repManager = _fixture.Create<IRepositoryManager>();
             var pet = _fixture.Create<Pet>();
 
-            var petId = repository.Add(pet);
+            repManager.Pet.Create(pet);
 
-            petId.Should().BeGreaterThan(0);
+            pet.Id.Should().BeGreaterThan(0);
         }
 
         [Fact]
-        public void Delete_Successfuly()
+        public async void Delete_Successfuly()
         {
-            var repository = _fixture.Create<PetRepository>();
-            var pet = GetValidPet();
+            var repositoryManager = _fixture.Create<IRepositoryManager>();
+            var pet = await GetValidPetAsync();
 
-            var petId = repository.Add(pet);
-            repository.Save();
-            repository.Delete(petId);
-            repository.Save();
-            var dataPet = repository.GetItemById(petId);
+            repositoryManager.Pet.Create(pet);
+            repositoryManager.SaveAsync().Wait();
+            repositoryManager.Pet.Delete(pet);
+            repositoryManager.SaveAsync().Wait();
+            var dataPet = await repositoryManager.Pet.FirstOrDefaultAsync(x => x.Id == pet.Id, false);
 
             dataPet.Should().BeNull();
         }
 
-        private Pet GetValidPet()
+        private async Task<Pet> GetValidPetAsync()
         {
             var pet = _fixture.Build<Pet>()
                 .Without(x => x.Id)
@@ -56,12 +57,12 @@
                 .Create();
             pet.View = _fixture.Build<PetView>()
                 .Without(x => x.Picture).Create();
-            pet.FarmId = GetFarmId();
+            pet.FarmId = await GetFarmIdAsync();
             return pet;
         }
-        private int GetFarmId()
+        private async Task<int> GetFarmIdAsync()
         {
-            var farmRepository = _fixture.Create<IRepository<PetFarm>>();
+            var repositoryManager = _fixture.Create<IRepositoryManager>();
             var farm = _fixture.Build<PetFarm>()
                 .Without(x => x.Id)
                 .Without(x => x.OwnerId)
@@ -76,9 +77,9 @@
                 .Without(x => x.SentColaborations)
                 .Create();
 
-            var farmId = farmRepository.Add(farm);
-            farmRepository.Save();
-            return farmId;
+            repositoryManager.PetFarm.Create(farm);
+            await repositoryManager.SaveAsync();
+            return farm.Id;
         }
     }
 }

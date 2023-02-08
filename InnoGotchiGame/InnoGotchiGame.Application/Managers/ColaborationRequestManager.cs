@@ -31,10 +31,10 @@ namespace InnoGotchiGame.Application.Managers
 
             var isSingleRequest = await _requestRepository.IsItemExistAsync(x => x.RequestSenderId == senderId && x.RequestReceiverId == recipientId ||
                                                            x.RequestReceiverId == senderId && x.RequestSenderId == recipientId);
-            if (isSingleRequest)
+            if (!isSingleRequest)
             {
                 _requestRepository.Create(request);
-                await _repositoryManager.SaveAsync();
+                _repositoryManager.SaveAsync().Wait();
             }
             else
             {
@@ -64,7 +64,7 @@ namespace InnoGotchiGame.Application.Managers
                 {
                     request.Status = ColaborationRequestStatus.Colaborators;
                     _requestRepository.Update(request);
-                    await _repositoryManager.SaveAsync();
+                    _repositoryManager.SaveAsync().Wait();
                 }
             }
             else
@@ -96,7 +96,7 @@ namespace InnoGotchiGame.Application.Managers
                 {
                     request.Status = ColaborationRequestStatus.NotColaborators;
                     _requestRepository.Update(request);
-                    await _repositoryManager.SaveAsync();
+                    _repositoryManager.SaveAsync().Wait();
                 }
             }
             else
@@ -119,7 +119,7 @@ namespace InnoGotchiGame.Application.Managers
             if (request != null)
             {
                 _requestRepository.Delete(request);
-                await _repositoryManager.SaveAsync();
+                _repositoryManager.SaveAsync().Wait();
             }
             else
             {

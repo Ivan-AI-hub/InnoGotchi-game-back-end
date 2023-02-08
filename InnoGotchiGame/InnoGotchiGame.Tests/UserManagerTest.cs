@@ -1,3 +1,5 @@
+using InnoGotchiGame.Persistence.Managers;
+
 namespace InnoGotchiGame.Tests
 {
     public class UserManagerTest
@@ -17,7 +19,7 @@ namespace InnoGotchiGame.Tests
                     .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-            _fixture.Register<IRepository<User>>(() => new UserRepository(context));
+            _fixture.Register<IRepositoryManager>(() => new RepositoryManager(context));
             _fixture.Register<AbstractValidator<User>>(() => new UserValidator());
 
             var config = new MapperConfiguration(cnf => cnf.AddProfiles(new List<Profile>() { new AssemblyMappingProfile() }));
@@ -25,75 +27,75 @@ namespace InnoGotchiGame.Tests
         }
 
         [Fact]
-        public void Add_Valid_User()
+        public async void Add_Valid_User()
         {
 
             var user = GetValidUser();
             var manager = _fixture.Create<UserManager>();
 
-            var rez = manager.Add(user, "Test_1234");
+            var rez = await manager.AddAsync(user, "Test_1234");
             Assert.True(rez.IsComplete, String.Concat(rez.Errors));
         }
 
         [Fact]
-        public void Add_Invalid_User()
+        public async void Add_Invalid_User()
         {
             var user = GetInvalidUser();
             var manager = _fixture.Create<UserManager>();
 
-            var rez = manager.Add(user, "Test_1234");
+            var rez = await manager.AddAsync(user, "Test_1234");
 
             Assert.False(rez.IsComplete, String.Concat(rez.Errors));
         }
 
         [Fact]
-        public void Update_Data_Valid()
+        public async void Update_Data_Valid()
         {
             var user = GetValidUser();
             var manager = _fixture.Create<UserManager>();
 
-            manager.Add(user, "Test_1234");
+            await manager.AddAsync(user, "Test_1234");
 
             user.FirstName = "SecondUpdate";
 
-            var rez = manager.UpdateData(user.Id, user);
+            var rez = await manager.UpdateDataAsync(user.Id, user);
 
             Assert.True(rez.IsComplete, String.Concat(rez.Errors));
-            manager.GetUserById(user.Id)!.FirstName.Should().Be("SecondUpdate");
+            (await manager.GetUserByIdAsync(user.Id)).FirstName.Should().Be("SecondUpdate");
         }
 
         [Fact]
-        public void Update_Data_Invalid()
+        public async void Update_Data_Invalid()
         {
             var user = GetValidUser();
             var manager = _fixture.Create<UserManager>();
 
-            manager.Add(user, "Test_1234");
+            await manager.AddAsync(user, "Test_1234");
 
             user.FirstName = "";
 
-            var rez = manager.UpdateData(user.Id, user);
+            var rez = await manager.UpdateDataAsync(user.Id, user);
 
             Assert.False(rez.IsComplete);
         }
 
         [Fact]
-        public void Update_Password_Valid()
+        public async void Update_Password_Valid()
         {
             var user = GetValidUser();
             var manager = _fixture.Create<UserManager>();
 
             var firstPassword = _fixture.Create<string>();
             var secondPassword = _fixture.Create<string>();
-            manager.Add(user, firstPassword);
+            await manager.AddAsync(user, firstPassword);
 
-            var rez = manager.UpdatePassword(user.Id, firstPassword, secondPassword);
+            var rez = await manager.UpdatePasswordAsync(user.Id, firstPassword, secondPassword);
 
             Assert.True(rez.IsComplete, String.Concat(rez.Errors));
         }
 
         [Fact]
-        public void Update_Password_InValid()
+        public async void Update_Password_InValid()
         {
             var user = GetValidUser();
             var manager = _fixture.Create<UserManager>();
@@ -101,38 +103,38 @@ namespace InnoGotchiGame.Tests
             var firstPassword = _fixture.Create<string>();
             var secondPassword = _fixture.Create<string>();
 
-            manager.Add(user, firstPassword);
+            await manager.AddAsync(user, firstPassword);
 
-            var rez = manager.UpdatePassword(user.Id, secondPassword, firstPassword);
+            var rez = await manager.UpdatePasswordAsync(user.Id, secondPassword, firstPassword);
 
             Assert.False(rez.IsComplete, String.Concat(rez.Errors));
         }
 
         [Fact]
-        public void Update_non_existent_id()
+        public async void Update_non_existent_id()
         {
             var user = GetValidUser();
             var manager = _fixture.Create<UserManager>();
 
-            var rez = manager.UpdateData(100, user);
+            var rez = await manager.UpdateDataAsync(100, user);
 
             Assert.False(rez.IsComplete);
         }
 
         [Fact]
-        public void Delete_Valid_User()
+        public async void Delete_Valid_User()
         {
             var user = GetValidUser();
             var manager = _fixture.Create<UserManager>();
 
-            manager.Add(user, "Test_1234");
-            var rez = manager.Delete(user.Id);
+            await manager.AddAsync(user, "Test_1234");
+            var rez = await manager.DeleteAsync(user.Id);
 
             Assert.True(rez.IsComplete, String.Concat(rez.Errors));
         }
 
         [Fact]
-        public void Get_Users_Successfully()
+        public async void Get_Users_Successfully()
         {
 
             var manager = _fixture.Create<UserManager>();
@@ -144,9 +146,9 @@ namespace InnoGotchiGame.Tests
                 users.Add(user);
             }
 
-            users.ForEach(x => manager.Add(x, "Test_1234"));
+            users.ForEach(async x => await manager.AddAsync(x, "Test_1234"));
 
-            var dataBaseUsers = manager.GetUsers().ToList();
+            var dataBaseUsers = (await manager.GetUsersAsync()).ToList();
 
             for (int i = 0; i < users.Count; i++)
             {
@@ -155,15 +157,15 @@ namespace InnoGotchiGame.Tests
         }
 
         [Fact]
-        public void FindUser_Successfully()
+        public async void FindUser_Successfully()
         {
 
             var user = GetValidUser();
             var password = _fixture.Create<string>();
             var manager = _fixture.Create<UserManager>();
 
-            manager.Add(user, password);
-            var findedUser = manager.FindUserInDb(user.Email, password);
+            await manager.AddAsync(user, password);
+            var findedUser = await manager.FindUserInDbAsync(user.Email, password);
 
             findedUser!.Email.Should().Be(user.Email);
             findedUser.Id.Should().Be(user.Id);

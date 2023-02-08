@@ -38,7 +38,7 @@ namespace InnoGotchiGame.Application.Managers
             if (validationRezult.IsValid && await IsUniqueNameAsync(pictureData.Name, rezult))
             {
                 _pictureRepository.Create(pictureData);
-                await _repositoryManager.SaveAsync();
+                _repositoryManager.SaveAsync().Wait();
             }
             return rezult;
         }
@@ -57,7 +57,7 @@ namespace InnoGotchiGame.Application.Managers
             {
                 pictureData.Id = updatedId;
                 _pictureRepository.Update(pictureData);
-                await _repositoryManager.SaveAsync();
+                _repositoryManager.SaveAsync().Wait();
                 newPicture.Id = updatedId;
             }
             return rezult;
@@ -74,7 +74,7 @@ namespace InnoGotchiGame.Application.Managers
             if (await CheckPictureIdAsync(id, managerRez))
             {
                 _pictureRepository.Delete(await _pictureRepository.FirstOrDefaultAsync(x => x.Id == id, false));
-                await _repositoryManager.SaveAsync();
+                _repositoryManager.SaveAsync().Wait();
             }
             return managerRez;
         }

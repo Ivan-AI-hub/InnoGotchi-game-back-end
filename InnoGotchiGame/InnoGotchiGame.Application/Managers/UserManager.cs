@@ -44,7 +44,7 @@ namespace InnoGotchiGame.Application.Managers
             if (validationRezult.IsValid && await IsUniqueEmailAsync(user.Email, managerRezult))
             {
                 _userRepository.Create(dataUser);
-                await _repositoryManager.SaveAsync();
+                _repositoryManager.SaveAsync().Wait();
                 user.Id = dataUser.Id;
             }
             return managerRezult;
@@ -62,19 +62,16 @@ namespace InnoGotchiGame.Application.Managers
 
             if (await CheckUserIdAsync(updatedId, managerRezult))
             {
-                var oldUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, false);
-                dataUser.Id = oldUser!.Id;
-                dataUser.Email = oldUser.Email;
-                dataUser.PasswordHach = oldUser.PasswordHach;
-                dataUser.Picture = oldUser.Picture;
-                
+                var oldUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, true);
+                oldUser.Picture = dataUser.Picture;
+                oldUser.FirstName = dataUser.FirstName;
+                oldUser.LastName = dataUser.LastName;
 
-                var validationRezult = _validator.Validate(dataUser);
+                var validationRezult = _validator.Validate(oldUser);
                 managerRezult = new ManagerRezult(validationRezult);
                 if (managerRezult.IsComplete)
                 {
-                    _userRepository.Update(dataUser);
-                    await _repositoryManager.SaveAsync();
+                    _repositoryManager.SaveAsync().Wait();
                 }
             }
             return managerRezult;
@@ -97,7 +94,7 @@ namespace InnoGotchiGame.Application.Managers
                 if (dataUser.PasswordHach == StringToHach(oldPassword))
                 {
                     dataUser.PasswordHach = StringToHach(newPassword);
-                    await _repositoryManager.SaveAsync();
+                    _repositoryManager.SaveAsync().Wait();
                 }
                 else
                 {

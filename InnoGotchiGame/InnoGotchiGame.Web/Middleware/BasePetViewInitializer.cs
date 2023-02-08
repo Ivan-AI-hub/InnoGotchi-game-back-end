@@ -14,7 +14,7 @@ namespace InnoGotchiGame.Web.Middleware
             _next = next;
         }
 
-        public Task Invoke(HttpContext httpContext, PictureManager manager)
+        public async Task InvokeAsync(HttpContext httpContext, PictureManager manager)
         {
             if (!_isInitialize)
             {
@@ -22,31 +22,31 @@ namespace InnoGotchiGame.Web.Middleware
                 {
                     Description = "petView-nose"
                 };
-                if ((manager.GetAll(filter)).Count() == 0)
+                if ((await manager.GetAllAsync(filter)).Any())
                 {
                     for (int i = 1; i < 6; i++)
                     {
-                        AddImageToDb($"wwwroot/Resourses/Bodies/body{i}.svg", "petView-body", manager);
+                        await AddImageToDb($"wwwroot/Resourses/Bodies/body{i}.svg", "petView-body", manager);
                     }
                     for (int i = 1; i < 7; i++)
                     {
-                        AddImageToDb($"wwwroot/Resourses/Eyes/eyes{i}.svg", "petView-eyes", manager);
+                        await AddImageToDb($"wwwroot/Resourses/Eyes/eyes{i}.svg", "petView-eyes", manager);
                     }
                     for (int i = 1; i < 6; i++)
                     {
-                        AddImageToDb($"wwwroot/Resourses/Mouths/mouth{i}.svg", "petView-mouth", manager);
+                        await AddImageToDb($"wwwroot/Resourses/Mouths/mouth{i}.svg", "petView-mouth", manager);
                     }
                     for (int i = 1; i < 7; i++)
                     {
-                        AddImageToDb($"wwwroot/Resourses/Noses/nose{i}.svg", "petView-nose", manager);
+                        await AddImageToDb($"wwwroot/Resourses/Noses/nose{i}.svg", "petView-nose", manager);
                     }
                 }
                 _isInitialize = true;
             }
-            return _next.Invoke(httpContext);
+            await _next.Invoke(httpContext);
         }
 
-        private void AddImageToDb(string path, string description, PictureManager manager)
+        private async Task AddImageToDb(string path, string description, PictureManager manager)
         {
             var picture = new PictureDTO()
             {
@@ -55,7 +55,7 @@ namespace InnoGotchiGame.Web.Middleware
                 Format = "svg",
                 Image = File.ReadAllBytes(path).ToArray()
             };
-            manager.Add(picture);
+            await manager.AddAsync(picture);
         }
     }
 }
