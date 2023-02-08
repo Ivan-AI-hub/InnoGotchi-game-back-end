@@ -1,4 +1,5 @@
 ﻿using InnoGotchiGame.Persistence;
+using InnoGotchiGame.Persistence.Managers;
 using LoggerService;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
@@ -34,6 +35,11 @@ namespace InnoGotchiGame.Web.Extensions
             services.AddDbContext<InnoGotchiGameContext>(options => 
                                 options.UseSqlServer(connection, 
                                 b => b.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name)));
+        }
+
+        public static void ConfigureRepositoryManager(this IServiceCollection services)
+        {
+            services.AddScoped<IRepositoryManager, RepositoryManager>();
         }
     }
 }

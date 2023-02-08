@@ -215,11 +215,11 @@ namespace InnoGotchiGame.Application.Managers
         }
 
         /// <returns>A filtered and sorted page containing <paramref name="pageSize"/> pets</returns>
-        public IEnumerable<PetDTO> GetPetsPage(int pageSize, int pageNumber, Filtrator<Pet>? filtrator = null, Sorter<Pet>? sorter = null)
+        public async Task<IEnumerable<PetDTO>> GetPetsPageAsync(int pageSize, int pageNumber, Filtrator<Pet>? filtrator = null, Sorter<Pet>? sorter = null)
         {
             var pets = GetPetsQuary(filtrator, sorter);
             pets = pets.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
-            var petsList = pets.ToListAsync();
+            var petsList = await pets.ToListAsync();
             return _mapper.Map<IEnumerable<PetDTO>>(petsList);
         }
 

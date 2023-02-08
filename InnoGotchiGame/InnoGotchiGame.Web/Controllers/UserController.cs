@@ -33,7 +33,7 @@ namespace InnoGotchiGame.Web.Controllers
         [AllowAnonymous]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult Post([FromBody] AddUserModel addUserModel)
+        public async Task<IActionResult> PostAsync([FromBody] AddUserModel addUserModel)
         {
             if (!ModelState.IsValid)
             {
@@ -42,7 +42,7 @@ namespace InnoGotchiGame.Web.Controllers
 
             UserDTO user = _mapper.Map<UserDTO>(addUserModel);
 
-            var rezult = _userManager.Add(user, addUserModel.Password);
+            var rezult = await _userManager.AddAsync(user, addUserModel.Password);
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
 
@@ -56,7 +56,7 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut("data")]
         [ProducesResponseType(202)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult PutData([FromBody] UpdateUserDataModel updateUserModel)
+        public async Task<IActionResult> PutDataAsync([FromBody] UpdateUserDataModel updateUserModel)
         {
             if (!ModelState.IsValid)
             {
@@ -65,7 +65,7 @@ namespace InnoGotchiGame.Web.Controllers
 
             UserDTO user = _mapper.Map<UserDTO>(updateUserModel);
 
-            var rezult = _userManager.UpdateData(updateUserModel.UpdatedId, user);
+            var rezult = await _userManager.UpdateDataAsync(updateUserModel.UpdatedId, user);
 
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
@@ -80,14 +80,14 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut("password")]
         [ProducesResponseType(202)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult PutPassword([FromBody] UpdateUserPasswordModel updateUserModel)
+        public async Task<IActionResult> PutPasswordAsync([FromBody] UpdateUserPasswordModel updateUserModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var rezult = _userManager.UpdatePassword(updateUserModel.UpdatedId, updateUserModel.OldPassword, updateUserModel.NewPassword);
+            var rezult = await _userManager.UpdatePasswordAsync(updateUserModel.UpdatedId, updateUserModel.OldPassword, updateUserModel.NewPassword);
 
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
@@ -102,14 +102,14 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpDelete("{userId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult Delete(int userId)
+        public async Task<IActionResult> DeleteAsync(int userId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var rezult = _userManager.Delete(userId);
+            var rezult = await _userManager.DeleteAsync(userId);
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
 
@@ -120,11 +120,11 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpGet("{pageSize}/{pageNumber}")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
-        public IActionResult GetPage(int pageSize, int pageNumber, UserFiltrator filtrator,
+        public async Task<IActionResult> GetPageAsync(int pageSize, int pageNumber, UserFiltrator filtrator,
                                     string sortField = "LastName", bool isDescendingSort = false)
         {
             var sorter = GetSorter(sortField, isDescendingSort);
-            var users = _userManager.GetUsersPage(pageSize, pageNumber, filtrator, sorter);
+            var users = await _userManager.GetUsersPageAsync(pageSize, pageNumber, filtrator, sorter);
             return Ok(users);
         }
 
@@ -132,10 +132,10 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpGet]
         [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
-        public IActionResult Get(UserFiltrator filtrator, string sortField = "LastName", bool isDescendingSort = false)
+        public async Task<IActionResult> GetAsync(UserFiltrator filtrator, string sortField = "LastName", bool isDescendingSort = false)
         {
             var sorter = GetSorter(sortField, isDescendingSort);
-            var users = _userManager.GetUsers(filtrator, sorter);
+            var users = await _userManager.GetUsersAsync(filtrator, sorter);
             return Ok(users);
         }
 
@@ -144,9 +144,9 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpGet("{userId}")]
         [ProducesResponseType(typeof(UserDTO), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public IActionResult GetById(int userId)
+        public async Task<IActionResult> GetByIdAsync(int userId)
         {
-            var user = _userManager.GetUserById(userId);
+            var user = await _userManager.GetUserByIdAsync(userId);
             if (user == null)
                 return BadRequest(new { errorText = "Invalid id." });
 
@@ -157,10 +157,10 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpGet("Authorized")]
         [ProducesResponseType(typeof(UserDTO), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public IActionResult GetAuthorizeUser()
+        public async Task<IActionResult> GetAuthorizeUserAsync()
         {
             var userId = GetAuthUserId();
-            var user = _userManager.GetUserById(userId);
+            var user = await _userManager.GetUserByIdAsync(userId);
 
             return new ObjectResult(user);
         }
@@ -172,9 +172,9 @@ namespace InnoGotchiGame.Web.Controllers
         [AllowAnonymous]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(string), 400)]
-        public IActionResult Token(string email, string password)
+        public async Task<IActionResult> TokenAsync(string email, string password)
         {
-            UserDTO? user = _userManager.FindUserInDb(email, password);
+            UserDTO? user = await _userManager.FindUserInDbAsync(email, password);
             if (user == null)
             {
                 return BadRequest(new { errorText = "Invalid email or password." });

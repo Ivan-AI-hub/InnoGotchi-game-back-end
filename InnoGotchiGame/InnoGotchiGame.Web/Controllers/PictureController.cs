@@ -21,13 +21,13 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult Post([FromBody] PictureDTO picture)
+        public async Task<IActionResult> PostAsync([FromBody] PictureDTO picture)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
-            var rezult = _manager.Add(picture);
+            var rezult = await _manager.AddAsync(picture);
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
 
@@ -41,14 +41,14 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut("{updatedId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult Put([FromBody] PictureDTO picture, int updatedId)
+        public async Task<IActionResult> PutAsync([FromBody] PictureDTO picture, int updatedId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var rezult = _manager.Update(updatedId, picture);
+            var rezult = await _manager.UpdateAsync(updatedId, picture);
 
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
@@ -59,9 +59,9 @@ namespace InnoGotchiGame.Web.Controllers
         /// <returns>Filtered list of pictures</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<PictureDTO>), 200)]
-        public IEnumerable<PictureDTO> Get(PictureFiltrator filtrator)
+        public async Task<IEnumerable<PictureDTO>> GetAsync(PictureFiltrator filtrator)
         {
-            var pictures = _manager.GetAll(filtrator);
+            var pictures = await _manager.GetAllAsync(filtrator);
             return pictures;
         }
 
@@ -69,9 +69,9 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpGet("{pictureId}")]
         [ProducesResponseType(typeof(UserDTO), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public IActionResult GetById(int pictureId)
+        public async Task<IActionResult> GetByIdAsync(int pictureId)
         {
-            var picture = _manager.GetById(pictureId);
+            var picture = await _manager.GetByIdAsync(pictureId);
             if (picture == null)
                 return BadRequest(new { errorText = "Invalid id." });
 

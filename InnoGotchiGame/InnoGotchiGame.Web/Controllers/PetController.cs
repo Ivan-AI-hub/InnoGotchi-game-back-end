@@ -24,9 +24,9 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult Post([FromBody] AddPetModel addPetModel)
+        public async Task<IActionResult> PostAsync([FromBody] AddPetModel addPetModel)
         {
-            var rezult = _petManager.Add(addPetModel.FarmId, addPetModel.Name, addPetModel.View);
+            var rezult = await _petManager.AddAsync(addPetModel.FarmId, addPetModel.Name, addPetModel.View);
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
 
@@ -39,14 +39,14 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut]
         [ProducesResponseType(202)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult Put([FromBody] UpdatePetModel updatePetModel)
+        public async Task<IActionResult> PutAsync([FromBody] UpdatePetModel updatePetModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var rezult = _petManager.Update(updatePetModel.UpdatedId, updatePetModel.Name);
+            var rezult = await _petManager.UpdateAsync(updatePetModel.UpdatedId, updatePetModel.Name);
 
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
@@ -61,7 +61,7 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut("{petId}/feed")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult Feed(int petId)
+        public async Task<IActionResult> FeedAsync(int petId)
         {
             if (!ModelState.IsValid)
             {
@@ -69,7 +69,7 @@ namespace InnoGotchiGame.Web.Controllers
             }
 
             var userId = GetAuthUserId();
-            var rezult = _petManager.Feed(petId, userId);
+            var rezult = await _petManager.FeedAsync(petId, userId);
 
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
@@ -84,14 +84,14 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut("{petId}/resetHappinessDay")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult ResetHappinessDay(int petId)
+        public async Task<IActionResult> ResetHappinessDayAsync(int petId)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var rezult = _petManager.ResetHappinessDay(petId);
+            var rezult = await _petManager.ResetHappinessDayAsync(petId);
 
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
@@ -106,7 +106,7 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut("{petId}/drink")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult GiveDrink(int petId)
+        public async Task<IActionResult> GiveDrinkAsync(int petId)
         {
             if (!ModelState.IsValid)
             {
@@ -114,7 +114,7 @@ namespace InnoGotchiGame.Web.Controllers
             }
 
             var userId = GetAuthUserId();
-            var rezult = _petManager.GiveDrink(petId, userId);
+            var rezult = await _petManager.GiveDrinkAsync(petId, userId);
 
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
@@ -129,14 +129,14 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut("{petId}/dead")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult SetDeadStatus(int petId, DateTime deadDate)
+        public async Task<IActionResult> SetDeadStatusAsync(int petId, DateTime deadDate)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var rezult = _petManager.SetDeadStatus(petId, deadDate);
+            var rezult = await _petManager.SetDeadStatusAsync(petId, deadDate);
 
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
@@ -147,30 +147,30 @@ namespace InnoGotchiGame.Web.Controllers
         /// <returns>Filtered and sorted list of pets</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<PetDTO>), 200)]
-        public IEnumerable<PetDTO> Get(PetFiltrator filtrator, string sortField = "Age", bool isDescendingSort = false)
+        public async Task<IEnumerable<PetDTO>> GetAsync(PetFiltrator filtrator, string sortField = "Age", bool isDescendingSort = false)
         {
             var sorter = GetSorter(sortField, isDescendingSort);
-            var pets = _petManager.GetPets(filtrator, sorter);
+            var pets = await _petManager.GetPetsAsync(filtrator, sorter);
             return pets;
         }
 
         /// <returns>A filtered and sorted page containing <paramref name="pageSize"/> pets</returns>
         [HttpGet("{pageSize}/{pageNumber}")]
         [ProducesResponseType(typeof(IEnumerable<PetDTO>), 200)]
-        public IEnumerable<PetDTO> GetPage(int pageSize, int pageNumber, PetFiltrator filtrator,
+        public async Task<IEnumerable<PetDTO>> GetPageAsync(int pageSize, int pageNumber, PetFiltrator filtrator,
             string sortField = "Age", bool isDescendingSort = false)
         {
             var sorter = GetSorter(sortField, isDescendingSort);
-            var pets = _petManager.GetPetsPage(pageSize, pageNumber, filtrator, sorter);
+            var pets = await _petManager.GetPetsPageAsync(pageSize, pageNumber, filtrator, sorter);
             return pets;
         }
 
         /// <returns>pet with special <paramref name="petId"/> </returns>
         [HttpGet("{petId}")]
         [ProducesResponseType(typeof(PetDTO), 200)]
-        public IActionResult GetById(int petId)
+        public async Task<IActionResult> GetByIdAsync(int petId)
         {
-            var pet = _petManager.GetPetById(petId);
+            var pet = await _petManager.GetPetByIdAsync(petId);
             if (pet == null)
                 return BadRequest(new { errorText = "Invalid id." });
 

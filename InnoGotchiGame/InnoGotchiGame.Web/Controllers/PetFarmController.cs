@@ -24,7 +24,7 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult Post([FromBody] AddPetFarmModel addFarmModel)
+        public async Task<IActionResult> PostAsync([FromBody] AddPetFarmModel addFarmModel)
         {
             if (!ModelState.IsValid)
             {
@@ -32,7 +32,7 @@ namespace InnoGotchiGame.Web.Controllers
             }
 
             var userId = GetAuthUserId();
-            var rezult = _farmManager.Add(userId, addFarmModel.Name);
+            var rezult = await _farmManager.AddAsync(userId, addFarmModel.Name);
 
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
@@ -46,14 +46,14 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut]
         [ProducesResponseType(202)]
         [ProducesResponseType(typeof(List<string>), 400)]
-        public IActionResult Put([FromBody] UpdatePetFarmModel updatePetFarmModel)
+        public async Task<IActionResult> PutAsync([FromBody] UpdatePetFarmModel updatePetFarmModel)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
 
-            var rezult = _farmManager.UpdateName(updatePetFarmModel.UpdatedId, updatePetFarmModel.Name);
+            var rezult = await _farmManager.UpdateNameAsync(updatePetFarmModel.UpdatedId, updatePetFarmModel.Name);
 
             if (!rezult.IsComplete)
                 return BadRequest(rezult.Errors);
@@ -65,10 +65,10 @@ namespace InnoGotchiGame.Web.Controllers
         /// <returns>All farms from database</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<PetFarmDTO>), 200)]
-        public IActionResult Get(PetFarmFiltrator filtrator, string sortField = "Name", bool isDescendingSort = false)
+        public async Task<IActionResult> GetAsync(PetFarmFiltrator filtrator, string sortField = "Name", bool isDescendingSort = false)
         {
             var sorter = GetSorter(sortField, isDescendingSort);
-            var farms = _farmManager.GetPetFarms(filtrator, sorter);
+            var farms = await _farmManager.GetPetFarmsAsync(filtrator, sorter);
             return new ObjectResult(farms);
         }
 
@@ -77,9 +77,9 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpGet("{farmId}")]
         [ProducesResponseType(typeof(PetFarmDTO), 200)]
         [ProducesResponseType(typeof(string), 400)]
-        public IActionResult GetById(int farmId)
+        public async Task<IActionResult> GetByIdAsync(int farmId)
         {
-            var farm = _farmManager.GetFarmById(farmId);
+            var farm = await _farmManager.GetFarmByIdAsync(farmId);
             if (farm == null)
                 return BadRequest(new { errorText = "Invalid id." });
 
