@@ -2,7 +2,7 @@
 
 namespace InnoGotchiGame.Persistence.Interfaces
 {
-    internal interface IColaborationRequestRepository : IRepositoryBase<ColaborationRequest>
+    public interface IColaborationRequestRepository : IRepositoryBase<ColaborationRequest>
     {
     }
 }
