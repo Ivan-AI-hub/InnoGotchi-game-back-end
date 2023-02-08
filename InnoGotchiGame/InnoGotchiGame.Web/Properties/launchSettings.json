@@ -4,7 +4,7 @@
     "InnoGotchiGame.Web": {
       "commandName": "Project",
       "dotnetRunMessages": true,
-      "launchBrowser": true,
+      "launchBrowser": false,
       "launchUrl": "swagger",
       "applicationUrl": "https://localhost:10000;http://localhost:10001",
       "environmentVariables": {
