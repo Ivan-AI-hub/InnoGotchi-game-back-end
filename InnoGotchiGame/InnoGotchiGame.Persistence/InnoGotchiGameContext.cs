@@ -6,15 +6,10 @@ namespace InnoGotchiGame.Persistence
 {
     public class InnoGotchiGameContext : DbContext
     {
-        public InnoGotchiGameContext()
-        {
-            Database.EnsureCreated();
-        }
 
         public InnoGotchiGameContext(DbContextOptions<InnoGotchiGameContext> options)
             : base(options)
         {
-            Database.EnsureCreated();
         }
 
         public DbSet<Pet> Pets { get; set; }

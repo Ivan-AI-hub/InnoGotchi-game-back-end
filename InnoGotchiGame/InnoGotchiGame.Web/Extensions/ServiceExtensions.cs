@@ -1,6 +1,7 @@
 ﻿using InnoGotchiGame.Persistence;
 using LoggerService;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace InnoGotchiGame.Web.Extensions
 {
@@ -30,7 +31,9 @@ namespace InnoGotchiGame.Web.Extensions
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)
         {
             string connection = configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<InnoGotchiGameContext>(options => options.UseSqlServer(connection));
+            services.AddDbContext<InnoGotchiGameContext>(options => 
+                                options.UseSqlServer(connection, 
+                                b => b.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name)));
         }
     }
 }
