@@ -4,6 +4,8 @@ using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
+using InnoGotchiGame.Persistence.Managers;
+using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Application.Managers
 {
@@ -13,11 +15,13 @@ namespace InnoGotchiGame.Application.Managers
     public class PictureManager
     {
         private AbstractValidator<Picture> _validator;
-        private IRepository<Picture> _repository;
+        private IRepositoryManager _repositoryManager;
+        private IRepositoryBase<Picture> _pictureRepository;
         private IMapper _mapper;
-        public PictureManager(IRepository<Picture> repository, IMapper mapper, AbstractValidator<Picture> validator)
+        public PictureManager(IRepositoryManager repositoryManager, IMapper mapper, AbstractValidator<Picture> validator)
         {
-            _repository = repository;
+            _repositoryManager = repositoryManager;
+            _pictureRepository = repositoryManager.Picture;
             _mapper = mapper;
             _validator = validator;
         }
@@ -26,15 +30,15 @@ namespace InnoGotchiGame.Application.Managers
         /// Adds <paramref name="picture"/> to database
         /// </summary>
         /// <returns>Result of method execution</returns>
-        public ManagerRezult Add(PictureDTO picture)
+        public async Task<ManagerRezult> AddAsync(PictureDTO picture)
         {
             var pictureData = _mapper.Map<Picture>(picture);
             var validationRezult = _validator.Validate(pictureData);
             var rezult = new ManagerRezult(validationRezult);
-            if (validationRezult.IsValid && IsUniqueName(pictureData.Name, rezult))
+            if (validationRezult.IsValid && await IsUniqueNameAsync(pictureData.Name, rezult))
             {
-                picture.Id = _repository.Add(pictureData);
-                _repository.Save();
+                _pictureRepository.Create(pictureData);
+                await _repositoryManager.SaveAsync();
             }
             return rezult;
         }
@@ -44,15 +48,16 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="updatedId">Id of the picture being updated</param>
         /// <returns>Result of method execution</returns>
-        public ManagerRezult Update(int updatedId, PictureDTO newPicture)
+        public async Task<ManagerRezult> UpdateAsync(int updatedId, PictureDTO newPicture)
         {
             var pictureData = _mapper.Map<Picture>(newPicture);
             var validationRezult = _validator.Validate(pictureData);
             var rezult = new ManagerRezult(validationRezult);
-            if (validationRezult.IsValid && CheckPictureId(updatedId, rezult) && IsUniqueName(pictureData.Name, rezult))
+            if (validationRezult.IsValid && await CheckPictureIdAsync(updatedId, rezult) && await IsUniqueNameAsync(pictureData.Name, rezult))
             {
-                _repository.Update(updatedId, pictureData);
-                _repository.Save();
+                pictureData.Id = updatedId;
+                _pictureRepository.Update(pictureData);
+                await _repositoryManager.SaveAsync();
                 newPicture.Id = updatedId;
             }
             return rezult;
@@ -63,36 +68,37 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="id">Picture id</param>
         /// <returns>Result of method execution</returns>
-        public ManagerRezult Delete(int id)
+        public async Task<ManagerRezult> DeleteAsync(int id)
         {
             var managerRez = new ManagerRezult();
-            if (CheckPictureId(id, managerRez))
+            if (await CheckPictureIdAsync(id, managerRez))
             {
-                _repository.Delete(id);
+                _pictureRepository.Delete(await _pictureRepository.FirstOrDefaultAsync(x => x.Id == id, false));
+                await _repositoryManager.SaveAsync();
             }
             return managerRez;
         }
 
         /// <returns>picture with special <paramref name="id"/> </returns>
-        public PictureDTO? GetById(int id)
+        public async Task<PictureDTO?> GetByIdAsync(int id)
         {
-            var picture = _mapper.Map<PictureDTO>(_repository.GetItemById(id));
+            var picture = _mapper.Map<PictureDTO>(await _pictureRepository.FirstOrDefaultAsync(x => x.Id == id, false));
             return picture;
         }
 
         /// <returns>Filtered list of pictures</returns>
-        public IEnumerable<PictureDTO> GetAll(Filtrator<Picture>? filtrator)
+        public async Task<IEnumerable<PictureDTO>> GetAllAsync(Filtrator<Picture>? filtrator)
         {
-            var pictures = _repository.GetItems();
+            var pictures = _pictureRepository.GetItems(false);
             pictures = filtrator != null ? filtrator.Filter(pictures) : pictures;
             pictures = pictures.OrderBy(x => x.Name);
-            return _mapper.Map<IEnumerable<PictureDTO>>(pictures);
+            return _mapper.Map<IEnumerable<PictureDTO>>(await pictures.ToListAsync());
 
         }
 
-        private bool IsUniqueName(string name, ManagerRezult managerRezult)
+        private async Task<bool> IsUniqueNameAsync(string name, ManagerRezult managerRezult)
         {
-            if (_repository.IsItemExist(x => x.Name.ToLower() == name.ToLower()))
+            if (await _pictureRepository.IsItemExistAsync(x => x.Name.ToLower() == name.ToLower()))
             {
                 managerRezult.Errors.Add("A picture with the same Name already exists in the database");
                 return false;
@@ -100,9 +106,9 @@ namespace InnoGotchiGame.Application.Managers
             return true;
         }
 
-        private bool CheckPictureId(int id, ManagerRezult rezult)
+        private async Task<bool> CheckPictureIdAsync(int id, ManagerRezult rezult)
         {
-            if (!_repository.IsItemExist(id))
+            if (!await _pictureRepository.IsItemExistAsync(x => x.Id == id))
             {
                 rezult.Errors.Add("The farm ID is not in the database");
                 return false;

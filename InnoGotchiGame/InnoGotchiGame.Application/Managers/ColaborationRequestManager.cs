@@ -1,5 +1,6 @@
 ﻿using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
+using InnoGotchiGame.Persistence.Managers;
 
 namespace InnoGotchiGame.Application.Managers
 {
@@ -8,11 +9,13 @@ namespace InnoGotchiGame.Application.Managers
     /// </summary>
     public class ColaborationRequestManager
     {
-        private IRepository<ColaborationRequest> _repository;
+        private IRepositoryManager _repositoryManager;
+        private IRepositoryBase<ColaborationRequest> _requestRepository;
 
-        public ColaborationRequestManager(IRepository<ColaborationRequest> repository)
+        public ColaborationRequestManager(IRepositoryManager repositoryManager)
         {
-            _repository = repository;
+            _requestRepository = repositoryManager.ColaborationRequest;
+            _repositoryManager = repositoryManager;
         }
 
         /// <summary>
@@ -21,17 +24,17 @@ namespace InnoGotchiGame.Application.Managers
         /// <param name="senderId">id of the sending user</param>
         /// <param name="recipientId">id of the recipient user</param>
         /// <returns>Result of method execution</returns>
-        public ManagerRezult SendColaborationRequest(int senderId, int recipientId)
+        public async Task<ManagerRezult> SendColaborationRequestAsync(int senderId, int recipientId)
         {
             var rezult = new ManagerRezult();
             var request = new ColaborationRequest() { RequestSenderId = senderId, RequestReceiverId = recipientId, Status = ColaborationRequestStatus.Undefined };
 
-            var isSingleRequest = _repository.GetItem(x => x.RequestSenderId == senderId && x.RequestReceiverId == recipientId ||
-                                                           x.RequestReceiverId == senderId && x.RequestSenderId == recipientId) == null;
+            var isSingleRequest = await _requestRepository.IsItemExistAsync(x => x.RequestSenderId == senderId && x.RequestReceiverId == recipientId ||
+                                                           x.RequestReceiverId == senderId && x.RequestSenderId == recipientId);
             if (isSingleRequest)
             {
-                _repository.Add(request);
-                _repository.Save();
+                _requestRepository.Create(request);
+                await _repositoryManager.SaveAsync();
             }
             else
             {
@@ -47,10 +50,10 @@ namespace InnoGotchiGame.Application.Managers
         /// <param name="requestId">id of the request</param>
         /// <param name="recipientId">id of the recipient user</param>
         /// <returns>Result of method execution</returns>
-        public ManagerRezult ConfirmRequest(int requestId, int recipientId)
+        public async Task<ManagerRezult> ConfirmRequestAsync(int requestId, int recipientId)
         {
             var rezult = new ManagerRezult();
-            var request = _repository.GetItemById(requestId);
+            var request = await _requestRepository.FirstOrDefaultAsync(x => x.Id == requestId, false);
             if (request != null)
             {
                 if (request.Status == ColaborationRequestStatus.Colaborators)
@@ -60,8 +63,8 @@ namespace InnoGotchiGame.Application.Managers
                 if (rezult.IsComplete)
                 {
                     request.Status = ColaborationRequestStatus.Colaborators;
-                    _repository.Update(requestId, request);
-                    _repository.Save();
+                    _requestRepository.Update(request);
+                    await _repositoryManager.SaveAsync();
                 }
             }
             else
@@ -78,10 +81,10 @@ namespace InnoGotchiGame.Application.Managers
         /// <param name="requestId">id of the request</param>
         /// <param name="participantId">id of the participant</param>
         /// <returns>Result of method execution</returns>
-        public ManagerRezult RejectRequest(int requestId, int participantId)
+        public async Task<ManagerRezult> RejectRequestAsync(int requestId, int participantId)
         {
             var rezult = new ManagerRezult();
-            var request = _repository.GetItemById(requestId);
+            var request = await _requestRepository.FirstOrDefaultAsync(x => x.Id == requestId, false);
             if (request != null)
             {
                 if (request.Status == ColaborationRequestStatus.NotColaborators)
@@ -92,8 +95,8 @@ namespace InnoGotchiGame.Application.Managers
                 if (rezult.IsComplete)
                 {
                     request.Status = ColaborationRequestStatus.NotColaborators;
-                    _repository.Update(requestId, request);
-                    _repository.Save();
+                    _requestRepository.Update(request);
+                    await _repositoryManager.SaveAsync();
                 }
             }
             else
@@ -109,14 +112,14 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="requestId">id of the request</param>
         /// <returns>Result of method execution</returns>
-        public ManagerRezult DeleteRequest(int requestId)
+        public async Task<ManagerRezult> DeleteRequestAsync(int requestId)
         {
             var rezult = new ManagerRezult();
-            var request = _repository.GetItemById(requestId);
+            var request = await _requestRepository.FirstOrDefaultAsync(x => x.Id == requestId, false);
             if (request != null)
             {
-                _repository.Delete(requestId);
-                _repository.Save();
+                _requestRepository.Delete(request);
+                await _repositoryManager.SaveAsync();
             }
             else
             {

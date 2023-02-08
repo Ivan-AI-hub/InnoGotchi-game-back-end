@@ -15,7 +15,7 @@ namespace InnoGotchiGame.Persistence.Abstracts
         public virtual void Create(T item) => Context.Set<T>().Add(item);
         public void Update(T item) => Context.Set<T>().Update(item);
         public void Delete(T item) => Context.Set<T>().Remove(item);
-        public bool IsItemExist(Expression<Func<T, bool>> predicate) => Context.Set<T>().Any(predicate);
+        public Task<bool> IsItemExistAsync(Expression<Func<T, bool>> predicate) => Context.Set<T>().AnyAsync(predicate);
 
         public IQueryable<T> GetItemsByCondition(Expression<Func<T, bool>> predicate, bool trackChanges)
         {

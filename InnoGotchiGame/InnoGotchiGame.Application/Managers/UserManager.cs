@@ -5,6 +5,8 @@ using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters.Base;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
+using InnoGotchiGame.Persistence.Managers;
+using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -16,12 +18,14 @@ namespace InnoGotchiGame.Application.Managers
     public class UserManager
     {
         private AbstractValidator<User> _validator;
-        private IRepository<User> _repository;
+        private IRepositoryManager _repositoryManager;
+        private IRepositoryBase<User> _userRepository;
         private IMapper _mapper;
 
-        public UserManager(IRepository<User> repository, IMapper mapper, AbstractValidator<User> validator)
+        public UserManager(IRepositoryManager repositoryManager, IMapper mapper, AbstractValidator<User> validator)
         {
-            _repository = repository;
+            _repositoryManager = repositoryManager;
+            _userRepository = repositoryManager.User;
             _mapper = mapper;
             _validator = validator;
         }
@@ -30,18 +34,18 @@ namespace InnoGotchiGame.Application.Managers
         /// Adds <paramref name="user"/> to database
         /// </summary>
         /// <returns>Result of method execution</returns>
-        public ManagerRezult Add(UserDTO user, string password)
+        public async Task<ManagerRezult> AddAsync(UserDTO user, string password)
         {
             var dataUser = _mapper.Map<User>(user);
             dataUser.PasswordHach = StringToHach(password);
 
             var validationRezult = _validator.Validate(dataUser);
             var managerRezult = new ManagerRezult(validationRezult);
-            if (validationRezult.IsValid && IsUniqueEmail(user.Email, managerRezult))
+            if (validationRezult.IsValid && await IsUniqueEmailAsync(user.Email, managerRezult))
             {
-                var newId = _repository.Add(dataUser);
-                user.Id = newId;
-                _repository.Save();
+                _userRepository.Create(dataUser);
+                await _repositoryManager.SaveAsync();
+                user.Id = dataUser.Id;
             }
             return managerRezult;
         }
@@ -51,27 +55,26 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="updatedId">User id</param>
         /// <returns>Result of method execution</returns>
-        public ManagerRezult UpdateData(int updatedId, UserDTO newUser)
+        public async Task<ManagerRezult> UpdateDataAsync(int updatedId, UserDTO newUser)
         {
             ManagerRezult managerRezult = new ManagerRezult();
             var dataUser = _mapper.Map<User>(newUser);
 
-            if (CheckUserId(updatedId, managerRezult))
+            if (await CheckUserIdAsync(updatedId, managerRezult))
             {
-                var oldUser = _repository.GetItemById(updatedId);
+                var oldUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, false);
+                dataUser.Id = oldUser!.Id;
                 dataUser.Email = oldUser.Email;
                 dataUser.PasswordHach = oldUser.PasswordHach;
-                if (oldUser.Picture != null)
-                {
-                    dataUser.Picture.Id = oldUser.Picture.Id;
-                }
+                dataUser.Picture = oldUser.Picture;
+                
 
                 var validationRezult = _validator.Validate(dataUser);
                 managerRezult = new ManagerRezult(validationRezult);
                 if (managerRezult.IsComplete)
                 {
-                    _repository.Update(updatedId, dataUser);
-                    _repository.Save();
+                    _userRepository.Update(dataUser);
+                    await _repositoryManager.SaveAsync();
                 }
             }
             return managerRezult;
@@ -82,29 +85,23 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="updatedId">User id</param>
         /// <returns>Result of method execution</returns>
-        public ManagerRezult UpdatePassword(int updatedId, string oldPassword, string newPassword)
+        public async Task<ManagerRezult> UpdatePasswordAsync(int updatedId, string oldPassword, string newPassword)
         {
             ManagerRezult managerRezult = new ManagerRezult();
-            if (CheckUserId(updatedId, managerRezult))
+            if (await CheckUserIdAsync(updatedId, managerRezult))
             {
-                var dataUser = _repository.GetItemById(updatedId);
+                var dataUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, false);
 
                 var validationRezult = _validator.Validate(dataUser);
                 managerRezult = new ManagerRezult(validationRezult);
                 if (dataUser.PasswordHach == StringToHach(oldPassword))
                 {
                     dataUser.PasswordHach = StringToHach(newPassword);
+                    await _repositoryManager.SaveAsync();
                 }
                 else
                 {
                     managerRezult.Errors.Add("Old and new password are not equal");
-                }
-
-
-                if (managerRezult.IsComplete)
-                {
-                    _repository.Update(updatedId, dataUser);
-                    _repository.Save();
                 }
             }
             return managerRezult;
@@ -115,54 +112,48 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="deletedId">User id</param>
         /// <returns>Result of method execution</returns>
-        public ManagerRezult Delete(int deletedId)
+        public async Task<ManagerRezult> DeleteAsync(int deletedId)
         {
             var managerRez = new ManagerRezult();
-            if (CheckUserId(deletedId, managerRez))
+            if (await CheckUserIdAsync(deletedId, managerRez))
             {
-                _repository.Delete(deletedId);
+                _userRepository.Delete(await _userRepository.FirstOrDefaultAsync(x => x.Id == deletedId, false));
             }
 
             return managerRez;
         }
 
         /// <returns>user with special <paramref name="id"/> </returns>
-        public UserDTO? GetUserById(int userId)
+        public async Task<UserDTO?> GetUserByIdAsync(int userId)
         {
-            var user = _repository.GetItemById(userId);
-            if (user != null)
-                return _mapper.Map<UserDTO>(user);
-            else
-                return null;
+            var user = await _userRepository.FirstOrDefaultAsync(x => x.Id == userId, false);
+            return _mapper.Map<UserDTO>(user);
         }
 
         /// <summary>
         /// Searches for a user in the database
         /// </summary>
         /// <returns>Finded user or null</returns>
-        public UserDTO? FindUserInDb(string email, string password)
+        public async Task<UserDTO?> FindUserInDbAsync(string email, string password)
         {
             string passwordHach = StringToHach(password);
-            var user = _repository.GetItem(x => x.Email == email && x.PasswordHach == passwordHach);
-            if (user != null)
-                return _mapper.Map<UserDTO>(user);
-            else
-                return null;
+            var user = await _userRepository.FirstOrDefaultAsync(x => x.Email == email && x.PasswordHach == passwordHach, false);
+            return _mapper.Map<UserDTO>(user);
         }
 
         /// <returns>Filtered and sorted list of users</returns>
-        public IEnumerable<UserDTO> GetUsers(Filtrator<User>? filtrator = null, Sorter<User>? sorter = null)
+        public async Task<IEnumerable<UserDTO>> GetUsersAsync(Filtrator<User>? filtrator = null, Sorter<User>? sorter = null)
         {
-            var users = GetUsersQuary(filtrator, sorter);
+            var users = await GetUsersQuary(filtrator, sorter).ToListAsync();
             return _mapper.Map<IEnumerable<UserDTO>>(users);
         }
 
         /// <returns>A filtered and sorted page containing <paramref name="pageSize"/> users</returns>
-        public IEnumerable<UserDTO> GetUsersPage(int pageSize, int pageNumber, Filtrator<User>? filtrator = null, Sorter<User>? sorter = null)
+        public async Task<IEnumerable<UserDTO>> GetUsersPageAsync(int pageSize, int pageNumber, Filtrator<User>? filtrator = null, Sorter<User>? sorter = null)
         {
             var users = GetUsersQuary(filtrator, sorter);
             users = users.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
-            return _mapper.Map<IEnumerable<UserDTO>>(users);
+            return _mapper.Map<IEnumerable<UserDTO>>(await users.ToListAsync());
         }
 
         private string StringToHach(string password)
@@ -179,9 +170,9 @@ namespace InnoGotchiGame.Application.Managers
             }
         }
 
-        private bool CheckUserId(int userId, ManagerRezult rezult)
+        private async Task<bool> CheckUserIdAsync(int userId, ManagerRezult rezult)
         {
-            if (!_repository.IsItemExist(userId))
+            if (!await _userRepository.IsItemExistAsync(x => x.Id == userId))
             {
                 rezult.Errors.Add("The user ID is not in the database");
                 return false;
@@ -189,9 +180,9 @@ namespace InnoGotchiGame.Application.Managers
             return true;
         }
 
-        private bool IsUniqueEmail(string email, ManagerRezult managerRezult)
+        private async Task<bool> IsUniqueEmailAsync(string email, ManagerRezult managerRezult)
         {
-            if (_repository.IsItemExist(x => x.Email == email))
+            if (await _userRepository.IsItemExistAsync(x => x.Email == email))
             {
                 managerRezult.Errors.Add("A user with the same Email already exists in the database");
                 return false;
@@ -201,7 +192,7 @@ namespace InnoGotchiGame.Application.Managers
 
         private IQueryable<User> GetUsersQuary(Filtrator<User>? filtrator = null, Sorter<User>? sorter = null)
         {
-            var users = _repository.GetItems();
+            var users = _userRepository.GetItems(false);
             users = filtrator != null ? filtrator.Filter(users) : users;
             users = sorter != null ? sorter.Sort(users) : users;
             return users;
