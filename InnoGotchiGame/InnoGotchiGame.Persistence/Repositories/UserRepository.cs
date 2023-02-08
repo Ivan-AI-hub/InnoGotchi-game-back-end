@@ -1,78 +1,30 @@
 ﻿using InnoGotchiGame.Domain;
+using InnoGotchiGame.Persistence.Abstracts;
 using InnoGotchiGame.Persistence.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace InnoGotchiGame.Persistence.Repositories
 {
-    public class UserRepository : IRepository<User>
+    public class UserRepository : RepositoryBase<User>, IUserRepository
     {
-        private InnoGotchiGameContext _context;
-        public UserRepository(InnoGotchiGameContext context)
+        public UserRepository(InnoGotchiGameContext context) : base(context)
         {
-            _context = context;
         }
 
-        public User? GetItemById(int id)
+        public override IQueryable<User> GetItems(bool trackChanges)
         {
-            return GetFullData().FirstOrDefault(x => x.Id == id);
+            return GetOnlyDiscribeData(trackChanges);
         }
 
-        public bool IsItemExist(int id)
+        public override Task<User?> FirstOrDefaultAsync(Expression<Func<User, bool>> predicate, bool trackChanges)
         {
-            return IsItemExist(x => x.Id == id);
+            return GetFullData(trackChanges).FirstOrDefaultAsync(predicate);
         }
 
-        public bool IsItemExist(Func<User, bool> func)
+        private IQueryable<User> GetFullData(bool trackChanges)
         {
-            return _context.Users.Any(func);
-        }
-
-        public User? GetItem(Func<User, bool> predicate)
-        {
-            return GetFullData().FirstOrDefault(predicate);
-        }
-
-        public int Add(User item)
-        {
-            return _context.Users.Add(item).Entity.Id;
-        }
-
-        public void Update(int updatedId, User item)
-        {
-            item.Id = updatedId;
-            _context.ChangeTracker.Clear();
-            _context.Users.Update(item);
-        }
-
-        public bool Delete(int id)
-        {
-            var user = GetItemById(id);
-            _context.ChangeTracker.Clear();
-            if (user != null)
-            {
-                _context.Users.Remove(user);
-                return true;
-            }
-            return false;
-        }
-
-        public IQueryable<User> GetItems()
-        {
-            var users = GetOnlyDiscribeData();
-
-
-            return users;
-        }
-
-        public void Save()
-        {
-            _context.SaveChanges();
-        }
-
-        private IQueryable<User> GetFullData()
-        {
-            var users = _context.Users
-                .AsNoTracking()
+            var users = Context.Users
                 .Include(x => x.Picture)
                 .Include(x => x.OwnPetFarm)
                     .ThenInclude(x => x.Pets)
@@ -82,15 +34,15 @@ namespace InnoGotchiGame.Persistence.Repositories
                     .ThenInclude(x => x.RequestSender);
 
 
-            return users;
+            return trackChanges ? users : users.AsNoTracking();
         }
 
-        private IQueryable<User> GetOnlyDiscribeData()
+        private IQueryable<User> GetOnlyDiscribeData(bool trackChanges)
         {
-            var users = _context.Users.AsNoTracking().Include(x => x.Picture);
+            var users = Context.Users.Include(x => x.Picture);
 
 
-            return users;
+            return trackChanges ? users : users.AsNoTracking();
         }
     }
 }
