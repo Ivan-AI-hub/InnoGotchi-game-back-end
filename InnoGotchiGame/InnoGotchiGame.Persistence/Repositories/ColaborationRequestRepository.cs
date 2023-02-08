@@ -1,70 +1,24 @@
 ﻿using InnoGotchiGame.Domain;
+using InnoGotchiGame.Persistence.Abstracts;
 using InnoGotchiGame.Persistence.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Persistence.Repositories
 {
-    public class ColaborationRequestRepository : IRepository<ColaborationRequest>
+    public class ColaborationRequestRepository : RepositoryBase<ColaborationRequest>, IColaborationRequestRepository
     {
-        private InnoGotchiGameContext _context;
-        public ColaborationRequestRepository(InnoGotchiGameContext context)
+        public ColaborationRequestRepository(InnoGotchiGameContext context) : base(context)
         {
-            _context = context;
         }
 
-        public int Add(ColaborationRequest item)
+        public override IQueryable<ColaborationRequest> GetItems(bool trackChanges)
         {
-            return _context.ColaborationRequests.Add(item).Entity.Id;
-        }
-
-        public bool Delete(int id)
-        {
-            var request = GetItemById(id);
-            _context.ChangeTracker.Clear();
-            if (request == null)
-                return false;
-
-            _context.ColaborationRequests.Remove(request);
-            return true;
-        }
-
-        public ColaborationRequest? GetItem(Func<ColaborationRequest, bool> predicate)
-        {
-            return GetItems().FirstOrDefault(predicate);
-        }
-
-        public ColaborationRequest? GetItemById(int id)
-        {
-            return GetItems().FirstOrDefault(x => x.Id == id);
-        }
-
-        public IQueryable<ColaborationRequest> GetItems()
-        {
-            return _context.ColaborationRequests
+            var requests = Context.ColaborationRequests
                 .AsNoTracking()
                 .Include(x => x.RequestReceiver)
                 .Include(x => x.RequestSender);
-        }
 
-        public bool IsItemExist(int id)
-        {
-            return IsItemExist(x => x.Id == id);
-        }
-        public bool IsItemExist(Func<ColaborationRequest, bool> func)
-        {
-            return _context.ColaborationRequests.Any(func);
-        }
-
-        public void Save()
-        {
-            _context.SaveChanges();
-        }
-
-        public void Update(int updatedId, ColaborationRequest item)
-        {
-            item.Id = updatedId;
-            _context.ChangeTracker.Clear();
-            _context.ColaborationRequests.Update(item);
+            return trackChanges ? requests : requests.AsNoTracking();
         }
     }
 }
