@@ -6,7 +6,7 @@ namespace InnoGotchiGame.Persistence.Interfaces
     {
 
         /// <returns>true if the element exists, and false if not</returns>
-        public bool IsItemExist(Func<T, bool> func);
+        public bool IsItemExist(Expression<Func<T, bool>> predicate);
 
         /// <param name="predicate">Special predicate for element search</param>
         /// <returns>The element, if it was found in the database or null</returns>
@@ -14,6 +14,9 @@ namespace InnoGotchiGame.Persistence.Interfaces
 
         /// <returns>queryable items from the database</returns>
         public IQueryable<T> GetItems(bool trackChanges);
+
+        /// <returns>item from database with special id</returns>
+        public Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, bool trackChanges);
 
         /// <summary>
         /// Create item in database
@@ -31,10 +34,5 @@ namespace InnoGotchiGame.Persistence.Interfaces
         /// </summary>
         /// <returns>true if complite and false if not</returns>
         public void Delete(T item);
-
-        /// <summary>
-        /// Save changes in database
-        /// </summary>
-        public void Save();
     }
 }
