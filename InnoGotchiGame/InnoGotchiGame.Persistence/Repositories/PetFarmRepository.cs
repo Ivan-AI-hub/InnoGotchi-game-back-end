@@ -1,75 +1,25 @@
 ﻿using InnoGotchiGame.Domain;
+using InnoGotchiGame.Persistence.Abstracts;
 using InnoGotchiGame.Persistence.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Persistence.Repositories
 {
-    public class PetFarmRepository : IRepository<PetFarm>
+    public class PetFarmRepository : RepositoryBase<PetFarm>, IPetFarmRepository
     {
-        private InnoGotchiGameContext _context;
-        public PetFarmRepository(InnoGotchiGameContext context)
+        public PetFarmRepository(InnoGotchiGameContext context) : base(context)
         {
-            _context = context;
         }
 
-        public PetFarm? GetItemById(int id)
+        public override IQueryable<PetFarm> GetItems(bool trackChanges)
         {
-            return GetItems().FirstOrDefault(x => x.Id == id);
-        }
-        public bool IsItemExist(int id)
-        {
-            return IsItemExist(x => x.Id == id);
-        }
-
-        public bool IsItemExist(Func<PetFarm, bool> func)
-        {
-            return _context.PetFarms.Any(func);
-        }
-
-        public PetFarm? GetItem(Func<PetFarm, bool> predicate)
-        {
-            return GetItems().FirstOrDefault(predicate);
-        }
-
-        public int Add(PetFarm item)
-        {
-            return _context.PetFarms.Add(item).Entity.Id;
-        }
-
-        public void Update(int updatedId, PetFarm item)
-        {
-            item.Id = updatedId;
-            _context.ChangeTracker.Clear();
-            _context.PetFarms.Update(item);
-        }
-
-        public bool Delete(int id)
-        {
-            var petFarm = GetItemById(id);
-            _context.ChangeTracker.Clear();
-            if (petFarm != null)
-            {
-                _context.PetFarms.Remove(petFarm);
-                return true;
-            }
-            return false;
-        }
-
-        public IQueryable<PetFarm> GetItems()
-        {
-            var petFarms = _context.PetFarms
-                .AsNoTracking()
-                .Include(x => x.Owner)
-                .Include(x => x.Pets)
-                    .ThenInclude(x => x.View.Picture);
+            var petFarms = Context.PetFarms
+                        .Include(x => x.Owner)
+                        .Include(x => x.Pets)
+                            .ThenInclude(x => x.View.Picture);
 
 
-            return petFarms;
-        }
-
-        public void Save()
-        {
-            _context.SaveChanges();
+            return trackChanges ? petFarms : petFarms.AsNoTracking();
         }
     }
 }
