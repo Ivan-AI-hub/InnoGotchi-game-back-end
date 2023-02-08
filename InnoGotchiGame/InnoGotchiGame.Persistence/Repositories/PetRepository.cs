@@ -1,76 +1,30 @@
 ﻿using InnoGotchiGame.Domain;
+using InnoGotchiGame.Persistence.Abstracts;
 using InnoGotchiGame.Persistence.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace InnoGotchiGame.Persistence.Repositories
 {
-    public class PetRepository : IRepository<Pet>
+    public class PetRepository : RepositoryBase<Pet>, IPetRepository
     {
-        private InnoGotchiGameContext _context;
-        public PetRepository(InnoGotchiGameContext context)
+        public PetRepository(InnoGotchiGameContext context) : base(context)
         {
-            _context = context;
-        }
-        public Pet? GetItemById(int id)
-        {
-            return GetItem(x => x.Id == id);
-        }
-        public bool IsItemExist(int id)
-        {
-            return IsItemExist(x => x.Id == id);
         }
 
-        public bool IsItemExist(Func<Pet, bool> func)
+        public override IQueryable<Pet> GetItems(bool trackChanges)
         {
-            return _context.Pets.Any(func);
+            return GetOnlyDiscribeData(trackChanges);
         }
 
-        public Pet? GetItem(Func<Pet, bool> predicate)
+        public override Task<Pet?> FirstOrDefaultAsync(Expression<Func<Pet, bool>> predicate, bool trackChanges)
         {
-            return GetFullData().FirstOrDefault(predicate);
+            return GetFullData(trackChanges).FirstOrDefaultAsync();
         }
 
-        public int Add(Pet item)
+        private IQueryable<Pet> GetFullData(bool trackChanges)
         {
-            return _context.Pets.Add(item).Entity.Id;
-        }
-
-        public void Update(int updatedId, Pet item)
-        {
-            item.Id = updatedId;
-            _context.ChangeTracker.Clear();
-            _context.Pets.Update(item);
-        }
-
-        public bool Delete(int id)
-        {
-            var pet = GetItemById(id);
-            _context.ChangeTracker.Clear();
-            if (pet != null)
-            {
-                _context.Pets.Remove(pet);
-                return true;
-            }
-            return false;
-        }
-
-
-        public IQueryable<Pet> GetItems()
-        {
-            var pets = GetOnlyDiscribeData();
-
-            return pets;
-        }
-
-        public void Save()
-        {
-            _context.SaveChanges();
-        }
-
-        private IQueryable<Pet> GetFullData()
-        {
-            var pets = _context.Pets
-                 .AsNoTracking()
+            var pets = Context.Pets
                  .Include(x => x.Farm)
                      .ThenInclude(x => x.Owner)
                  .Include(x => x.Farm.Owner.AcceptedColaborations)
@@ -80,16 +34,15 @@ namespace InnoGotchiGame.Persistence.Repositories
                  .Include(x => x.View.Picture);
 
 
-            return pets;
+            return trackChanges ? pets : pets.AsNoTracking();
         }
 
-        private IQueryable<Pet> GetOnlyDiscribeData()
+        private IQueryable<Pet> GetOnlyDiscribeData(bool trackChanges)
         {
-            var pets = _context.Pets
-                .AsNoTracking()
+            var pets = Context.Pets
                 .Include(x => x.View.Picture);
-
-            return pets;
+            
+            return trackChanges? pets : pets.AsNoTracking();
         }
     }
 }
