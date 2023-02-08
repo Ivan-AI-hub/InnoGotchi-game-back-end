@@ -14,12 +14,15 @@ using InnoGotchiGame.Web.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using NLog;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
+
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.ConfigureCors(builder.Configuration, MyAllowSpecificOrigins);
-
+builder.Services.ConfigureLoggerService();
 
 builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles

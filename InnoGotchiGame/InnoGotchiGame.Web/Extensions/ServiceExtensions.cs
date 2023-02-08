@@ -1,4 +1,6 @@
-﻿namespace InnoGotchiGame.Web.Extensions
+﻿using LoggerService;
+
+namespace InnoGotchiGame.Web.Extensions
 {
     public static class ServiceExtensions
     {
@@ -16,7 +18,11 @@
                                       .AllowAnyMethod());
 
             });
+        }
 
+        public static void ConfigureLoggerService(this IServiceCollection services)
+        {
+            services.AddScoped<ILoggerManager, LoggerManager>();
         }
     }
 }

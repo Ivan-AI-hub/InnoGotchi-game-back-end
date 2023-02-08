@@ -8,6 +8,7 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.11" />
+    <PackageReference Include="NLog" Version="5.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 
@@ -15,6 +16,7 @@
     <ProjectReference Include="..\InnoGotchiGame.Application\InnoGotchiGame.Application.csproj" />
     <ProjectReference Include="..\InnoGotchiGame.Domain\InnoGotchiGame.Domain.csproj" />
     <ProjectReference Include="..\InnoGotchiGame.Persistence\InnoGotchiGame.Persistence.csproj" />
+    <ProjectReference Include="..\LoggerService\LoggerService.csproj" />
   </ItemGroup>
 
 </Project>
