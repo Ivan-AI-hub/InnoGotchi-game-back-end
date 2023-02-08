@@ -8,6 +8,7 @@ using InnoGotchiGame.Persistence;
 using InnoGotchiGame.Persistence.Interfaces;
 using InnoGotchiGame.Persistence.Repositories;
 using InnoGotchiGame.Web;
+using InnoGotchiGame.Web.Extensions;
 using InnoGotchiGame.Web.Mapping;
 using InnoGotchiGame.Web.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -17,18 +18,7 @@ using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-IEnumerable<string> allowedOrigins = builder.Configuration.GetSection("AllowedSpecificOrigins").AsEnumerable().Select(x => x.Value).Where(x => x != null)!;
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy(name: MyAllowSpecificOrigins,
-                      policy =>
-                      {
-                          policy.WithOrigins(allowedOrigins.ToArray())
-                                            .AllowAnyHeader()
-                                            .AllowAnyMethod();
-                      });
-});
-
+builder.Services.ConfigureCors(builder.Configuration, MyAllowSpecificOrigins);
 
 
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -70,25 +60,24 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     {
         options.TokenValidationParameters = new TokenValidationParameters
         {
-            // указывает, будет ли валидироваться издатель при валидации токена
             ValidateIssuer = true,
-            // строка, представляющая издателя
+
             ValidIssuer = AuthOptions.ISSUER,
-            // будет ли валидироваться потребитель токена
+
             ValidateAudience = true,
-            // установка потребителя токена
+
             ValidAudience = AuthOptions.AUDIENCE,
-            // будет ли валидироваться время существования
+
             ValidateLifetime = true,
-            // установка ключа безопасности
+
             IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-            // валидация ключа безопасности
+
             ValidateIssuerSigningKey = true,
         };
     });
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
