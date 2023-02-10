@@ -3,6 +3,7 @@ using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Application.Sorters.SortRules;
+using InnoGotchiGame.Web.Models.ErrorModel;
 using InnoGotchiGame.Web.Models.PetFarms;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,19 +24,14 @@ namespace InnoGotchiGame.Web.Controllers
         /// </summary>
         [HttpPost]
         [ProducesResponseType(200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> PostAsync([FromBody] AddPetFarmModel addFarmModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var userId = GetAuthUserId();
             var rezult = await _farmManager.AddAsync(userId, addFarmModel.Name);
 
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Ok();
         }
@@ -45,18 +41,13 @@ namespace InnoGotchiGame.Web.Controllers
         /// </summary>
         [HttpPut]
         [ProducesResponseType(202)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> PutAsync([FromBody] UpdatePetFarmModel updatePetFarmModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var rezult = await _farmManager.UpdateNameAsync(updatePetFarmModel.UpdatedId, updatePetFarmModel.Name);
 
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Accepted();
         }
@@ -76,12 +67,12 @@ namespace InnoGotchiGame.Web.Controllers
         /// <returns>a farm with same Id</returns>
         [HttpGet("{farmId}")]
         [ProducesResponseType(typeof(PetFarmDTO), 200)]
-        [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> GetByIdAsync(int farmId)
         {
             var farm = await _farmManager.GetFarmByIdAsync(farmId);
             if (farm == null)
-                return BadRequest(new { errorText = "Invalid id." });
+                return BadRequest(new ErrorDetails(400, "Invalid id."));
 
             return new ObjectResult(farm);
         }

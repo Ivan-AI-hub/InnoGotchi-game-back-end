@@ -1,6 +1,7 @@
 ﻿using InnoGotchiGame.Application.Filtrators;
 using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
+using InnoGotchiGame.Web.Models.ErrorModel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchiGame.Web.Controllers
@@ -20,16 +21,12 @@ namespace InnoGotchiGame.Web.Controllers
         /// </summary>
         [HttpPost]
         [ProducesResponseType(200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> PostAsync([FromBody] PictureDTO picture)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
             var rezult = await _manager.AddAsync(picture);
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Ok();
         }
@@ -40,18 +37,13 @@ namespace InnoGotchiGame.Web.Controllers
         /// <param name="updatedId">Id of the picture being updated</param>
         [HttpPut("{updatedId}")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> PutAsync([FromBody] PictureDTO picture, int updatedId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var rezult = await _manager.UpdateAsync(updatedId, picture);
 
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Ok();
         }

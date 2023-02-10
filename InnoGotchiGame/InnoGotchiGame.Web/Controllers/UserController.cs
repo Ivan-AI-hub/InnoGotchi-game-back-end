@@ -4,6 +4,7 @@ using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Application.Sorters.SortRules;
+using InnoGotchiGame.Web.Models.ErrorModel;
 using InnoGotchiGame.Web.Models.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -32,19 +33,14 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPost]
         [AllowAnonymous]
         [ProducesResponseType(200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> PostAsync([FromBody] AddUserModel addUserModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             UserDTO user = _mapper.Map<UserDTO>(addUserModel);
 
             var rezult = await _userManager.AddAsync(user, addUserModel.Password);
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Ok();
         }
@@ -55,20 +51,15 @@ namespace InnoGotchiGame.Web.Controllers
         /// <param name="updateUserModel"></param>
         [HttpPut("data")]
         [ProducesResponseType(202)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> PutDataAsync([FromBody] UpdateUserDataModel updateUserModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             UserDTO user = _mapper.Map<UserDTO>(updateUserModel);
 
             var rezult = await _userManager.UpdateDataAsync(updateUserModel.UpdatedId, user);
 
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Accepted();
         }
@@ -79,18 +70,13 @@ namespace InnoGotchiGame.Web.Controllers
         /// <param name="updateUserModel"></param>
         [HttpPut("password")]
         [ProducesResponseType(202)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> PutPasswordAsync([FromBody] UpdateUserPasswordModel updateUserModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var rezult = await _userManager.UpdatePasswordAsync(updateUserModel.UpdatedId, updateUserModel.OldPassword, updateUserModel.NewPassword);
 
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Accepted();
         }
@@ -101,17 +87,12 @@ namespace InnoGotchiGame.Web.Controllers
         /// <param name="userId"></param>
         [HttpDelete("{userId}")]
         [ProducesResponseType(204)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> DeleteAsync(int userId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var rezult = await _userManager.DeleteAsync(userId);
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return NoContent();
         }
@@ -143,12 +124,12 @@ namespace InnoGotchiGame.Web.Controllers
         /// <returns>a user with same Id</returns>
         [HttpGet("{userId}")]
         [ProducesResponseType(typeof(UserDTO), 200)]
-        [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> GetByIdAsync(int userId)
         {
             var user = await _userManager.GetUserByIdAsync(userId);
             if (user == null)
-                return BadRequest(new { errorText = "Invalid id." });
+                return BadRequest(new ErrorDetails(400, "Invalid id."));
 
             return new ObjectResult(user);
         }
@@ -156,7 +137,6 @@ namespace InnoGotchiGame.Web.Controllers
         /// <returns>Authorized user</returns>
         [HttpGet("Authorized")]
         [ProducesResponseType(typeof(UserDTO), 200)]
-        [ProducesResponseType(typeof(string), 400)]
         public async Task<IActionResult> GetAuthorizeUserAsync()
         {
             var userId = GetAuthUserId();
@@ -171,13 +151,13 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPost("token")]
         [AllowAnonymous]
         [ProducesResponseType(200)]
-        [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> TokenAsync(string email, string password)
         {
             UserDTO? user = await _userManager.FindUserInDbAsync(email, password);
             if (user == null)
             {
-                return BadRequest(new { errorText = "Invalid email or password." });
+                return BadRequest(new ErrorDetails(400, "Invalid email or password."));
             }
 
             var claims = new List<Claim>

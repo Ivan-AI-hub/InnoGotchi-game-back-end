@@ -3,6 +3,7 @@ using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Application.Sorters.SortRules;
+using InnoGotchiGame.Web.Models.ErrorModel;
 using InnoGotchiGame.Web.Models.Pets;
 using Microsoft.AspNetCore.Mvc;
 
@@ -23,12 +24,12 @@ namespace InnoGotchiGame.Web.Controllers
         /// </summary>
         [HttpPost]
         [ProducesResponseType(200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> PostAsync([FromBody] AddPetModel addPetModel)
         {
             var rezult = await _petManager.AddAsync(addPetModel.FarmId, addPetModel.Name, addPetModel.View);
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Ok();
         }
@@ -38,18 +39,13 @@ namespace InnoGotchiGame.Web.Controllers
         /// </summary>
         [HttpPut]
         [ProducesResponseType(202)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> PutAsync([FromBody] UpdatePetModel updatePetModel)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var rezult = await _petManager.UpdateAsync(updatePetModel.UpdatedId, updatePetModel.Name);
 
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Accepted();
         }
@@ -60,19 +56,14 @@ namespace InnoGotchiGame.Web.Controllers
         /// <param name="petId">Pet id</param>
         [HttpPut("{petId}/feed")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> FeedAsync(int petId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var userId = GetAuthUserId();
             var rezult = await _petManager.FeedAsync(petId, userId);
 
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Ok();
         }
@@ -83,18 +74,13 @@ namespace InnoGotchiGame.Web.Controllers
         /// <param name="petId">Pet id</param>
         [HttpPut("{petId}/resetHappinessDay")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> ResetHappinessDayAsync(int petId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var rezult = await _petManager.ResetHappinessDayAsync(petId);
 
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Ok();
         }
@@ -105,19 +91,14 @@ namespace InnoGotchiGame.Web.Controllers
         /// <param name="petId">Pet id</param>
         [HttpPut("{petId}/drink")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> GiveDrinkAsync(int petId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var userId = GetAuthUserId();
             var rezult = await _petManager.GiveDrinkAsync(petId, userId);
 
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Ok();
         }
@@ -128,18 +109,13 @@ namespace InnoGotchiGame.Web.Controllers
         /// <param name="petId">Pet id</param>
         [HttpPut("{petId}/dead")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> SetDeadStatusAsync(int petId, DateTime deadDate)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             var rezult = await _petManager.SetDeadStatusAsync(petId, deadDate);
 
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Ok();
         }
@@ -168,11 +144,12 @@ namespace InnoGotchiGame.Web.Controllers
         /// <returns>pet with special <paramref name="petId"/> </returns>
         [HttpGet("{petId}")]
         [ProducesResponseType(typeof(PetDTO), 200)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> GetByIdAsync(int petId)
         {
             var pet = await _petManager.GetPetByIdAsync(petId);
             if (pet == null)
-                return BadRequest(new { errorText = "Invalid id." });
+                return BadRequest(new ErrorDetails(400, "Invalid id."));
 
             return new ObjectResult(pet);
         }

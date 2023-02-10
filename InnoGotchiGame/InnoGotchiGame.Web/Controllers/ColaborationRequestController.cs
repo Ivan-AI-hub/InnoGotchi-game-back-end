@@ -1,4 +1,5 @@
 ﻿using InnoGotchiGame.Application.Managers;
+using InnoGotchiGame.Web.Models.ErrorModel;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchiGame.Web.Controllers
@@ -19,18 +20,13 @@ namespace InnoGotchiGame.Web.Controllers
         /// <param name="recipientId">id of the recipient user</param>
         [HttpPost]
         [ProducesResponseType(200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> AddCollaboratorAsync(int recipientId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
-
             int userId = GetAuthUserId();
             var rezult = await _requestManager.SendColaborationRequestAsync(userId, recipientId);
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Ok();
         }
@@ -41,18 +37,14 @@ namespace InnoGotchiGame.Web.Controllers
         /// <param name="requestId">id of the request</param>d
         [HttpPut("{requestId}/confirm")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> ConfirmRequestAsync(int requestId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
             int userId = GetAuthUserId();
             var rezult = await _requestManager.ConfirmRequestAsync(requestId, userId);
 
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Ok();
         }
@@ -63,17 +55,13 @@ namespace InnoGotchiGame.Web.Controllers
         /// <param name="requestId">id of the request</param>
         [HttpPut("{requestId}/reject")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> RejectRequestAsync(int requestId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
             int userId = GetAuthUserId();
             var rezult = await _requestManager.RejectRequestAsync(requestId, userId);
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Ok();
         }
@@ -84,16 +72,12 @@ namespace InnoGotchiGame.Web.Controllers
         /// <param name="requestId">id of the request</param>
         [HttpDelete("{requestId}")]
         [ProducesResponseType(200)]
-        [ProducesResponseType(typeof(List<string>), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> DeleteRequestAsync(int requestId)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest();
-            }
             var rezult = await _requestManager.DeleteRequestAsync(requestId);
             if (!rezult.IsComplete)
-                return BadRequest(rezult.Errors);
+                return BadRequest(new ErrorDetails(400, rezult.Errors));
 
             return Ok();
         }
