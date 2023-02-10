@@ -1,18 +1,13 @@
-using AutoMapper;
 using FluentValidation;
 using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Mappings;
 using InnoGotchiGame.Application.Validators;
 using InnoGotchiGame.Domain;
-using InnoGotchiGame.Persistence;
-using InnoGotchiGame.Persistence.Interfaces;
-using InnoGotchiGame.Persistence.Repositories;
 using InnoGotchiGame.Web;
 using InnoGotchiGame.Web.Extensions;
 using InnoGotchiGame.Web.Mapping;
 using InnoGotchiGame.Web.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using NLog;
 using System.Text.Json.Serialization;
@@ -25,15 +20,11 @@ builder.Services.ConfigureCors(builder.Configuration, MyAllowSpecificOrigins);
 builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
+builder.Services.AddAutoMapper(typeof(AssemblyMappingProfile), typeof(WebMappingProfile));
 
 builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
 );
-
-
-var config = new MapperConfiguration(cnf => cnf.AddProfiles(new List<Profile>() { new AssemblyMappingProfile(), new WebMappingProfile() }));
-
-builder.Services.AddTransient<IMapper>(x => new Mapper(config));
 
 builder.Services.AddTransient<AbstractValidator<User>, UserValidator>();
 builder.Services.AddTransient<UserManager>();
