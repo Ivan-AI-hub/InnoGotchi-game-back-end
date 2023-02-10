@@ -15,7 +15,7 @@ namespace InnoGotchiGame.Web.Middleware
         }
 
         public async Task InvokeAsync(HttpContext httpContext, PictureManager manager)
-        {
+        { 
             if (!_isInitialize)
             {
                 var filter = new PictureFiltrator()

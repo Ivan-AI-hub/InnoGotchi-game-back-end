@@ -7,6 +7,7 @@ using InnoGotchiGame.Web;
 using InnoGotchiGame.Web.Extensions;
 using InnoGotchiGame.Web.Mapping;
 using InnoGotchiGame.Web.Middleware;
+using LoggerService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using NLog;
@@ -64,14 +65,15 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateIssuerSigningKey = true,
         };
     });
-var app = builder.Build();
 
+var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseMiddleware<BasePetViewInitializer>();
 app.UseHttpsRedirection();
 
