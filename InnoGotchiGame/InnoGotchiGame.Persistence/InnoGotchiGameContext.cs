@@ -18,9 +18,6 @@ namespace InnoGotchiGame.Persistence
         public DbSet<Picture> Pictures { get; set; }
         public DbSet<ColaborationRequest> ColaborationRequests { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-        }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new PetConfigurator());
