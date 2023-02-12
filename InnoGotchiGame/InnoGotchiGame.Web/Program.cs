@@ -21,6 +21,8 @@ builder.Services.ConfigureCors(builder.Configuration, MyAllowSpecificOrigins);
 builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
+builder.Services.ConfigureResponseCaching();
+builder.Services.ConfigureHttpCacheHeaders();
 builder.Services.AddAutoMapper(typeof(AssemblyMappingProfile), typeof(WebMappingProfile));
 
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -81,6 +83,9 @@ app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 app.UseAuthentication();
+
+app.UseResponseCaching();
+app.UseHttpCacheHeaders();
 
 app.MapControllers();
 
