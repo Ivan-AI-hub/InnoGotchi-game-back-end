@@ -23,6 +23,8 @@ builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureResponseCaching();
 builder.Services.ConfigureHttpCacheHeaders();
+builder.Services.ConfigureJWT(builder.Configuration);
+
 builder.Services.AddAutoMapper(typeof(AssemblyMappingProfile), typeof(WebMappingProfile));
 
 builder.Services.AddControllers().AddJsonOptions(options =>
@@ -47,26 +49,6 @@ builder.Services.AddTransient<PetFarmManager>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-
-            ValidIssuer = AuthOptions.ISSUER,
-
-            ValidateAudience = true,
-
-            ValidAudience = AuthOptions.AUDIENCE,
-
-            ValidateLifetime = true,
-
-            IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
-
-            ValidateIssuerSigningKey = true,
-        };
-    });
 
 var app = builder.Build();
 
