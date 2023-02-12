@@ -7,9 +7,5 @@ namespace InnoGotchiGame.Web.Controllers
     [Authorize(AuthenticationSchemes = "Bearer")]
     public class BaseController : Controller
     {
-        protected int GetAuthUserId()
-        {
-            return int.Parse((User.FindFirst(nameof(TokenClaims.UserId))!.Value));
-        }
     }
 }

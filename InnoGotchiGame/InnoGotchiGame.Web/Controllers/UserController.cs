@@ -5,6 +5,7 @@ using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Application.Sorters.SortRules;
 using InnoGotchiGame.Domain;
+using InnoGotchiGame.Web.Extensions;
 using InnoGotchiGame.Web.Models.ErrorModel;
 using InnoGotchiGame.Web.Models.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -143,7 +144,7 @@ namespace InnoGotchiGame.Web.Controllers
         [ProducesResponseType(typeof(UserDTO), 200)]
         public async Task<IActionResult> GetAuthorizeUserAsync()
         {
-            var userId = GetAuthUserId();
+            var userId = int.Parse(User.GetUserId()!);
             var user = await _userManager.GetUserByIdAsync(userId);
 
             return new ObjectResult(user);

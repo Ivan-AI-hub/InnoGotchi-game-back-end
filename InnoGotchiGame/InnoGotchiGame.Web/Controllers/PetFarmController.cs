@@ -3,6 +3,7 @@ using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Application.Sorters.SortRules;
+using InnoGotchiGame.Web.Extensions;
 using InnoGotchiGame.Web.Models.ErrorModel;
 using InnoGotchiGame.Web.Models.PetFarms;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +28,7 @@ namespace InnoGotchiGame.Web.Controllers
         [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> PostAsync([FromBody] AddPetFarmModel addFarmModel)
         {
-            var userId = GetAuthUserId();
+            var userId = int.Parse(User.GetUserId()!);
             var result = await _farmManager.AddAsync(userId, addFarmModel.Name);
 
             if (!result.IsComplete)
