@@ -27,9 +27,9 @@ namespace InnoGotchiGame.Web.Controllers
         [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> PostAsync([FromBody] AddPetModel addPetModel)
         {
-            var rezult = await _petManager.AddAsync(addPetModel.FarmId, addPetModel.Name, addPetModel.View);
-            if (!rezult.IsComplete)
-                return BadRequest(new ErrorDetails(400, rezult.Errors));
+            var result = await _petManager.AddAsync(addPetModel.FarmId, addPetModel.Name, addPetModel.View);
+            if (!result.IsComplete)
+                return BadRequest(new ErrorDetails(400, result.Errors));
 
             return Ok();
         }
@@ -42,10 +42,10 @@ namespace InnoGotchiGame.Web.Controllers
         [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> PutAsync([FromBody] UpdatePetModel updatePetModel)
         {
-            var rezult = await _petManager.UpdateAsync(updatePetModel.UpdatedId, updatePetModel.Name);
+            var result = await _petManager.UpdateAsync(updatePetModel.UpdatedId, updatePetModel.Name);
 
-            if (!rezult.IsComplete)
-                return BadRequest(new ErrorDetails(400, rezult.Errors));
+            if (!result.IsComplete)
+                return BadRequest(new ErrorDetails(400, result.Errors));
 
             return Accepted();
         }
@@ -60,10 +60,10 @@ namespace InnoGotchiGame.Web.Controllers
         public async Task<IActionResult> FeedAsync(int petId)
         {
             var userId = GetAuthUserId();
-            var rezult = await _petManager.FeedAsync(petId, userId);
+            var result = await _petManager.FeedAsync(petId, userId);
 
-            if (!rezult.IsComplete)
-                return BadRequest(new ErrorDetails(400, rezult.Errors));
+            if (!result.IsComplete)
+                return BadRequest(new ErrorDetails(400, result.Errors));
 
             return Ok();
         }
@@ -77,10 +77,10 @@ namespace InnoGotchiGame.Web.Controllers
         [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> ResetHappinessDayAsync(int petId)
         {
-            var rezult = await _petManager.ResetHappinessDayAsync(petId);
+            var result = await _petManager.ResetHappinessDayAsync(petId);
 
-            if (!rezult.IsComplete)
-                return BadRequest(new ErrorDetails(400, rezult.Errors));
+            if (!result.IsComplete)
+                return BadRequest(new ErrorDetails(400, result.Errors));
 
             return Ok();
         }
@@ -95,10 +95,10 @@ namespace InnoGotchiGame.Web.Controllers
         public async Task<IActionResult> GiveDrinkAsync(int petId)
         {
             var userId = GetAuthUserId();
-            var rezult = await _petManager.GiveDrinkAsync(petId, userId);
+            var result = await _petManager.GiveDrinkAsync(petId, userId);
 
-            if (!rezult.IsComplete)
-                return BadRequest(new ErrorDetails(400, rezult.Errors));
+            if (!result.IsComplete)
+                return BadRequest(new ErrorDetails(400, result.Errors));
 
             return Ok();
         }
@@ -112,10 +112,10 @@ namespace InnoGotchiGame.Web.Controllers
         [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> SetDeadStatusAsync(int petId, DateTime deadDate)
         {
-            var rezult = await _petManager.SetDeadStatusAsync(petId, deadDate);
+            var result = await _petManager.SetDeadStatusAsync(petId, deadDate);
 
-            if (!rezult.IsComplete)
-                return BadRequest(new ErrorDetails(400, rezult.Errors));
+            if (!result.IsComplete)
+                return BadRequest(new ErrorDetails(400, result.Errors));
 
             return Ok();
         }

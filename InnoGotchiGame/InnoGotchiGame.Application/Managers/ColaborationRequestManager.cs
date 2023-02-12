@@ -24,9 +24,9 @@ namespace InnoGotchiGame.Application.Managers
         /// <param name="senderId">id of the sending user</param>
         /// <param name="recipientId">id of the recipient user</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> SendColaborationRequestAsync(int senderId, int recipientId)
+        public async Task<ManagerResult> SendColaborationRequestAsync(int senderId, int recipientId)
         {
-            var rezult = new ManagerRezult();
+            var result = new ManagerResult();
             var request = new ColaborationRequest() { RequestSenderId = senderId, RequestReceiverId = recipientId, Status = ColaborationRequestStatus.Undefined };
 
             var isSingleRequest = await _requestRepository.IsItemExistAsync(x => x.RequestSenderId == senderId && x.RequestReceiverId == recipientId ||
@@ -38,10 +38,10 @@ namespace InnoGotchiGame.Application.Managers
             }
             else
             {
-                rezult.Errors.Add("The collaborating request for these users already exists");
+                result.Errors.Add("The collaborating request for these users already exists");
             }
 
-            return rezult;
+            return result;
         }
 
         /// <summary>
@@ -50,17 +50,17 @@ namespace InnoGotchiGame.Application.Managers
         /// <param name="requestId">id of the request</param>
         /// <param name="recipientId">id of the recipient user</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> ConfirmRequestAsync(int requestId, int recipientId)
+        public async Task<ManagerResult> ConfirmRequestAsync(int requestId, int recipientId)
         {
-            var rezult = new ManagerRezult();
+            var result = new ManagerResult();
             var request = await _requestRepository.FirstOrDefaultAsync(x => x.Id == requestId, false);
             if (request != null)
             {
                 if (request.Status == ColaborationRequestStatus.Colaborators)
-                    rezult.Errors.Add("Request already confirmed");
+                    result.Errors.Add("Request already confirmed");
                 if (request.RequestReceiverId != recipientId)
-                    rezult.Errors.Add("Only the recipient of the request can confirm the request. The recipient's ID does not match");
-                if (rezult.IsComplete)
+                    result.Errors.Add("Only the recipient of the request can confirm the request. The recipient's ID does not match");
+                if (result.IsComplete)
                 {
                     request.Status = ColaborationRequestStatus.Colaborators;
                     _requestRepository.Update(request);
@@ -69,10 +69,10 @@ namespace InnoGotchiGame.Application.Managers
             }
             else
             {
-                rezult.Errors.Add("The request ID is not in the database");
+                result.Errors.Add("The request ID is not in the database");
             }
 
-            return rezult;
+            return result;
         }
 
         /// <summary>
@@ -81,18 +81,18 @@ namespace InnoGotchiGame.Application.Managers
         /// <param name="requestId">id of the request</param>
         /// <param name="participantId">id of the participant</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> RejectRequestAsync(int requestId, int participantId)
+        public async Task<ManagerResult> RejectRequestAsync(int requestId, int participantId)
         {
-            var rezult = new ManagerRezult();
+            var result = new ManagerResult();
             var request = await _requestRepository.FirstOrDefaultAsync(x => x.Id == requestId, false);
             if (request != null)
             {
                 if (request.Status == ColaborationRequestStatus.NotColaborators)
-                    rezult.Errors.Add("Request already rejected");
+                    result.Errors.Add("Request already rejected");
                 if (request.RequestReceiverId != participantId && request.RequestSenderId != participantId)
-                    rezult.Errors.Add("Only the participant of the request can reject the request. The recipient's ID does not match");
+                    result.Errors.Add("Only the participant of the request can reject the request. The recipient's ID does not match");
 
-                if (rezult.IsComplete)
+                if (result.IsComplete)
                 {
                     request.Status = ColaborationRequestStatus.NotColaborators;
                     _requestRepository.Update(request);
@@ -101,10 +101,10 @@ namespace InnoGotchiGame.Application.Managers
             }
             else
             {
-                rezult.Errors.Add("The request ID is not in the database");
+                result.Errors.Add("The request ID is not in the database");
             }
 
-            return rezult;
+            return result;
         }
 
         /// <summary>
@@ -112,9 +112,9 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="requestId">id of the request</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> DeleteRequestAsync(int requestId)
+        public async Task<ManagerResult> DeleteRequestAsync(int requestId)
         {
-            var rezult = new ManagerRezult();
+            var result = new ManagerResult();
             var request = await _requestRepository.FirstOrDefaultAsync(x => x.Id == requestId, false);
             if (request != null)
             {
@@ -123,10 +123,10 @@ namespace InnoGotchiGame.Application.Managers
             }
             else
             {
-                rezult.Errors.Add("The request ID is not in the database");
+                result.Errors.Add("The request ID is not in the database");
             }
 
-            return rezult;
+            return result;
         }
     }
 }

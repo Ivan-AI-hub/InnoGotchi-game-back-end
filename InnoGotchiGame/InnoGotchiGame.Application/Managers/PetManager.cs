@@ -36,7 +36,7 @@ namespace InnoGotchiGame.Application.Managers
         /// <param name="farmId">id of the farm containing the pet</param>
         /// <param name="name">Pet name</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> AddAsync(int farmId, string name, PetViewDTO? view)
+        public async Task<ManagerResult> AddAsync(int farmId, string name, PetViewDTO? view)
         {
             var dataPet = new Pet()
             {
@@ -56,14 +56,14 @@ namespace InnoGotchiGame.Application.Managers
                 DrinkingCount = 1
             };
 
-            var validationRezult = _validator.Validate(dataPet);
-            var managerRezult = new ManagerRezult(validationRezult);
-            if (validationRezult.IsValid && await CheckFarmIdAsync(farmId, managerRezult) && await IsUniqueNameAsync(name, managerRezult))
+            var validationResult = _validator.Validate(dataPet);
+            var managerResult = new ManagerResult(validationResult);
+            if (validationResult.IsValid && await CheckFarmIdAsync(farmId, managerResult) && await IsUniqueNameAsync(name, managerResult))
             {
                 _petRepository.Create(dataPet);
                 _repositoryManager.SaveAsync().Wait();
             }
-            return managerRezult;
+            return managerResult;
         }
 
         /// <summary>
@@ -72,17 +72,17 @@ namespace InnoGotchiGame.Application.Managers
         /// <param name="id">Pet id</param>
         /// <param name="name">New name for the pet</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> UpdateAsync(int id, string name)
+        public async Task<ManagerResult> UpdateAsync(int id, string name)
         {
 
-            var managerRez = new ManagerRezult();
+            var managerRez = new ManagerResult();
             if (await IsPetAliveAsync(id, managerRez))
             {
                 var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
                 dataPet!.Statistic.Name = name;
-                var validationRezult = _validator.Validate(dataPet);
-                managerRez = new ManagerRezult(validationRezult);
-                if (validationRezult.IsValid && await IsUniqueNameAsync(dataPet.Statistic.Name, managerRez))
+                var validationResult = _validator.Validate(dataPet);
+                managerRez = new ManagerResult(validationResult);
+                if (validationResult.IsValid && await IsUniqueNameAsync(dataPet.Statistic.Name, managerRez))
                 {
                     _repositoryManager.SaveAsync().Wait();
                 }
@@ -96,9 +96,9 @@ namespace InnoGotchiGame.Application.Managers
         /// <param name="id">Pet id</param>
         /// <param name="feederId">id of the user who initiated the feeding</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> FeedAsync(int id, int feederId)
+        public async Task<ManagerResult> FeedAsync(int id, int feederId)
         {
-            var managerRez = new ManagerRezult();
+            var managerRez = new ManagerResult();
             if (await IsPetAliveAsync(id, managerRez))
             {
                 var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
@@ -124,9 +124,9 @@ namespace InnoGotchiGame.Application.Managers
         /// <param name="id">Pet id</param>
         /// <param name="drinkerId">id of the user who initiated the drinking</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> GiveDrinkAsync(int id, int drinkerId)
+        public async Task<ManagerResult> GiveDrinkAsync(int id, int drinkerId)
         {
-            var managerRez = new ManagerRezult();
+            var managerRez = new ManagerResult();
             if (await IsPetAliveAsync(id, managerRez))
             {
                 var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
@@ -150,9 +150,9 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="id">Pet id</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> SetDeadStatusAsync(int id, DateTime deadDate)
+        public async Task<ManagerResult> SetDeadStatusAsync(int id, DateTime deadDate)
         {
-            var managerRez = new ManagerRezult();
+            var managerRez = new ManagerResult();
             if (await IsPetAliveAsync(id, managerRez))
             {
                 var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
@@ -169,9 +169,9 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="id">Pet id</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> ResetHappinessDayAsync(int id)
+        public async Task<ManagerResult> ResetHappinessDayAsync(int id)
         {
-            var managerRez = new ManagerRezult();
+            var managerRez = new ManagerResult();
             if (await IsPetAliveAsync(id, managerRez))
             {
                 var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
@@ -187,9 +187,9 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="id">Pet id</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> DeleteAsync(int id)
+        public async Task<ManagerResult> DeleteAsync(int id)
         {
-            var managerRez = new ManagerRezult();
+            var managerRez = new ManagerResult();
             if (await CheckPetIdAsync(id, managerRez))
             {
                 var pet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, false);
@@ -230,37 +230,37 @@ namespace InnoGotchiGame.Application.Managers
             return pets;
         }
 
-        private async Task<bool> IsUniqueNameAsync(string name, ManagerRezult managerRezult)
+        private async Task<bool> IsUniqueNameAsync(string name, ManagerResult managerResult)
         {
             if (await _petRepository.IsItemExistAsync(x => x.Statistic.Name.ToLower() == name.ToLower()))
             {
-                managerRezult.Errors.Add("A pet with the same Name already exists in the database");
+                managerResult.Errors.Add("A pet with the same Name already exists in the database");
                 return false;
             }
             return true;
         }
 
-        private async Task<bool> CheckPetIdAsync(int petId, ManagerRezult rezult)
+        private async Task<bool> CheckPetIdAsync(int petId, ManagerResult result)
         {
             if (await _petRepository.IsItemExistAsync(x => x.Id == petId))
             {
                 return true;
             }
-            rezult.Errors.Add("The pet ID is not in the database");
+            result.Errors.Add("The pet ID is not in the database");
             return false;
         }
-        private async Task<bool> CheckFarmIdAsync(int farmId, ManagerRezult rezult)
+        private async Task<bool> CheckFarmIdAsync(int farmId, ManagerResult result)
         {
             if (!(await _farmRepository.IsItemExistAsync(x => x.Id == farmId)))
             {
-                rezult.Errors.Add("The farm ID is not in the database");
+                result.Errors.Add("The farm ID is not in the database");
                 return false;
             }
             return true;
         }
-        private async Task<bool> IsPetAliveAsync(int id, ManagerRezult rezult)
+        private async Task<bool> IsPetAliveAsync(int id, ManagerResult result)
         {
-            if (await CheckPetIdAsync(id, rezult))
+            if (await CheckPetIdAsync(id, result))
             {
                 var pet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, false);
                 if (pet.Statistic.IsAlive)
@@ -268,7 +268,7 @@ namespace InnoGotchiGame.Application.Managers
                     return true;
                 }
 
-                rezult.Errors.Add("The pet dead already");
+                result.Errors.Add("The pet dead already");
             }
             return false;
         }

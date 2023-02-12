@@ -42,9 +42,9 @@ namespace InnoGotchiGame.Web.Controllers
         {
             UserDTO user = _mapper.Map<UserDTO>(addUserModel);
 
-            var rezult = await _userManager.AddAsync(user, addUserModel.Password);
-            if (!rezult.IsComplete)
-                return BadRequest(new ErrorDetails(400, rezult.Errors));
+            var result = await _userManager.AddAsync(user, addUserModel.Password);
+            if (!result.IsComplete)
+                return BadRequest(new ErrorDetails(400, result.Errors));
 
             return Ok();
         }
@@ -60,10 +60,10 @@ namespace InnoGotchiGame.Web.Controllers
         {
             UserDTO user = _mapper.Map<UserDTO>(updateUserModel);
 
-            var rezult = await _userManager.UpdateDataAsync(updateUserModel.UpdatedId, user);
+            var result = await _userManager.UpdateDataAsync(updateUserModel.UpdatedId, user);
 
-            if (!rezult.IsComplete)
-                return BadRequest(new ErrorDetails(400, rezult.Errors));
+            if (!result.IsComplete)
+                return BadRequest(new ErrorDetails(400, result.Errors));
 
             return Accepted();
         }
@@ -77,10 +77,10 @@ namespace InnoGotchiGame.Web.Controllers
         [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> PutPasswordAsync([FromBody] UpdateUserPasswordModel updateUserModel)
         {
-            var rezult = await _userManager.UpdatePasswordAsync(updateUserModel.UpdatedId, updateUserModel.OldPassword, updateUserModel.NewPassword);
+            var result = await _userManager.UpdatePasswordAsync(updateUserModel.UpdatedId, updateUserModel.OldPassword, updateUserModel.NewPassword);
 
-            if (!rezult.IsComplete)
-                return BadRequest(new ErrorDetails(400, rezult.Errors));
+            if (!result.IsComplete)
+                return BadRequest(new ErrorDetails(400, result.Errors));
 
             return Accepted();
         }
@@ -94,9 +94,9 @@ namespace InnoGotchiGame.Web.Controllers
         [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> DeleteAsync(int userId)
         {
-            var rezult = await _userManager.DeleteAsync(userId);
-            if (!rezult.IsComplete)
-                return BadRequest(new ErrorDetails(400, rezult.Errors));
+            var result = await _userManager.DeleteAsync(userId);
+            if (!result.IsComplete)
+                return BadRequest(new ErrorDetails(400, result.Errors));
 
             return NoContent();
         }

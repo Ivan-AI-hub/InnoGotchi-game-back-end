@@ -30,17 +30,17 @@ namespace InnoGotchiGame.Application.Managers
         /// Adds <paramref name="picture"/> to database
         /// </summary>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> AddAsync(PictureDTO picture)
+        public async Task<ManagerResult> AddAsync(PictureDTO picture)
         {
             var pictureData = _mapper.Map<Picture>(picture);
-            var validationRezult = _validator.Validate(pictureData);
-            var rezult = new ManagerRezult(validationRezult);
-            if (validationRezult.IsValid && await IsUniqueNameAsync(pictureData.Name, rezult))
+            var validationResult = _validator.Validate(pictureData);
+            var result = new ManagerResult(validationResult);
+            if (validationResult.IsValid && await IsUniqueNameAsync(pictureData.Name, result))
             {
                 _pictureRepository.Create(pictureData);
                 _repositoryManager.SaveAsync().Wait();
             }
-            return rezult;
+            return result;
         }
 
         /// <summary>
@@ -48,19 +48,19 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="updatedId">Id of the picture being updated</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> UpdateAsync(int updatedId, PictureDTO newPicture)
+        public async Task<ManagerResult> UpdateAsync(int updatedId, PictureDTO newPicture)
         {
             var pictureData = _mapper.Map<Picture>(newPicture);
-            var validationRezult = _validator.Validate(pictureData);
-            var rezult = new ManagerRezult(validationRezult);
-            if (validationRezult.IsValid && await CheckPictureIdAsync(updatedId, rezult) && await IsUniqueNameAsync(pictureData.Name, rezult))
+            var validationResult = _validator.Validate(pictureData);
+            var result = new ManagerResult(validationResult);
+            if (validationResult.IsValid && await CheckPictureIdAsync(updatedId, result) && await IsUniqueNameAsync(pictureData.Name, result))
             {
                 pictureData.Id = updatedId;
                 _pictureRepository.Update(pictureData);
                 _repositoryManager.SaveAsync().Wait();
                 newPicture.Id = updatedId;
             }
-            return rezult;
+            return result;
         }
 
         /// <summary>
@@ -68,9 +68,9 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="id">Picture id</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> DeleteAsync(int id)
+        public async Task<ManagerResult> DeleteAsync(int id)
         {
-            var managerRez = new ManagerRezult();
+            var managerRez = new ManagerResult();
             if (await CheckPictureIdAsync(id, managerRez))
             {
                 _pictureRepository.Delete(await _pictureRepository.FirstOrDefaultAsync(x => x.Id == id, false));
@@ -96,21 +96,21 @@ namespace InnoGotchiGame.Application.Managers
 
         }
 
-        private async Task<bool> IsUniqueNameAsync(string name, ManagerRezult managerRezult)
+        private async Task<bool> IsUniqueNameAsync(string name, ManagerResult managerResult)
         {
             if (await _pictureRepository.IsItemExistAsync(x => x.Name.ToLower() == name.ToLower()))
             {
-                managerRezult.Errors.Add("A picture with the same Name already exists in the database");
+                managerResult.Errors.Add("A picture with the same Name already exists in the database");
                 return false;
             }
             return true;
         }
 
-        private async Task<bool> CheckPictureIdAsync(int id, ManagerRezult rezult)
+        private async Task<bool> CheckPictureIdAsync(int id, ManagerResult result)
         {
             if (!await _pictureRepository.IsItemExistAsync(x => x.Id == id))
             {
-                rezult.Errors.Add("The farm ID is not in the database");
+                result.Errors.Add("The farm ID is not in the database");
                 return false;
             }
             return true;

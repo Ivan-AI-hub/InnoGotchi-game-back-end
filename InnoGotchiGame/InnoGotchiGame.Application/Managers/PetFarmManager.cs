@@ -34,21 +34,21 @@ namespace InnoGotchiGame.Application.Managers
         /// <param name="ownerId">Id of the user who owns the farm</param>
         /// <param name="name">Farm name</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> AddAsync(int ownerId, string name)
+        public async Task<ManagerResult> AddAsync(int ownerId, string name)
         {
             var dataFarm = new PetFarm();
             dataFarm.CreateDate = DateTime.Now;
             dataFarm.Name = name;
             dataFarm.OwnerId = ownerId;
 
-            var validationRezult = _validator.Validate(dataFarm);
-            var rezult = new ManagerRezult(validationRezult);
-            if (validationRezult.IsValid && await IsUniqueNameAsync(dataFarm.Name, rezult))
+            var validationResult = _validator.Validate(dataFarm);
+            var result = new ManagerResult(validationResult);
+            if (validationResult.IsValid && await IsUniqueNameAsync(dataFarm.Name, result))
             {
                 _farmRepository.Create(dataFarm);
                 _repositoryManager.SaveAsync().Wait();
             }
-            return rezult;
+            return result;
         }
 
         /// <summary>
@@ -57,16 +57,16 @@ namespace InnoGotchiGame.Application.Managers
         /// <param name="id">Farm id</param>
         /// <param name="newName">New name for the farm</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> UpdateNameAsync(int id, string newName)
+        public async Task<ManagerResult> UpdateNameAsync(int id, string newName)
         {
-            var managerRez = new ManagerRezult();
+            var managerRez = new ManagerResult();
             if (await CheckFarmIdAsync(id, managerRez))
             {
                 var dataFarm = await _farmRepository.FirstOrDefaultAsync(x => x.Id == id, false);
                 dataFarm!.Name = newName;
-                var validationRezult = _validator.Validate(dataFarm);
-                managerRez = new ManagerRezult(validationRezult);
-                if (validationRezult.IsValid && await IsUniqueNameAsync(newName, managerRez))
+                var validationResult = _validator.Validate(dataFarm);
+                managerRez = new ManagerResult(validationResult);
+                if (validationResult.IsValid && await IsUniqueNameAsync(newName, managerRez))
                 {
                     _farmRepository.Update(dataFarm);
                     _repositoryManager.SaveAsync().Wait();
@@ -80,9 +80,9 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="id">Farm id</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> DeleteAsync(int id)
+        public async Task<ManagerResult> DeleteAsync(int id)
         {
-            var managerRez = new ManagerRezult();
+            var managerRez = new ManagerResult();
             if (await CheckFarmIdAsync(id, managerRez))
             {
                 var farm = await _farmRepository.FirstOrDefaultAsync(x => x.Id == id, false);
@@ -116,11 +116,11 @@ namespace InnoGotchiGame.Application.Managers
             return _mapper.Map<IEnumerable<PetFarmDTO>>(farmsList);
         }
 
-        private async Task<bool> IsUniqueNameAsync(string name, ManagerRezult managerRezult)
+        private async Task<bool> IsUniqueNameAsync(string name, ManagerResult managerResult)
         {
             if (await _farmRepository.IsItemExistAsync(x => x.Name.ToLower() == name.ToLower()))
             {
-                managerRezult.Errors.Add("A farm with the same Name already exists in the database");
+                managerResult.Errors.Add("A farm with the same Name already exists in the database");
                 return false;
             }
             return true;
@@ -134,11 +134,11 @@ namespace InnoGotchiGame.Application.Managers
             return farms;
         }
 
-        private async Task<bool> CheckFarmIdAsync(int id, ManagerRezult rezult)
+        private async Task<bool> CheckFarmIdAsync(int id, ManagerResult result)
         {
             if (!(await _farmRepository.IsItemExistAsync(x => x.Id == id)))
             {
-                rezult.Errors.Add("The farm ID is not in the database");
+                result.Errors.Add("The farm ID is not in the database");
                 return false;
             }
             return true;

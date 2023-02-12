@@ -28,10 +28,10 @@ namespace InnoGotchiGame.Web.Controllers
         public async Task<IActionResult> PostAsync([FromBody] AddPetFarmModel addFarmModel)
         {
             var userId = GetAuthUserId();
-            var rezult = await _farmManager.AddAsync(userId, addFarmModel.Name);
+            var result = await _farmManager.AddAsync(userId, addFarmModel.Name);
 
-            if (!rezult.IsComplete)
-                return BadRequest(new ErrorDetails(400, rezult.Errors));
+            if (!result.IsComplete)
+                return BadRequest(new ErrorDetails(400, result.Errors));
 
             return Ok();
         }
@@ -44,10 +44,10 @@ namespace InnoGotchiGame.Web.Controllers
         [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> PutAsync([FromBody] UpdatePetFarmModel updatePetFarmModel)
         {
-            var rezult = await _farmManager.UpdateNameAsync(updatePetFarmModel.UpdatedId, updatePetFarmModel.Name);
+            var result = await _farmManager.UpdateNameAsync(updatePetFarmModel.UpdatedId, updatePetFarmModel.Name);
 
-            if (!rezult.IsComplete)
-                return BadRequest(new ErrorDetails(400, rezult.Errors));
+            if (!result.IsComplete)
+                return BadRequest(new ErrorDetails(400, result.Errors));
 
             return Accepted();
         }

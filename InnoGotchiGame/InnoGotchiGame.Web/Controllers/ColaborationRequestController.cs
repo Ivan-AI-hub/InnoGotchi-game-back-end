@@ -24,9 +24,9 @@ namespace InnoGotchiGame.Web.Controllers
         public async Task<IActionResult> AddCollaboratorAsync(int recipientId)
         {
             int userId = GetAuthUserId();
-            var rezult = await _requestManager.SendColaborationRequestAsync(userId, recipientId);
-            if (!rezult.IsComplete)
-                return BadRequest(new ErrorDetails(400, rezult.Errors));
+            var result = await _requestManager.SendColaborationRequestAsync(userId, recipientId);
+            if (!result.IsComplete)
+                return BadRequest(new ErrorDetails(400, result.Errors));
 
             return Ok();
         }
@@ -41,10 +41,10 @@ namespace InnoGotchiGame.Web.Controllers
         public async Task<IActionResult> ConfirmRequestAsync(int requestId)
         {
             int userId = GetAuthUserId();
-            var rezult = await _requestManager.ConfirmRequestAsync(requestId, userId);
+            var result = await _requestManager.ConfirmRequestAsync(requestId, userId);
 
-            if (!rezult.IsComplete)
-                return BadRequest(new ErrorDetails(400, rezult.Errors));
+            if (!result.IsComplete)
+                return BadRequest(new ErrorDetails(400, result.Errors));
 
             return Ok();
         }
@@ -59,9 +59,9 @@ namespace InnoGotchiGame.Web.Controllers
         public async Task<IActionResult> RejectRequestAsync(int requestId)
         {
             int userId = GetAuthUserId();
-            var rezult = await _requestManager.RejectRequestAsync(requestId, userId);
-            if (!rezult.IsComplete)
-                return BadRequest(new ErrorDetails(400, rezult.Errors));
+            var result = await _requestManager.RejectRequestAsync(requestId, userId);
+            if (!result.IsComplete)
+                return BadRequest(new ErrorDetails(400, result.Errors));
 
             return Ok();
         }
@@ -75,9 +75,9 @@ namespace InnoGotchiGame.Web.Controllers
         [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> DeleteRequestAsync(int requestId)
         {
-            var rezult = await _requestManager.DeleteRequestAsync(requestId);
-            if (!rezult.IsComplete)
-                return BadRequest(new ErrorDetails(400, rezult.Errors));
+            var result = await _requestManager.DeleteRequestAsync(requestId);
+            if (!result.IsComplete)
+                return BadRequest(new ErrorDetails(400, result.Errors));
 
             return Ok();
         }

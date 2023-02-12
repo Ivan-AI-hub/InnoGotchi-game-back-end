@@ -34,20 +34,20 @@ namespace InnoGotchiGame.Application.Managers
         /// Adds <paramref name="user"/> to database
         /// </summary>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> AddAsync(UserDTO user, string password)
+        public async Task<ManagerResult> AddAsync(UserDTO user, string password)
         {
             var dataUser = _mapper.Map<User>(user);
             dataUser.PasswordHach = StringToHach(password);
 
-            var validationRezult = _validator.Validate(dataUser);
-            var managerRezult = new ManagerRezult(validationRezult);
-            if (validationRezult.IsValid && await IsUniqueEmailAsync(user.Email, managerRezult))
+            var validationResult = _validator.Validate(dataUser);
+            var managerResult = new ManagerResult(validationResult);
+            if (validationResult.IsValid && await IsUniqueEmailAsync(user.Email, managerResult))
             {
                 _userRepository.Create(dataUser);
                 _repositoryManager.SaveAsync().Wait();
                 user.Id = dataUser.Id;
             }
-            return managerRezult;
+            return managerResult;
         }
 
         /// <summary>
@@ -55,26 +55,26 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="updatedId">User id</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> UpdateDataAsync(int updatedId, UserDTO newUser)
+        public async Task<ManagerResult> UpdateDataAsync(int updatedId, UserDTO newUser)
         {
-            ManagerRezult managerRezult = new ManagerRezult();
+            ManagerResult managerResult = new ManagerResult();
             var dataUser = _mapper.Map<User>(newUser);
 
-            if (await CheckUserIdAsync(updatedId, managerRezult))
+            if (await CheckUserIdAsync(updatedId, managerResult))
             {
                 var oldUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, true);
                 oldUser.Picture = dataUser.Picture;
                 oldUser.FirstName = dataUser.FirstName;
                 oldUser.LastName = dataUser.LastName;
 
-                var validationRezult = _validator.Validate(oldUser);
-                managerRezult = new ManagerRezult(validationRezult);
-                if (managerRezult.IsComplete)
+                var validationResult = _validator.Validate(oldUser);
+                managerResult = new ManagerResult(validationResult);
+                if (managerResult.IsComplete)
                 {
                     _repositoryManager.SaveAsync().Wait();
                 }
             }
-            return managerRezult;
+            return managerResult;
         }
 
         /// <summary>
@@ -82,15 +82,15 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="updatedId">User id</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> UpdatePasswordAsync(int updatedId, string oldPassword, string newPassword)
+        public async Task<ManagerResult> UpdatePasswordAsync(int updatedId, string oldPassword, string newPassword)
         {
-            ManagerRezult managerRezult = new ManagerRezult();
-            if (await CheckUserIdAsync(updatedId, managerRezult))
+            ManagerResult managerResult = new ManagerResult();
+            if (await CheckUserIdAsync(updatedId, managerResult))
             {
                 var dataUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, false);
 
-                var validationRezult = _validator.Validate(dataUser);
-                managerRezult = new ManagerRezult(validationRezult);
+                var validationResult = _validator.Validate(dataUser);
+                managerResult = new ManagerResult(validationResult);
                 if (dataUser.PasswordHach == StringToHach(oldPassword))
                 {
                     dataUser.PasswordHach = StringToHach(newPassword);
@@ -98,10 +98,10 @@ namespace InnoGotchiGame.Application.Managers
                 }
                 else
                 {
-                    managerRezult.Errors.Add("Old and new password are not equal");
+                    managerResult.Errors.Add("Old and new password are not equal");
                 }
             }
-            return managerRezult;
+            return managerResult;
         }
 
         /// <summary>
@@ -109,9 +109,9 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="deletedId">User id</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerRezult> DeleteAsync(int deletedId)
+        public async Task<ManagerResult> DeleteAsync(int deletedId)
         {
-            var managerRez = new ManagerRezult();
+            var managerRez = new ManagerResult();
             if (await CheckUserIdAsync(deletedId, managerRez))
             {
                 _userRepository.Delete(await _userRepository.FirstOrDefaultAsync(x => x.Id == deletedId, false));
@@ -167,21 +167,21 @@ namespace InnoGotchiGame.Application.Managers
             }
         }
 
-        private async Task<bool> CheckUserIdAsync(int userId, ManagerRezult rezult)
+        private async Task<bool> CheckUserIdAsync(int userId, ManagerResult result)
         {
             if (!await _userRepository.IsItemExistAsync(x => x.Id == userId))
             {
-                rezult.Errors.Add("The user ID is not in the database");
+                result.Errors.Add("The user ID is not in the database");
                 return false;
             }
             return true;
         }
 
-        private async Task<bool> IsUniqueEmailAsync(string email, ManagerRezult managerRezult)
+        private async Task<bool> IsUniqueEmailAsync(string email, ManagerResult managerResult)
         {
             if (await _userRepository.IsItemExistAsync(x => x.Email == email))
             {
-                managerRezult.Errors.Add("A user with the same Email already exists in the database");
+                managerResult.Errors.Add("A user with the same Email already exists in the database");
                 return false;
             }
             return true;
