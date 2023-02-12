@@ -3,13 +3,9 @@ using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Mappings;
 using InnoGotchiGame.Application.Validators;
 using InnoGotchiGame.Domain;
-using InnoGotchiGame.Web;
 using InnoGotchiGame.Web.Extensions;
 using InnoGotchiGame.Web.Mapping;
 using InnoGotchiGame.Web.Middleware;
-using LoggerService;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
 using NLog;
 using System.Text.Json.Serialization;
 
@@ -23,6 +19,8 @@ builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureResponseCaching();
 builder.Services.ConfigureHttpCacheHeaders();
+builder.Services.ConfigureSwagger();
+
 builder.Services.ConfigureJWT(builder.Configuration);
 
 builder.Services.AddAutoMapper(typeof(AssemblyMappingProfile), typeof(WebMappingProfile));
@@ -47,7 +45,6 @@ builder.Services.AddTransient<PetFarmManager>();
 
 
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 builder.Services.AddAuthorization();
 
 var app = builder.Build();

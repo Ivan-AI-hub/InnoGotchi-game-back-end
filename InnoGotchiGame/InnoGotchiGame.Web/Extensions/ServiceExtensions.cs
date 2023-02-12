@@ -4,6 +4,7 @@ using LoggerService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Reflection;
 using System.Text;
 
@@ -35,8 +36,8 @@ namespace InnoGotchiGame.Web.Extensions
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)
         {
             string connection = configuration.GetConnectionString("DefaultConnection");
-            services.AddDbContext<InnoGotchiGameContext>(options => 
-                                options.UseSqlServer(connection, 
+            services.AddDbContext<InnoGotchiGameContext>(options =>
+                                options.UseSqlServer(connection,
                                 b => b.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name)));
         }
 
@@ -46,8 +47,8 @@ namespace InnoGotchiGame.Web.Extensions
         }
 
         public static void ConfigureResponseCaching(this IServiceCollection services)
-        { 
-            services.AddResponseCaching(); 
+        {
+            services.AddResponseCaching();
         }
 
         public static void ConfigureHttpCacheHeaders(this IServiceCollection services)
@@ -59,7 +60,8 @@ namespace InnoGotchiGame.Web.Extensions
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
         {
             var jwtSettings = configuration.GetSection("JwtSettings");
-            services.AddAuthentication(opt => {
+            services.AddAuthentication(opt =>
+            {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             })
@@ -78,5 +80,36 @@ namespace InnoGotchiGame.Web.Extensions
             });
         }
 
+        public static void ConfigureSwagger(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(s =>
+            {
+                s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    In = ParameterLocation.Header,
+                    Description = "Place to add JWT with Bearer",
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                s.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                           Name = "Bearer",
+                        },
+                        new List<string>()
+                    }
+                });
+
+            });
+        }
     }
 }
