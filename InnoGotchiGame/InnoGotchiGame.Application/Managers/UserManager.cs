@@ -17,12 +17,12 @@ namespace InnoGotchiGame.Application.Managers
     /// </summary>
     public class UserManager
     {
-        private AbstractValidator<User> _validator;
+        private IValidator<User> _validator;
         private IRepositoryManager _repositoryManager;
         private IRepositoryBase<User> _userRepository;
         private IMapper _mapper;
 
-        public UserManager(IRepositoryManager repositoryManager, IMapper mapper, AbstractValidator<User> validator)
+        public UserManager(IRepositoryManager repositoryManager, IMapper mapper, IValidator<User> validator)
         {
             _repositoryManager = repositoryManager;
             _userRepository = repositoryManager.User;

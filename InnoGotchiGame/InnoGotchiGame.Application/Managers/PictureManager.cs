@@ -14,11 +14,11 @@ namespace InnoGotchiGame.Application.Managers
     /// </summary>
     public class PictureManager
     {
-        private AbstractValidator<Picture> _validator;
+        private IValidator<Picture> _validator;
         private IRepositoryManager _repositoryManager;
         private IRepositoryBase<Picture> _pictureRepository;
         private IMapper _mapper;
-        public PictureManager(IRepositoryManager repositoryManager, IMapper mapper, AbstractValidator<Picture> validator)
+        public PictureManager(IRepositoryManager repositoryManager, IMapper mapper, IValidator<Picture> validator)
         {
             _repositoryManager = repositoryManager;
             _pictureRepository = repositoryManager.Picture;

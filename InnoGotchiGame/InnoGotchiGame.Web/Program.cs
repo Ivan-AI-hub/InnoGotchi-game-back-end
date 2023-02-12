@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.AspNetCore;
 using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Mappings;
 using InnoGotchiGame.Application.Validators;
@@ -17,6 +18,7 @@ builder.Services.ConfigureCors(builder.Configuration, MyAllowSpecificOrigins);
 builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureSqlContext(builder.Configuration);
 builder.Services.ConfigureRepositoryManager();
+builder.Services.ConfigureBLLManagers();
 builder.Services.ConfigureResponseCaching();
 builder.Services.ConfigureHttpCacheHeaders();
 builder.Services.ConfigureSwagger();
@@ -29,20 +31,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
 );
 
-builder.Services.AddTransient<AbstractValidator<User>, UserValidator>();
-builder.Services.AddTransient<UserManager>();
-
-builder.Services.AddTransient<AbstractValidator<Picture>, PictureValidator>();
-builder.Services.AddTransient<PictureManager>();
-
-builder.Services.AddTransient<ColaborationRequestManager>();
-
-builder.Services.AddTransient<AbstractValidator<Pet>, PetValidator>();
-builder.Services.AddTransient<PetManager>();
-
-builder.Services.AddTransient<AbstractValidator<PetFarm>, PetFarmValidator>();
-builder.Services.AddTransient<PetFarmManager>();
-
+builder.Services.AddValidatorsFromAssemblyContaining<PetValidator>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthorization();

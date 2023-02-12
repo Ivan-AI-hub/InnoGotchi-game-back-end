@@ -15,12 +15,12 @@ namespace InnoGotchiGame.Application.Managers
     /// </summary>
     public class PetFarmManager
     {
-        private AbstractValidator<PetFarm> _validator;
+        private IValidator<PetFarm> _validator;
         private IRepositoryManager _repositoryManager;
         private IRepositoryBase<PetFarm> _farmRepository;
         private IMapper _mapper;
 
-        public PetFarmManager(IRepositoryManager repositoryManager, IMapper mapper, AbstractValidator<PetFarm> validator)
+        public PetFarmManager(IRepositoryManager repositoryManager, IMapper mapper, IValidator<PetFarm> validator)
         {
             _validator = validator;
             _repositoryManager = repositoryManager;

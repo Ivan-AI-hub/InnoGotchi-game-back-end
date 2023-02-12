@@ -1,4 +1,5 @@
-﻿using InnoGotchiGame.Persistence;
+﻿using InnoGotchiGame.Application.Managers;
+using InnoGotchiGame.Persistence;
 using InnoGotchiGame.Persistence.Managers;
 using LoggerService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -44,6 +45,15 @@ namespace InnoGotchiGame.Web.Extensions
         public static void ConfigureRepositoryManager(this IServiceCollection services)
         {
             services.AddScoped<IRepositoryManager, RepositoryManager>();
+        }
+
+        public static void ConfigureBLLManagers(this IServiceCollection services)
+        {
+            services.AddScoped<UserManager>();
+            services.AddScoped<PictureManager>();
+            services.AddScoped<ColaborationRequestManager>();
+            services.AddScoped<PetManager>();
+            services.AddScoped<PetFarmManager>(); ;
         }
 
         public static void ConfigureResponseCaching(this IServiceCollection services)
