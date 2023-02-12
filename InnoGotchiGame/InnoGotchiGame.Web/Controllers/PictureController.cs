@@ -9,7 +9,7 @@ namespace InnoGotchiGame.Web.Controllers
     [Route("/api/pictures")]
     public class PictureController : BaseController
     {
-        private PictureManager _manager;
+        private readonly PictureManager _manager;
 
         public PictureController(PictureManager manager)
         {
@@ -60,12 +60,12 @@ namespace InnoGotchiGame.Web.Controllers
         /// <returns>picture with special <paramref name="pictureId"/> </returns>
         [HttpGet("{pictureId}")]
         [ProducesResponseType(typeof(UserDTO), 200)]
-        [ProducesResponseType(typeof(string), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 404)]
         public async Task<IActionResult> GetByIdAsync(int pictureId)
         {
             var picture = await _manager.GetByIdAsync(pictureId);
             if (picture == null)
-                return BadRequest(new { errorText = "Invalid id." });
+                return NotFound(new ErrorDetails(404, "Invalid id."));
 
             return new ObjectResult(picture);
         }

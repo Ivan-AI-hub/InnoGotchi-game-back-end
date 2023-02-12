@@ -12,7 +12,7 @@ namespace InnoGotchiGame.Web.Controllers
     [Route("/api/farms")]
     public class PetFarmController : BaseController
     {
-        private PetFarmManager _farmManager;
+        private readonly PetFarmManager _farmManager;
 
         public PetFarmController(PetFarmManager farmManager)
         {
@@ -67,12 +67,12 @@ namespace InnoGotchiGame.Web.Controllers
         /// <returns>a farm with same Id</returns>
         [HttpGet("{farmId}")]
         [ProducesResponseType(typeof(PetFarmDTO), 200)]
-        [ProducesResponseType(typeof(ErrorDetails), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 404)]
         public async Task<IActionResult> GetByIdAsync(int farmId)
         {
             var farm = await _farmManager.GetFarmByIdAsync(farmId);
             if (farm == null)
-                return BadRequest(new ErrorDetails(400, "Invalid id."));
+                return NotFound(new ErrorDetails(404, "Invalid id."));
 
             return new ObjectResult(farm);
         }

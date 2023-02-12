@@ -7,7 +7,7 @@ namespace InnoGotchiGame.Web.Controllers
     [Route("/api/colaborators")]
     public class ColaborationRequestController : BaseController
     {
-        private ColaborationRequestManager _requestManager;
+        private readonly ColaborationRequestManager _requestManager;
 
         public ColaborationRequestController(ColaborationRequestManager requestManager)
         {

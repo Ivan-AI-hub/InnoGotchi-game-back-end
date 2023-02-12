@@ -17,8 +17,8 @@ namespace InnoGotchiGame.Web.Controllers
     [Route("api/users")]
     public class UserController : BaseController
     {
-        private UserManager _userManager;
-        private IMapper _mapper;
+        private readonly UserManager _userManager;
+        private readonly IMapper _mapper;
 
         public UserController(UserManager manager, IMapper mapper)
         {
@@ -124,12 +124,12 @@ namespace InnoGotchiGame.Web.Controllers
         /// <returns>a user with same Id</returns>
         [HttpGet("{userId}")]
         [ProducesResponseType(typeof(UserDTO), 200)]
-        [ProducesResponseType(typeof(ErrorDetails), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 404)]
         public async Task<IActionResult> GetByIdAsync(int userId)
         {
             var user = await _userManager.GetUserByIdAsync(userId);
             if (user == null)
-                return BadRequest(new ErrorDetails(400, "Invalid id."));
+                return NotFound(new ErrorDetails(404, "Invalid id."));
 
             return new ObjectResult(user);
         }

@@ -12,7 +12,7 @@ namespace InnoGotchiGame.Web.Controllers
     [Route("/api/pets")]
     public class PetController : BaseController
     {
-        private PetManager _petManager;
+        private readonly PetManager _petManager;
 
         public PetController(PetManager petManager)
         {
@@ -144,12 +144,12 @@ namespace InnoGotchiGame.Web.Controllers
         /// <returns>pet with special <paramref name="petId"/> </returns>
         [HttpGet("{petId}")]
         [ProducesResponseType(typeof(PetDTO), 200)]
-        [ProducesResponseType(typeof(ErrorDetails), 400)]
+        [ProducesResponseType(typeof(ErrorDetails), 404)]
         public async Task<IActionResult> GetByIdAsync(int petId)
         {
             var pet = await _petManager.GetPetByIdAsync(petId);
             if (pet == null)
-                return BadRequest(new ErrorDetails(400, "Invalid id."));
+                return NotFound(new ErrorDetails(404, "Invalid id."));
 
             return new ObjectResult(pet);
         }
