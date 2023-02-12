@@ -4,6 +4,7 @@ using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Application.Sorters.SortRules;
+using InnoGotchiGame.Domain;
 using InnoGotchiGame.Web.Models.ErrorModel;
 using InnoGotchiGame.Web.Models.Users;
 using Microsoft.AspNetCore.Authorization;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 
 namespace InnoGotchiGame.Web.Controllers
 {
@@ -19,11 +21,13 @@ namespace InnoGotchiGame.Web.Controllers
     {
         private readonly UserManager _userManager;
         private readonly IMapper _mapper;
+        private readonly IConfiguration _configuration;
 
-        public UserController(UserManager manager, IMapper mapper)
+        public UserController(UserManager manager, IMapper mapper, IConfiguration configuration)
         {
             _userManager = manager;
             _mapper = mapper;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -160,24 +164,7 @@ namespace InnoGotchiGame.Web.Controllers
                 return BadRequest(new ErrorDetails(400, "Invalid email or password."));
             }
 
-            var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(nameof(TokenClaims.UserId), user.Id.ToString())
-            };
-
-            var jwt = new JwtSecurityToken(
-                    issuer: AuthOptions.ISSUER,
-                    audience: AuthOptions.AUDIENCE,
-                    claims: claims,
-                    expires: DateTime.UtcNow.Add(TimeSpan.FromHours(AuthOptions.LIFETIME)),
-                    signingCredentials: new SigningCredentials(AuthOptions.GetSymmetricSecurityKey(), SecurityAlgorithms.HmacSha256));
-
-            var token = new AuthorizeModel
-            {
-                AccessToken = new JwtSecurityTokenHandler().WriteToken(jwt),
-                User = user
-            };
+            var token = GetToken(user);
             return Json(token);
         }
 
@@ -187,6 +174,33 @@ namespace InnoGotchiGame.Web.Controllers
             sorter.SortRule = Enum.Parse<UserSortRule>(sortRule);
             sorter.IsDescendingSort = isDescendingSort;
             return sorter;
+        }
+
+        private AuthorizeModel GetToken(UserDTO user)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(nameof(TokenClaims.UserId), user.Id.ToString())
+            };
+
+            var jwtSettings = _configuration.GetSection("JwtSettings");
+
+            var key = Encoding.UTF8.GetBytes(jwtSettings.GetSection("issuerSigningKey").Value);
+
+            var jwt = new JwtSecurityToken(
+                    issuer: jwtSettings.GetSection("validIssuer").Value,
+                    audience: jwtSettings.GetSection("validAudience").Value,
+                    claims: claims,
+                    expires: DateTime.UtcNow.AddMinutes(Convert.ToDouble(jwtSettings.GetSection("expires").Value)),
+                    signingCredentials: new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256));
+
+            var token = new AuthorizeModel
+            {
+                AccessToken = new JwtSecurityTokenHandler().WriteToken(jwt),
+                User = user
+            };
+            return token;
         }
     }
 }
