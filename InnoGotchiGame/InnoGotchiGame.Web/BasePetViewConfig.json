@@ -1,0 +1,32 @@
+{
+  "BodiesLinks": [
+    "wwwroot/Resourses/Bodies/body1.svg",
+    "wwwroot/Resourses/Bodies/body2.svg",
+    "wwwroot/Resourses/Bodies/body3.svg",
+    "wwwroot/Resourses/Bodies/body4.svg",
+    "wwwroot/Resourses/Bodies/body5.svg"
+  ],
+  "EyesLinks": [
+    "wwwroot/Resourses/Eyes/eyes1.svg",
+    "wwwroot/Resourses/Eyes/eyes2.svg",
+    "wwwroot/Resourses/Eyes/eyes3.svg",
+    "wwwroot/Resourses/Eyes/eyes4.svg",
+    "wwwroot/Resourses/Eyes/eyes5.svg",
+    "wwwroot/Resourses/Eyes/eyes6.svg"
+  ],
+  "MouthsLinks": [
+    "wwwroot/Resourses/Mouths/mouth1.svg",
+    "wwwroot/Resourses/Mouths/mouth2.svg",
+    "wwwroot/Resourses/Mouths/mouth3.svg",
+    "wwwroot/Resourses/Mouths/mouth4.svg",
+    "wwwroot/Resourses/Mouths/mouth5.svg"
+  ],
+  "NosesLinks": [
+    "wwwroot/Resourses/Noses/nose1.svg",
+    "wwwroot/Resourses/Noses/nose2.svg",
+    "wwwroot/Resourses/Noses/nose3.svg",
+    "wwwroot/Resourses/Noses/nose4.svg",
+    "wwwroot/Resourses/Noses/nose5.svg",
+    "wwwroot/Resourses/Noses/nose16.svg"
+  ]
+}

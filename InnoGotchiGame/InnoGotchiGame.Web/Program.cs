@@ -5,8 +5,13 @@ using InnoGotchiGame.Application.Mappings;
 using InnoGotchiGame.Application.Validators;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Web.Extensions;
+using InnoGotchiGame.Web.Initializers;
+using InnoGotchiGame.Web.Initializers.Models;
 using InnoGotchiGame.Web.Mapping;
 using InnoGotchiGame.Web.Middleware;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using NLog;
 using System.Text.Json.Serialization;
 
@@ -32,11 +37,15 @@ builder.Services.AddControllers().AddJsonOptions(options =>
 );
 
 builder.Services.AddValidatorsFromAssemblyContaining<PetValidator>();
-
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthorization();
 
+
+builder.Configuration.AddJsonFile("BasePetViewConfig.json");
+builder.Services.Configure<BasePetViewInitializeModel>(builder.Configuration);
+
 var app = builder.Build();
+app.InitializePetView();
 
 if (app.Environment.IsDevelopment())
 {
@@ -44,7 +53,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseMiddleware<ExceptionHandlingMiddleware>();
-app.UseMiddleware<BasePetViewInitializer>();
 app.UseHttpsRedirection();
 
 app.UseCors(MyAllowSpecificOrigins);
