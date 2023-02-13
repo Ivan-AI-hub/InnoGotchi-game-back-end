@@ -36,7 +36,7 @@ namespace InnoGotchiGame.Tests
         public async void Delete_Successfuly()
         {
             var repositoryManager = _fixture.Create<IRepositoryManager>();
-            var pet = await GetValidPetAsync();
+            var pet = await GetValidPet();
 
             repositoryManager.Pet.Create(pet);
             repositoryManager.SaveAsync().Wait();
@@ -47,7 +47,7 @@ namespace InnoGotchiGame.Tests
             dataPet.Should().BeNull();
         }
 
-        private async Task<Pet> GetValidPetAsync()
+        private async Task<Pet> GetValidPet()
         {
             var pet = _fixture.Build<Pet>()
                 .Without(x => x.Id)
@@ -57,10 +57,10 @@ namespace InnoGotchiGame.Tests
                 .Create();
             pet.View = _fixture.Build<PetView>()
                 .Without(x => x.Picture).Create();
-            pet.FarmId = await GetFarmIdAsync();
+            pet.FarmId = await GetFarmId();
             return pet;
         }
-        private async Task<int> GetFarmIdAsync()
+        private async Task<int> GetFarmId()
         {
             var repositoryManager = _fixture.Create<IRepositoryManager>();
             var farm = _fixture.Build<PetFarm>()

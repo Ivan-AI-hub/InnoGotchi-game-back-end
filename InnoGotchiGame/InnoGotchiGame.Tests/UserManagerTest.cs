@@ -20,7 +20,7 @@ namespace InnoGotchiGame.Tests
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
             _fixture.Register<IRepositoryManager>(() => new RepositoryManager(context));
-            _fixture.Register<AbstractValidator<User>>(() => new UserValidator());
+            _fixture.Register<IValidator<User>>(() => new UserValidator());
 
             var config = new MapperConfiguration(cnf => cnf.AddProfiles(new List<Profile>() { new AssemblyMappingProfile() }));
             _fixture.Register<IMapper>(() => new Mapper(config));

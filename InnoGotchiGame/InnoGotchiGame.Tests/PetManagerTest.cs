@@ -18,8 +18,9 @@ namespace InnoGotchiGame.Tests
                     .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
+
             _fixture.Register<IRepositoryManager>(() => new RepositoryManager(context));
-            _fixture.Register<AbstractValidator<Pet>>(() => new PetValidator());
+            _fixture.Register<IValidator<Pet>>(() => new PetValidator());
 
             var config = new MapperConfiguration(cnf => cnf.AddProfiles(new List<Profile>() { new AssemblyMappingProfile() }));
             _fixture.Register<IMapper>(() => new Mapper(config));
@@ -29,7 +30,7 @@ namespace InnoGotchiGame.Tests
         public async void Add_Valid_Pet()
         {
 
-            var farmId = await GetFarmIdAsync();
+            var farmId = GetFarmId();
             var petName = _fixture.Create<string>();
             var view = _fixture.Create<PetViewDTO>();
             var manager = _fixture.Create<PetManager>();
@@ -43,7 +44,7 @@ namespace InnoGotchiGame.Tests
         public async void Add_Invalid_Pet()
         {
 
-            var farmId = await GetFarmIdAsync();
+            var farmId = GetFarmId();
             var petName = "";
             var view = _fixture.Create<PetViewDTO>();
             var manager = _fixture.Create<PetManager>();
@@ -58,7 +59,7 @@ namespace InnoGotchiGame.Tests
         {
             //arrange
             var manager = _fixture.Create<PetManager>();
-            var pet = await GetValidPetAsync(manager);
+            var pet = GetValidPet(manager);
             var petSecondName = _fixture.Create<string>();
 
             //act
@@ -80,7 +81,7 @@ namespace InnoGotchiGame.Tests
         {
             //arrange
             var manager = _fixture.Create<PetManager>();
-            var pet = await GetValidPetAsync(manager);
+            var pet = GetValidPet(manager);
 
             //act
             var rez = await manager.FeedAsync(pet.Id, pet.Farm.OwnerId);
@@ -95,7 +96,7 @@ namespace InnoGotchiGame.Tests
         {
             //arrange
             var manager = _fixture.Create<PetManager>();
-            var pet = await GetValidPetAsync(manager);
+            var pet = GetValidPet(manager);
 
             //act
             var rez = await manager.GiveDrinkAsync(pet.Id, pet.Farm.OwnerId);
@@ -110,7 +111,7 @@ namespace InnoGotchiGame.Tests
         {
             //arrange
             var manager = _fixture.Create<PetManager>();
-            var pet = GetValidPetAsync(manager);
+            var pet = GetValidPet(manager);
 
             //act
             var rez = await manager.SetDeadStatusAsync(pet.Id, DateTime.UtcNow);
@@ -121,7 +122,7 @@ namespace InnoGotchiGame.Tests
             newPet!.Statistic.DeadDate.Should().NotBeNull();
         }
 
-        private async Task<int> GetFarmIdAsync()
+        private int GetFarmId()
         {
             var repManager = _fixture.Create<IRepositoryManager>();
             var farm = _fixture.Build<PetFarm>()
@@ -139,19 +140,22 @@ namespace InnoGotchiGame.Tests
                 .Create();
 
             repManager.PetFarm.Create(farm);
-            await repManager.SaveAsync();
+            repManager.SaveAsync().Wait();
             return farm.Id;
         }
 
-        private async Task<PetDTO> GetValidPetAsync(PetManager manager)
+        private PetDTO GetValidPet(PetManager manager)
         {
-            var farmId = await GetFarmIdAsync();
+            var farmId = GetFarmId();
             var name = _fixture.Create<string>();
             var view = _fixture.Create<PetViewDTO>();
 
-            await manager.AddAsync(farmId, name, view);
-            var pet = (await manager.GetPetsAsync(new PetFiltrator() { Name = name })).First();
-            return await manager.GetPetByIdAsync(pet.Id);
+            var repository = _fixture.Create<IRepositoryManager>();
+            var mapper = _fixture.Create<IMapper>();
+
+            manager.AddAsync(farmId, name, view).Wait();
+            var pet = repository.Pet.FirstOrDefaultAsync(x => x.Statistic.Name == name, false).Result;
+            return mapper.Map<PetDTO>(pet);
         }
     }
 }
