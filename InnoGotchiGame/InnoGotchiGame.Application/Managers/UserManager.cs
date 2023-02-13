@@ -63,7 +63,7 @@ namespace InnoGotchiGame.Application.Managers
 
             if (await CheckUserIdAsync(updatedId, managerResult))
             {
-                var oldUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, true);
+                var oldUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, false);
                 oldUser.Picture = dataUser.Picture;
                 oldUser.FirstName = dataUser.FirstName;
                 oldUser.LastName = dataUser.LastName;
@@ -72,6 +72,7 @@ namespace InnoGotchiGame.Application.Managers
                 managerResult = new ManagerResult(validationResult);
                 if (managerResult.IsComplete)
                 {
+                    _repositoryManager.User.Update(oldUser);
                     await _repositoryManager.SaveAsync();
                     _repositoryManager.Detach(dataUser);
                 }
@@ -89,13 +90,14 @@ namespace InnoGotchiGame.Application.Managers
             ManagerResult managerResult = new ManagerResult();
             if (await CheckUserIdAsync(updatedId, managerResult))
             {
-                var dataUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, true);
+                var dataUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, false);
 
                 var validationResult = _validator.Validate(dataUser);
                 managerResult = new ManagerResult(validationResult);
                 if (dataUser.PasswordHach == StringToHach(oldPassword))
                 {
                     dataUser.PasswordHach = StringToHach(newPassword);
+                    _repositoryManager.User.Update(dataUser);
                     await _repositoryManager.SaveAsync();
                     _repositoryManager.Detach(dataUser);
                 }

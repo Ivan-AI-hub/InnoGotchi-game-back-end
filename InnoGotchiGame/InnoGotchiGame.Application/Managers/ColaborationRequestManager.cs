@@ -54,7 +54,7 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> ConfirmRequestAsync(int requestId, int recipientId)
         {
             var result = new ManagerResult();
-            var request = await _requestRepository.FirstOrDefaultAsync(x => x.Id == requestId, true);
+            var request = await _requestRepository.FirstOrDefaultAsync(x => x.Id == requestId, false);
             if (request != null)
             {
                 if (request.Status == ColaborationRequestStatus.Colaborators)
@@ -66,6 +66,7 @@ namespace InnoGotchiGame.Application.Managers
                 if (result.IsComplete)
                 {
                     request.Status = ColaborationRequestStatus.Colaborators;
+                    _repositoryManager.ColaborationRequest.Update(request);
                     await _repositoryManager.SaveAsync();
                     _repositoryManager.Detach(request);
                 }
@@ -87,7 +88,7 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> RejectRequestAsync(int requestId, int participantId)
         {
             var result = new ManagerResult();
-            var request = await _requestRepository.FirstOrDefaultAsync(x => x.Id == requestId, true);
+            var request = await _requestRepository.FirstOrDefaultAsync(x => x.Id == requestId, false);
             if (request != null)
             {
                 if (request.Status == ColaborationRequestStatus.NotColaborators)
@@ -98,6 +99,7 @@ namespace InnoGotchiGame.Application.Managers
                 if (result.IsComplete)
                 {
                     request.Status = ColaborationRequestStatus.NotColaborators;
+                    _repositoryManager.ColaborationRequest.Update(request);
                     await _repositoryManager.SaveAsync();
                     _repositoryManager.Detach(request);
                 }

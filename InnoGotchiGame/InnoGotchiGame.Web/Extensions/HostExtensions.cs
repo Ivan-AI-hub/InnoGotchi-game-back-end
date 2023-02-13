@@ -1,8 +1,8 @@
 ﻿using InnoGotchiGame.Application.Managers;
-using InnoGotchiGame.Web.Initializers.Models;
 using InnoGotchiGame.Web.Initializers;
-using Microsoft.Extensions.Options;
+using InnoGotchiGame.Web.Initializers.Models;
 using LoggerService;
+using Microsoft.Extensions.Options;
 
 namespace InnoGotchiGame.Web.Extensions
 {

@@ -4,7 +4,6 @@ using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Application.Sorters.SortRules;
-using InnoGotchiGame.Domain;
 using InnoGotchiGame.Web.Extensions;
 using InnoGotchiGame.Web.Models.ErrorModel;
 using InnoGotchiGame.Web.Models.Users;

@@ -16,7 +16,7 @@ namespace InnoGotchiGame.Web.Models.ErrorModel
         public ErrorDetails(int statusCode, IEnumerable<string> messages)
         {
             StatusCode = statusCode;
-            Message = String.Join('\n',messages);
+            Message = String.Join('\n', messages);
         }
 
         public override string ToString() => JsonSerializer.Serialize(this);

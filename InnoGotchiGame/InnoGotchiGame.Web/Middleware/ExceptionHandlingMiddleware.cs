@@ -1,6 +1,5 @@
 ﻿using InnoGotchiGame.Web.Models.ErrorModel;
 using LoggerService;
-using Microsoft.AspNetCore.Diagnostics;
 using System.Net;
 
 namespace InnoGotchiGame.Web.Middleware
@@ -31,7 +30,7 @@ namespace InnoGotchiGame.Web.Middleware
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             context.Response.ContentType = "application/json";
             logger.LogError($"Something went wrong: {exception}");
-            await context.Response.WriteAsync(new ErrorDetails(context.Response.StatusCode, "Internal Server Error.").ToString());        
+            await context.Response.WriteAsync(new ErrorDetails(context.Response.StatusCode, "Internal Server Error.").ToString());
         }
     }
 }

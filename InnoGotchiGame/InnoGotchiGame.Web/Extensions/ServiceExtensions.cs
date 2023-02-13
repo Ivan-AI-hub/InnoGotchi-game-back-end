@@ -53,18 +53,7 @@ namespace InnoGotchiGame.Web.Extensions
             services.AddScoped<PictureManager>();
             services.AddScoped<ColaborationRequestManager>();
             services.AddScoped<PetManager>();
-            services.AddScoped<PetFarmManager>(); ;
-        }
-
-        public static void ConfigureResponseCaching(this IServiceCollection services)
-        {
-            services.AddResponseCaching();
-        }
-
-        public static void ConfigureHttpCacheHeaders(this IServiceCollection services)
-        {
-            services.AddHttpCacheHeaders();
-            services.AddHttpContextAccessor();
+            services.AddScoped<PetFarmManager>();
         }
 
         public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)

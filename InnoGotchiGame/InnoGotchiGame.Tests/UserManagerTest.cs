@@ -33,8 +33,8 @@ namespace InnoGotchiGame.Tests
             var user = GetValidUser();
             var manager = _fixture.Create<UserManager>();
 
-            var rez = await manager.AddAsync(user, "Test_1234");
-            Assert.True(rez.IsComplete, String.Concat(rez.Errors));
+            var result = await manager.AddAsync(user, "Test_1234");
+            Assert.True(result.IsComplete, String.Concat(result.Errors));
         }
 
         [Fact]
@@ -43,9 +43,9 @@ namespace InnoGotchiGame.Tests
             var user = GetInvalidUser();
             var manager = _fixture.Create<UserManager>();
 
-            var rez = await manager.AddAsync(user, "Test_1234");
+            var result = await manager.AddAsync(user, "Test_1234");
 
-            Assert.False(rez.IsComplete, String.Concat(rez.Errors));
+            Assert.False(result.IsComplete, String.Concat(result.Errors));
         }
 
         [Fact]
@@ -58,9 +58,9 @@ namespace InnoGotchiGame.Tests
 
             user.FirstName = "SecondUpdate";
 
-            var rez = await manager.UpdateDataAsync(user.Id, user);
+            var result = await manager.UpdateDataAsync(user.Id, user);
 
-            Assert.True(rez.IsComplete, String.Concat(rez.Errors));
+            Assert.True(result.IsComplete, String.Concat(result.Errors));
             (await manager.GetUserByIdAsync(user.Id)).FirstName.Should().Be("SecondUpdate");
         }
 
@@ -74,9 +74,9 @@ namespace InnoGotchiGame.Tests
 
             user.FirstName = "";
 
-            var rez = await manager.UpdateDataAsync(user.Id, user);
+            var result = await manager.UpdateDataAsync(user.Id, user);
 
-            Assert.False(rez.IsComplete);
+            Assert.False(result.IsComplete);
         }
 
         [Fact]
@@ -89,9 +89,9 @@ namespace InnoGotchiGame.Tests
             var secondPassword = _fixture.Create<string>();
             await manager.AddAsync(user, firstPassword);
 
-            var rez = await manager.UpdatePasswordAsync(user.Id, firstPassword, secondPassword);
+            var result = await manager.UpdatePasswordAsync(user.Id, firstPassword, secondPassword);
 
-            Assert.True(rez.IsComplete, String.Concat(rez.Errors));
+            Assert.True(result.IsComplete, String.Concat(result.Errors));
         }
 
         [Fact]
@@ -105,9 +105,9 @@ namespace InnoGotchiGame.Tests
 
             await manager.AddAsync(user, firstPassword);
 
-            var rez = await manager.UpdatePasswordAsync(user.Id, secondPassword, firstPassword);
+            var result = await manager.UpdatePasswordAsync(user.Id, secondPassword, firstPassword);
 
-            Assert.False(rez.IsComplete, String.Concat(rez.Errors));
+            Assert.False(result.IsComplete, String.Concat(result.Errors));
         }
 
         [Fact]
@@ -116,9 +116,9 @@ namespace InnoGotchiGame.Tests
             var user = GetValidUser();
             var manager = _fixture.Create<UserManager>();
 
-            var rez = await manager.UpdateDataAsync(100, user);
+            var result = await manager.UpdateDataAsync(100, user);
 
-            Assert.False(rez.IsComplete);
+            Assert.False(result.IsComplete);
         }
 
         [Fact]
@@ -128,9 +128,9 @@ namespace InnoGotchiGame.Tests
             var manager = _fixture.Create<UserManager>();
 
             await manager.AddAsync(user, "Test_1234");
-            var rez = await manager.DeleteAsync(user.Id);
+            var result = await manager.DeleteAsync(user.Id);
 
-            Assert.True(rez.IsComplete, String.Concat(rez.Errors));
+            Assert.True(result.IsComplete, String.Concat(result.Errors));
         }
 
         [Fact]

@@ -7,7 +7,6 @@ using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
 using InnoGotchiGame.Persistence.Managers;
 using Microsoft.EntityFrameworkCore;
-using System.Data;
 
 namespace InnoGotchiGame.Application.Managers
 {

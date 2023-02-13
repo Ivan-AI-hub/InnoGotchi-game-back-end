@@ -1,17 +1,10 @@
 using FluentValidation;
-using FluentValidation.AspNetCore;
-using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Application.Mappings;
 using InnoGotchiGame.Application.Validators;
-using InnoGotchiGame.Domain;
 using InnoGotchiGame.Web.Extensions;
-using InnoGotchiGame.Web.Initializers;
 using InnoGotchiGame.Web.Initializers.Models;
 using InnoGotchiGame.Web.Mapping;
 using InnoGotchiGame.Web.Middleware;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Options;
 using NLog;
 using System.Text.Json.Serialization;
 
@@ -22,24 +15,22 @@ var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.ConfigureCors(builder.Configuration, MyAllowSpecificOrigins);
 builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureSqlContext(builder.Configuration);
+
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureBLLManagers();
-builder.Services.ConfigureResponseCaching();
-builder.Services.ConfigureHttpCacheHeaders();
+
 builder.Services.ConfigureSwagger();
 
 builder.Services.ConfigureJWT(builder.Configuration);
-
-builder.Services.AddAutoMapper(typeof(AssemblyMappingProfile), typeof(WebMappingProfile));
-
 builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
 );
 
+builder.Services.AddAutoMapper(typeof(AssemblyMappingProfile), typeof(WebMappingProfile));
+
 builder.Services.AddValidatorsFromAssemblyContaining<PetValidator>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddAuthorization();
-
 
 builder.Configuration.AddJsonFile("BasePetViewConfig.json");
 builder.Services.Configure<BasePetViewInitializeModel>(builder.Configuration);
@@ -59,9 +50,6 @@ app.UseCors(MyAllowSpecificOrigins);
 
 app.UseAuthorization();
 app.UseAuthentication();
-
-app.UseResponseCaching();
-app.UseHttpCacheHeaders();
 
 app.MapControllers();
 

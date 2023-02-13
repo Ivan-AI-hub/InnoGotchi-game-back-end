@@ -7,7 +7,7 @@ namespace InnoGotchiGame.Persistence.Abstracts
     public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
     {
         protected InnoGotchiGameContext Context;
-        public RepositoryBase(InnoGotchiGameContext context) 
+        public RepositoryBase(InnoGotchiGameContext context)
         {
             Context = context;
         }

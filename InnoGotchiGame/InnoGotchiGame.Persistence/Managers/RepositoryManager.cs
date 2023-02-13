@@ -17,14 +17,14 @@ namespace InnoGotchiGame.Persistence.Managers
             _context = context;
         }
 
-        public IColaborationRequestRepository ColaborationRequest 
-        { 
+        public IColaborationRequestRepository ColaborationRequest
+        {
             get
             {
                 if (_colaborationRequestRepository == null)
                     _colaborationRequestRepository = new ColaborationRequestRepository(_context);
                 return _colaborationRequestRepository;
-            } 
+            }
         }
 
         public IPetFarmRepository PetFarm
@@ -74,7 +74,7 @@ namespace InnoGotchiGame.Persistence.Managers
 
         public Task SaveAsync()
         {
-           return _context.SaveChangesAsync();
+            return _context.SaveChangesAsync();
         }
     }
 }

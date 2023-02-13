@@ -41,8 +41,8 @@ namespace InnoGotchiGame.Persistence.Repositories
         {
             var pets = Context.Pets
                 .Include(x => x.View.Picture);
-            
-            return trackChanges? pets : pets.AsNoTracking();
+
+            return trackChanges ? pets : pets.AsNoTracking();
         }
     }
 }

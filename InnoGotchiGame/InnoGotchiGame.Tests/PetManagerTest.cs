@@ -35,9 +35,9 @@ namespace InnoGotchiGame.Tests
             var view = _fixture.Create<PetViewDTO>();
             var manager = _fixture.Create<PetManager>();
 
-            var rez = await manager.AddAsync(farmId, petName, view);
+            var result = await manager.AddAsync(farmId, petName, view);
 
-            Assert.True(rez.IsComplete, String.Concat(rez.Errors));
+            Assert.True(result.IsComplete, String.Concat(result.Errors));
         }
 
         [Fact]
@@ -49,9 +49,9 @@ namespace InnoGotchiGame.Tests
             var view = _fixture.Create<PetViewDTO>();
             var manager = _fixture.Create<PetManager>();
 
-            var rez = await manager.AddAsync(farmId, petName, view);
+            var result = await manager.AddAsync(farmId, petName, view);
 
-            Assert.False(rez.IsComplete, String.Concat(rez.Errors));
+            Assert.False(result.IsComplete, String.Concat(result.Errors));
         }
 
         [Fact]
@@ -64,15 +64,15 @@ namespace InnoGotchiGame.Tests
 
             //act
 
-            var rez = await manager.UpdateAsync(pet.Id, petSecondName);
+            var result = await manager.UpdateAsync(pet.Id, petSecondName);
             var updatedPet = new PetDTO();
-            if (rez.IsComplete)
+            if (result.IsComplete)
             {
                 updatedPet = (await manager.GetPetsAsync(new PetFiltrator() { Name = petSecondName })).First();
             }
 
             //assert
-            Assert.True(rez.IsComplete, String.Concat(rez.Errors));
+            Assert.True(result.IsComplete, String.Concat(result.Errors));
             updatedPet.Statistic.Name.Should().Be(petSecondName);
         }
 
@@ -84,10 +84,10 @@ namespace InnoGotchiGame.Tests
             var pet = GetValidPet(manager);
 
             //act
-            var rez = await manager.FeedAsync(pet.Id, pet.Farm.OwnerId);
+            var result = await manager.FeedAsync(pet.Id, pet.Farm.OwnerId);
             var newPet = await manager.GetPetByIdAsync(pet.Id);
             //assert
-            Assert.True(rez.IsComplete, String.Concat(rez.Errors));
+            Assert.True(result.IsComplete, String.Concat(result.Errors));
             newPet!.Statistic.FeedingCount.Should().BeGreaterThan(pet.Statistic.FeedingCount);
         }
 
@@ -99,10 +99,10 @@ namespace InnoGotchiGame.Tests
             var pet = GetValidPet(manager);
 
             //act
-            var rez = await manager.GiveDrinkAsync(pet.Id, pet.Farm.OwnerId);
+            var result = await manager.GiveDrinkAsync(pet.Id, pet.Farm.OwnerId);
             var newPet = await manager.GetPetByIdAsync(pet.Id);
             //assert
-            Assert.True(rez.IsComplete, String.Concat(rez.Errors));
+            Assert.True(result.IsComplete, String.Concat(result.Errors));
             newPet!.Statistic.DrinkingCount.Should().BeGreaterThan(pet.Statistic.DrinkingCount);
         }
 
@@ -114,10 +114,10 @@ namespace InnoGotchiGame.Tests
             var pet = GetValidPet(manager);
 
             //act
-            var rez = await manager.SetDeadStatusAsync(pet.Id, DateTime.UtcNow);
+            var result = await manager.SetDeadStatusAsync(pet.Id, DateTime.UtcNow);
             var newPet = await manager.GetPetByIdAsync(pet.Id);
             //assert
-            Assert.True(rez.IsComplete, String.Concat(rez.Errors));
+            Assert.True(result.IsComplete, String.Concat(result.Errors));
             newPet!.Statistic.IsAlive.Should().BeFalse();
             newPet!.Statistic.DeadDate.Should().NotBeNull();
         }
