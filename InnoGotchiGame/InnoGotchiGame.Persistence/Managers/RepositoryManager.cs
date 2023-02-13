@@ -67,6 +67,11 @@ namespace InnoGotchiGame.Persistence.Managers
             }
         }
 
+        public void Detach(object item)
+        {
+            _context.Entry(item).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+        }
+
         public Task SaveAsync()
         {
            return _context.SaveChangesAsync();

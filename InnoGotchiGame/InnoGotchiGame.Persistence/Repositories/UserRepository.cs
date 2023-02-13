@@ -19,7 +19,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 
         public override Task<User?> FirstOrDefaultAsync(Expression<Func<User, bool>> predicate, bool trackChanges)
         {
-            return GetFullData(trackChanges).FirstOrDefaultAsync(predicate);
+            return GetFullData(trackChanges).Where(predicate).FirstOrDefaultAsync(predicate);
         }
 
         private IQueryable<User> GetFullData(bool trackChanges)

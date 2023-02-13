@@ -10,5 +10,6 @@ namespace InnoGotchiGame.Persistence.Managers
         IPictureRepository Picture { get; }
         IUserRepository User { get; }
         Task SaveAsync();
+        void Detach(object item);
     }
 }

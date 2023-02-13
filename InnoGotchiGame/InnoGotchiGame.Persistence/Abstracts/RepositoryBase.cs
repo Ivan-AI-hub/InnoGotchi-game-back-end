@@ -26,7 +26,7 @@ namespace InnoGotchiGame.Persistence.Abstracts
 
         public virtual Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, bool trackChanges)
         {
-            return GetItems(trackChanges).FirstOrDefaultAsync();
+            return GetItems(trackChanges).Where(predicate).FirstOrDefaultAsync();
         }
     }
 }

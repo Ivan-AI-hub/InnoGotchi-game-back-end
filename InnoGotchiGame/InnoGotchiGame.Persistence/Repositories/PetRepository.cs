@@ -19,7 +19,7 @@ namespace InnoGotchiGame.Persistence.Repositories
 
         public override Task<Pet?> FirstOrDefaultAsync(Expression<Func<Pet, bool>> predicate, bool trackChanges)
         {
-            return GetFullData(trackChanges).FirstOrDefaultAsync();
+            return GetFullData(trackChanges).Where(predicate).FirstOrDefaultAsync();
         }
 
         private IQueryable<Pet> GetFullData(bool trackChanges)
