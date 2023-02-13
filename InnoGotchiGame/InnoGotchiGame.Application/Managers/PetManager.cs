@@ -7,6 +7,7 @@ using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
 using InnoGotchiGame.Persistence.Managers;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace InnoGotchiGame.Application.Managers
 {
@@ -61,7 +62,8 @@ namespace InnoGotchiGame.Application.Managers
             if (validationResult.IsValid && await CheckFarmIdAsync(farmId, managerResult) && await IsUniqueNameAsync(name, managerResult))
             {
                 _petRepository.Create(dataPet);
-                _repositoryManager.SaveAsync().Wait();
+                await _repositoryManager.SaveAsync();
+                _repositoryManager.Detach(dataPet);
             }
             return managerResult;
         }
@@ -84,7 +86,8 @@ namespace InnoGotchiGame.Application.Managers
                 managerRez = new ManagerResult(validationResult);
                 if (validationResult.IsValid && await IsUniqueNameAsync(dataPet.Statistic.Name, managerRez))
                 {
-                    _repositoryManager.SaveAsync().Wait();
+                    await _repositoryManager.SaveAsync();
+                    _repositoryManager.Detach(dataPet);
                 }
             }
             return managerRez;
@@ -107,7 +110,8 @@ namespace InnoGotchiGame.Application.Managers
                     dataPet.Statistic.FeedingCount++;
                     dataPet.Statistic.DateLastFeed = DateTime.UtcNow;
 
-                    _repositoryManager.SaveAsync().Wait();
+                    await _repositoryManager.SaveAsync();
+                    _repositoryManager.Detach(dataPet);
 
                 }
                 else
@@ -135,7 +139,8 @@ namespace InnoGotchiGame.Application.Managers
                     dataPet.Statistic.DrinkingCount++;
                     dataPet.Statistic.DateLastDrink = DateTime.UtcNow;
 
-                    _repositoryManager.SaveAsync().Wait();
+                    await _repositoryManager.SaveAsync();
+                    _repositoryManager.Detach(dataPet);
                 }
                 else
                 {
@@ -159,7 +164,8 @@ namespace InnoGotchiGame.Application.Managers
                 dataPet!.Statistic.DeadDate = deadDate;
                 dataPet.Statistic.IsAlive = false;
 
-                _repositoryManager.SaveAsync().Wait();
+                await _repositoryManager.SaveAsync();
+                _repositoryManager.Detach(dataPet);
             }
             return managerRez;
         }
@@ -177,7 +183,8 @@ namespace InnoGotchiGame.Application.Managers
                 var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
                 dataPet!.Statistic.FirstHappinessDay = DateTime.UtcNow;
 
-                _repositoryManager.SaveAsync().Wait();
+                await _repositoryManager.SaveAsync();
+                _repositoryManager.Detach(dataPet);
             }
             return managerRez;
         }
@@ -251,12 +258,12 @@ namespace InnoGotchiGame.Application.Managers
         }
         private async Task<bool> CheckFarmIdAsync(int farmId, ManagerResult result)
         {
-            if (!(await _farmRepository.IsItemExistAsync(x => x.Id == farmId)))
+            if (await _farmRepository.IsItemExistAsync(x => x.Id == farmId))
             {
-                result.Errors.Add("The farm ID is not in the database");
-                return false;
+                return true;
             }
-            return true;
+            result.Errors.Add("The farm ID is not in the database");
+            return false;
         }
         private async Task<bool> IsPetAliveAsync(int id, ManagerResult result)
         {

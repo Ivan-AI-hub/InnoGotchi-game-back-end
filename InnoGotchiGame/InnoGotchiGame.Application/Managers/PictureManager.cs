@@ -6,6 +6,7 @@ using InnoGotchiGame.Domain;
 using InnoGotchiGame.Persistence.Interfaces;
 using InnoGotchiGame.Persistence.Managers;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace InnoGotchiGame.Application.Managers
 {
@@ -38,7 +39,8 @@ namespace InnoGotchiGame.Application.Managers
             if (validationResult.IsValid && await IsUniqueNameAsync(pictureData.Name, result))
             {
                 _pictureRepository.Create(pictureData);
-                _repositoryManager.SaveAsync().Wait();
+                await _repositoryManager.SaveAsync();
+                _repositoryManager.Detach(pictureData);
             }
             return result;
         }
@@ -57,7 +59,8 @@ namespace InnoGotchiGame.Application.Managers
             {
                 pictureData.Id = updatedId;
                 _pictureRepository.Update(pictureData);
-                _repositoryManager.SaveAsync().Wait();
+                await _repositoryManager.SaveAsync();
+                _repositoryManager.Detach(pictureData);
                 newPicture.Id = updatedId;
             }
             return result;
@@ -74,7 +77,7 @@ namespace InnoGotchiGame.Application.Managers
             if (await CheckPictureIdAsync(id, managerRez))
             {
                 _pictureRepository.Delete(await _pictureRepository.FirstOrDefaultAsync(x => x.Id == id, false));
-                _repositoryManager.SaveAsync().Wait();
+                await _repositoryManager.SaveAsync();
             }
             return managerRez;
         }

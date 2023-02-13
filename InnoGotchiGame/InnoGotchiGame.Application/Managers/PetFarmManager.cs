@@ -46,7 +46,8 @@ namespace InnoGotchiGame.Application.Managers
             if (validationResult.IsValid && await IsUniqueNameAsync(dataFarm.Name, result))
             {
                 _farmRepository.Create(dataFarm);
-                _repositoryManager.SaveAsync().Wait();
+                await _repositoryManager.SaveAsync();
+                _repositoryManager.Detach(dataFarm);
             }
             return result;
         }
@@ -69,7 +70,8 @@ namespace InnoGotchiGame.Application.Managers
                 if (validationResult.IsValid && await IsUniqueNameAsync(newName, managerRez))
                 {
                     _farmRepository.Update(dataFarm);
-                    _repositoryManager.SaveAsync().Wait();
+                    await _repositoryManager.SaveAsync();
+                    _repositoryManager.Detach(dataFarm);
                 }
             }
             return managerRez;
@@ -87,7 +89,7 @@ namespace InnoGotchiGame.Application.Managers
             {
                 var farm = await _farmRepository.FirstOrDefaultAsync(x => x.Id == id, false);
                 _farmRepository.Delete(farm!);
-                _repositoryManager.SaveAsync().Wait();
+                await _repositoryManager.SaveAsync();
             }
             return managerRez;
         }

@@ -44,7 +44,8 @@ namespace InnoGotchiGame.Application.Managers
             if (validationResult.IsValid && await IsUniqueEmailAsync(user.Email, managerResult))
             {
                 _userRepository.Create(dataUser);
-                _repositoryManager.SaveAsync().Wait();
+                await _repositoryManager.SaveAsync();
+                _repositoryManager.Detach(dataUser);
                 user.Id = dataUser.Id;
             }
             return managerResult;
@@ -71,7 +72,8 @@ namespace InnoGotchiGame.Application.Managers
                 managerResult = new ManagerResult(validationResult);
                 if (managerResult.IsComplete)
                 {
-                    _repositoryManager.SaveAsync().Wait();
+                    await _repositoryManager.SaveAsync();
+                    _repositoryManager.Detach(dataUser);
                 }
             }
             return managerResult;
@@ -87,14 +89,15 @@ namespace InnoGotchiGame.Application.Managers
             ManagerResult managerResult = new ManagerResult();
             if (await CheckUserIdAsync(updatedId, managerResult))
             {
-                var dataUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, false);
+                var dataUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, true);
 
                 var validationResult = _validator.Validate(dataUser);
                 managerResult = new ManagerResult(validationResult);
                 if (dataUser.PasswordHach == StringToHach(oldPassword))
                 {
                     dataUser.PasswordHach = StringToHach(newPassword);
-                    _repositoryManager.SaveAsync().Wait();
+                    await _repositoryManager.SaveAsync();
+                    _repositoryManager.Detach(dataUser);
                 }
                 else
                 {
@@ -114,7 +117,8 @@ namespace InnoGotchiGame.Application.Managers
             var managerRez = new ManagerResult();
             if (await CheckUserIdAsync(deletedId, managerRez))
             {
-                _userRepository.Delete(await _userRepository.FirstOrDefaultAsync(x => x.Id == deletedId, false));
+                var user = await _userRepository.FirstOrDefaultAsync(x => x.Id == deletedId, false);
+                _userRepository.Delete(user);
             }
 
             return managerRez;
