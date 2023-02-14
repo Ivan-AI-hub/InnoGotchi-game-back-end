@@ -2,8 +2,8 @@
 {
     public enum ColaborationRequestStatusDTO
     {
-        Colaborators = 1,
+        NotColaborators = -1,
         Undefined = 0,
-        NotColaborators = -1
+        Colaborators = 1
     }
 }
