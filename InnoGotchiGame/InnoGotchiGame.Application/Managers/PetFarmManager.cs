@@ -36,10 +36,7 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> AddAsync(int ownerId, string name)
         {
-            var dataFarm = new PetFarm();
-            dataFarm.CreateDate = DateTime.Now;
-            dataFarm.Name = name;
-            dataFarm.OwnerId = ownerId;
+            var dataFarm = new PetFarm(name, ownerId);
 
             var validationResult = _validator.Validate(dataFarm);
             var result = new ManagerResult(validationResult);
@@ -60,21 +57,21 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> UpdateNameAsync(int id, string newName)
         {
-            var managerRez = new ManagerResult();
-            if (await CheckFarmIdAsync(id, managerRez))
+            var result = new ManagerResult();
+            if (await CheckFarmIdExistAsync(id, result))
             {
                 var dataFarm = await _farmRepository.FirstOrDefaultAsync(x => x.Id == id, false);
                 dataFarm!.Name = newName;
                 var validationResult = _validator.Validate(dataFarm);
-                managerRez = new ManagerResult(validationResult);
-                if (validationResult.IsValid && await IsUniqueNameAsync(newName, managerRez))
+                result = new ManagerResult(validationResult);
+                if (validationResult.IsValid && await IsUniqueNameAsync(newName, result))
                 {
                     _farmRepository.Update(dataFarm);
                     await _repositoryManager.SaveAsync();
                     _repositoryManager.Detach(dataFarm);
                 }
             }
-            return managerRez;
+            return result;
         }
 
         /// <summary>
@@ -84,14 +81,14 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> DeleteAsync(int id)
         {
-            var managerRez = new ManagerResult();
-            if (await CheckFarmIdAsync(id, managerRez))
+            var result = new ManagerResult();
+            if (await CheckFarmIdExistAsync(id, result))
             {
                 var farm = await _farmRepository.FirstOrDefaultAsync(x => x.Id == id, false);
                 _farmRepository.Delete(farm!);
                 await _repositoryManager.SaveAsync();
             }
-            return managerRez;
+            return result;
         }
 
         /// <returns>farm with special <paramref name="id"/> </returns>
@@ -136,7 +133,7 @@ namespace InnoGotchiGame.Application.Managers
             return farms;
         }
 
-        private async Task<bool> CheckFarmIdAsync(int id, ManagerResult result)
+        private async Task<bool> CheckFarmIdExistAsync(int id, ManagerResult result)
         {
             if (!(await _farmRepository.IsItemExistAsync(x => x.Id == id)))
             {

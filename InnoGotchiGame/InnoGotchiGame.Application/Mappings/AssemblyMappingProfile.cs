@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Enums;
 
 namespace InnoGotchiGame.Application.Mappings
 {

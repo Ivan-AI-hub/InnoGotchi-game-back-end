@@ -1,19 +1,32 @@
-﻿namespace InnoGotchiGame.Domain
+﻿using InnoGotchiGame.Domain.Interfaces;
+
+namespace InnoGotchiGame.Domain
 {
-    public class Pet
+    public class Pet : IPet
     {
-        public int Id { get; set; }
+        public int Id { get; private set; }
 
-        public PetStatistic Statistic { get; set; }
-        public PetView View { get; set; }
+        public IPetStatistic Statistic { get; private set; }
+        public IPetView View { get; private set; }
 
-        public int FarmId { get; set; }
-        public PetFarm Farm { get; set; }
+        public int FarmId { get; private set; }
+        public IPetFarm? Farm { get; private set; }
 
-        public Pet()
+        private Pet(){ }
+        private Pet(IPetStatistic statistic, IPetView view)
         {
-            Statistic = new PetStatistic();
-            View = new PetView();
+            Statistic = statistic;
+            View = view;
+        }
+        public Pet(IPetStatistic statistic, IPetView view, IPetFarm farm) : this(statistic, view)
+        {
+            Farm = farm;
+            FarmId = farm.Id;
+        }
+
+        public Pet(IPetStatistic statistic, IPetView view, int farmId) : this(statistic, view)
+        {
+            FarmId = farmId;
         }
     }
 }

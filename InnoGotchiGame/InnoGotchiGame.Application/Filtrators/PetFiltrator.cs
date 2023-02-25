@@ -13,36 +13,36 @@ namespace InnoGotchiGame.Application.Filtrators
         public int MinDaysFromLastDrinking { get; set; } = -1;
 
 
-        internal override IQueryable<Pet> Filter(IQueryable<Pet> query)
+        internal override IQueryable<Pet> Filter(IQueryable<Pet> pets)
         {
-            query = query.Where(x => x.Statistic.Name.Contains(Name));
+            pets = pets.Where(x => x.Statistic.Name.Contains(Name));
 
             if (DaysAlive != -1)
             {
-                var AliveDate = (DateTime.UtcNow - new TimeSpan(DaysAlive, 0, 0, 0)).Date;
-                query = query.Where(x => x.Statistic.BornDate < AliveDate);
+                var filtrationBornDate = GetDate(DaysAlive);
+                pets = pets.Where(x => x.Statistic.BornDate < filtrationBornDate);
             }
             if (MinDaysFromLastFeeding != -1)
             {
-                var date = GetDate(MinDaysFromLastFeeding);
-                query = query.Where(x => x.Statistic.DateLastFeed <= date);
+                var minDateFromLastFeeding = GetDate(MinDaysFromLastFeeding);
+                pets = pets.Where(x => x.Statistic.DateLastFeed <= minDateFromLastFeeding);
             }
             if (MaxDaysFromLastFeeding != -1)
             {
-                var date = GetDate(MaxDaysFromLastFeeding);
-                query = query.Where(x => x.Statistic.DateLastFeed > date);
+                var maxDateFromLastFeeding = GetDate(MaxDaysFromLastFeeding);
+                pets = pets.Where(x => x.Statistic.DateLastFeed > maxDateFromLastFeeding);
             }
             if (MinDaysFromLastDrinking != -1)
             {
-                var date = GetDate(MinDaysFromLastDrinking);
-                query = query.Where(x => x.Statistic.DateLastDrink <= date);
+                var minDateFromLastDrinking = GetDate(MinDaysFromLastDrinking);
+                pets = pets.Where(x => x.Statistic.DateLastDrink <= minDateFromLastDrinking);
             }
             if (MaxDaysFromLastDrinking != -1)
             {
-                var date = GetDate(MaxDaysFromLastDrinking);
-                query = query.Where(x => x.Statistic.DateLastDrink > date);
+                var maxDateFromLastDrinking = GetDate(MaxDaysFromLastDrinking);
+                pets = pets.Where(x => x.Statistic.DateLastDrink > maxDateFromLastDrinking);
             }
-            return query;
+            return pets;
         }
 
         private DateTime GetDate(int daysAgo)

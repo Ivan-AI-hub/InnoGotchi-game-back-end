@@ -1,7 +1,9 @@
-﻿namespace InnoGotchiGame.Domain
+﻿using InnoGotchiGame.Domain.Interfaces;
+
+namespace InnoGotchiGame.Domain
 {
-    public record PetView
+    public record PetView : IPetView
     {
-        public Picture? Picture { get; set; }
+        public IPicture? Picture { get; set; }
     }
 }

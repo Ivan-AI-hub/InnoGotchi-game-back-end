@@ -1,4 +1,4 @@
-﻿namespace InnoGotchiGame.Domain
+﻿namespace InnoGotchiGame.Domain.Enums
 {
     public enum ColaborationRequestStatus
     {

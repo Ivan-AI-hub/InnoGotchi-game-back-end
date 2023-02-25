@@ -73,13 +73,13 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> DeleteAsync(int id)
         {
-            var managerRez = new ManagerResult();
-            if (await CheckPictureIdAsync(id, managerRez))
+            var result = new ManagerResult();
+            if (await CheckPictureIdAsync(id, result))
             {
                 _pictureRepository.Delete(await _pictureRepository.FirstOrDefaultAsync(x => x.Id == id, false));
                 await _repositoryManager.SaveAsync();
             }
-            return managerRez;
+            return result;
         }
 
         /// <returns>picture with special <paramref name="id"/> </returns>

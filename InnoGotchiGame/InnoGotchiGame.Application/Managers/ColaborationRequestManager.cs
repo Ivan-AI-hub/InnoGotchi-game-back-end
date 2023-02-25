@@ -1,4 +1,5 @@
 ﻿using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Enums;
 using InnoGotchiGame.Persistence.Interfaces;
 using InnoGotchiGame.Persistence.Managers;
 
@@ -27,7 +28,7 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> SendColaborationRequestAsync(int senderId, int recipientId)
         {
             var result = new ManagerResult();
-            var request = new ColaborationRequest() { RequestSenderId = senderId, RequestReceiverId = recipientId, Status = ColaborationRequestStatus.Undefined };
+            var request = new ColaborationRequest(senderId, recipientId, ColaborationRequestStatus.Undefined);
 
             var isSecondRequest = await _requestRepository.IsItemExistAsync(x => x.RequestSenderId == senderId && x.RequestReceiverId == recipientId ||
                                                            x.RequestReceiverId == senderId && x.RequestSenderId == recipientId);

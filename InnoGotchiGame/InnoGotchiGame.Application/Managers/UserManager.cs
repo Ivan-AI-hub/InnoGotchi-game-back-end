@@ -116,14 +116,14 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> DeleteAsync(int deletedId)
         {
-            var managerRez = new ManagerResult();
-            if (await CheckUserIdAsync(deletedId, managerRez))
+            var result = new ManagerResult();
+            if (await CheckUserIdAsync(deletedId, result))
             {
                 var user = await _userRepository.FirstOrDefaultAsync(x => x.Id == deletedId, false);
                 _userRepository.Delete(user);
             }
 
-            return managerRez;
+            return result;
         }
 
         /// <returns>user with special <paramref name="id"/> </returns>
