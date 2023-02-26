@@ -1,15 +1,16 @@
 ﻿using InnoGotchiGame.Application.Sorters.Base;
 using InnoGotchiGame.Application.Sorters.SortRules;
 using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Interfaces;
 
 namespace InnoGotchiGame.Application.Sorters
 {
-    public class UserSorter : Sorter<User>
+    public class UserSorter : Sorter<IUser>
     {
         public UserSortRule SortRule { get; set; }
 
 
-        internal override IQueryable<User> Sort(IQueryable<User> users)
+        internal override IQueryable<IUser> Sort(IQueryable<IUser> users)
         {
             if (!IsDescendingSort)
             {

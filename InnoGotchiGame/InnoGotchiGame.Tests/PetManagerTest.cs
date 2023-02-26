@@ -125,19 +125,7 @@ namespace InnoGotchiGame.Tests
         private int GetFarmId()
         {
             var repManager = _fixture.Create<IRepositoryManager>();
-            var farm = _fixture.Build<PetFarm>()
-                .Without(x => x.Id)
-                .Without(x => x.OwnerId)
-                .Without(x => x.Owner)
-                .Create();
-
-            farm.Owner = _fixture.Build<User>()
-                .Without(x => x.Id)
-                .Without(x => x.OwnPetFarm)
-                .Without(x => x.Picture)
-                .Without(x => x.AcceptedColaborations)
-                .Without(x => x.SentColaborations)
-                .Create();
+            var farm = _fixture.Build<PetFarm>().Create();
 
             repManager.PetFarm.Create(farm);
             repManager.SaveAsync().Wait();

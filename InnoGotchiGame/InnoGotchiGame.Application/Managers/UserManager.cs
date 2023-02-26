@@ -4,6 +4,7 @@ using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters.Base;
 using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Interfaces;
 using InnoGotchiGame.Persistence.Interfaces;
 using InnoGotchiGame.Persistence.Managers;
 using Microsoft.EntityFrameworkCore;
@@ -17,12 +18,12 @@ namespace InnoGotchiGame.Application.Managers
     /// </summary>
     public class UserManager
     {
-        private IValidator<User> _validator;
+        private IValidator<IUser> _validator;
         private IRepositoryManager _repositoryManager;
-        private IRepositoryBase<User> _userRepository;
+        private IUserRepository _userRepository;
         private IMapper _mapper;
 
-        public UserManager(IRepositoryManager repositoryManager, IMapper mapper, IValidator<User> validator)
+        public UserManager(IRepositoryManager repositoryManager, IMapper mapper, IValidator<IUser> validator)
         {
             _repositoryManager = repositoryManager;
             _userRepository = repositoryManager.User;
@@ -36,14 +37,14 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> AddAsync(UserDTO user, string password)
         {
-            var dataUser = _mapper.Map<User>(user);
+            var dataUser = _mapper.Map<IUser>(user);
             dataUser.PasswordHach = StringToHach(password);
 
             var validationResult = _validator.Validate(dataUser);
             var managerResult = new ManagerResult(validationResult);
             if (validationResult.IsValid && await IsUniqueEmailAsync(user.Email, managerResult))
             {
-                _userRepository.Create(dataUser);
+                _userRepository.Create((User)dataUser);//Bad
                 await _repositoryManager.SaveAsync();
                 _repositoryManager.Detach(dataUser);
                 user.Id = dataUser.Id;
@@ -54,12 +55,12 @@ namespace InnoGotchiGame.Application.Managers
         /// <summary>
         /// Updates user data
         /// </summary>
-        /// <param name="updatedId">User id</param>
+        /// <param name="updatedId">IUser id</param>
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> UpdateDataAsync(int updatedId, UserDTO newUser)
         {
             ManagerResult managerResult = new ManagerResult();
-            var dataUser = _mapper.Map<User>(newUser);
+            var dataUser = _mapper.Map<IUser>(newUser);
 
             if (await CheckUserIdAsync(updatedId, managerResult))
             {
@@ -83,7 +84,7 @@ namespace InnoGotchiGame.Application.Managers
         /// <summary>
         /// Updates user password
         /// </summary>
-        /// <param name="updatedId">User id</param>
+        /// <param name="updatedId">IUser id</param>
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> UpdatePasswordAsync(int updatedId, string oldPassword, string newPassword)
         {
@@ -112,7 +113,7 @@ namespace InnoGotchiGame.Application.Managers
         /// <summary>
         /// Deletes the user
         /// </summary>
-        /// <param name="deletedId">User id</param>
+        /// <param name="deletedId">IUser id</param>
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> DeleteAsync(int deletedId)
         {
@@ -145,14 +146,14 @@ namespace InnoGotchiGame.Application.Managers
         }
 
         /// <returns>Filtered and sorted list of users</returns>
-        public async Task<IEnumerable<UserDTO>> GetUsersAsync(Filtrator<User>? filtrator = null, Sorter<User>? sorter = null)
+        public async Task<IEnumerable<UserDTO>> GetUsersAsync(Filtrator<IUser>? filtrator = null, Sorter<IUser>? sorter = null)
         {
             var users = await GetUsersQuary(filtrator, sorter).ToListAsync();
             return _mapper.Map<IEnumerable<UserDTO>>(users);
         }
 
         /// <returns>A filtered and sorted page containing <paramref name="pageSize"/> users</returns>
-        public async Task<IEnumerable<UserDTO>> GetUsersPageAsync(int pageSize, int pageNumber, Filtrator<User>? filtrator = null, Sorter<User>? sorter = null)
+        public async Task<IEnumerable<UserDTO>> GetUsersPageAsync(int pageSize, int pageNumber, Filtrator<IUser>? filtrator = null, Sorter<IUser>? sorter = null)
         {
             var users = GetUsersQuary(filtrator, sorter);
             users = users.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
@@ -193,9 +194,9 @@ namespace InnoGotchiGame.Application.Managers
             return true;
         }
 
-        private IQueryable<User> GetUsersQuary(Filtrator<User>? filtrator = null, Sorter<User>? sorter = null)
+        private IQueryable<IUser> GetUsersQuary(Filtrator<IUser>? filtrator = null, Sorter<IUser>? sorter = null)
         {
-            var users = _userRepository.GetItems(false);
+            var users = _userRepository.GetItems(false).OfType<IUser>();
             users = filtrator != null ? filtrator.Filter(users) : users;
             users = sorter != null ? sorter.Sort(users) : users;
             return users;

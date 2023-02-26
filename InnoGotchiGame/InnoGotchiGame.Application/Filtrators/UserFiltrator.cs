@@ -1,16 +1,17 @@
 ﻿using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Interfaces;
 
 namespace InnoGotchiGame.Application.Filtrators
 {
-    public class UserFiltrator : Filtrator<User>
+    public class UserFiltrator : Filtrator<IUser>
     {
         public string FirstName { get; set; } = "";
         public string LastName { get; set; } = "";
         public string Email { get; set; } = "";
         public int PetFarmId { get; set; } = -1;
 
-        internal override IQueryable<User> Filter(IQueryable<User> users)
+        internal override IQueryable<IUser> Filter(IQueryable<IUser> users)
         {
             return users.Where(x => x.FirstName.Contains(FirstName) &&
                                     x.LastName.Contains(LastName) &&

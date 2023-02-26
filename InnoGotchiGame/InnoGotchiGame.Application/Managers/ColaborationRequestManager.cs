@@ -11,7 +11,7 @@ namespace InnoGotchiGame.Application.Managers
     public class ColaborationRequestManager
     {
         private IRepositoryManager _repositoryManager;
-        private IRepositoryBase<ColaborationRequest> _requestRepository;
+        private IColaborationRequestRepository _requestRepository;
 
         public ColaborationRequestManager(IRepositoryManager repositoryManager)
         {

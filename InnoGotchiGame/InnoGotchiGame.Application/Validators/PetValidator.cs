@@ -1,9 +1,10 @@
 ﻿using FluentValidation;
 using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Interfaces;
 
 namespace InnoGotchiGame.Application.Validators
 {
-    public class PetValidator : AbstractValidator<Pet>
+    public class PetValidator : AbstractValidator<IPet>
     {
         public PetValidator()
         {

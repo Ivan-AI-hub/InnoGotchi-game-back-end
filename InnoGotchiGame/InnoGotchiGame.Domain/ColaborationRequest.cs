@@ -1,4 +1,4 @@
-﻿using InnoGotchiGame.Domain.enums;
+﻿using InnoGotchiGame.Domain.Enums;
 using InnoGotchiGame.Domain.Interfaces;
 
 namespace InnoGotchiGame.Domain

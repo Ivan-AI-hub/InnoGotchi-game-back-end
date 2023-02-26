@@ -49,37 +49,8 @@ namespace InnoGotchiGame.Tests
 
         private async Task<Pet> GetValidPet()
         {
-            var pet = _fixture.Build<Pet>()
-                .Without(x => x.Id)
-                .Without(x => x.FarmId)
-                .Without(x => x.Farm)
-                .Without(x => x.View)
-                .Create();
-            pet.View = _fixture.Build<PetView>()
-                .Without(x => x.Picture).Create();
-            pet.FarmId = await GetFarmId();
+            var pet = _fixture.Build<Pet>().Create();
             return pet;
-        }
-        private async Task<int> GetFarmId()
-        {
-            var repositoryManager = _fixture.Create<IRepositoryManager>();
-            var farm = _fixture.Build<PetFarm>()
-                .Without(x => x.Id)
-                .Without(x => x.OwnerId)
-                .Without(x => x.Owner)
-                .Create();
-
-            farm.Owner = _fixture.Build<User>()
-                .Without(x => x.Id)
-                .Without(x => x.OwnPetFarm)
-                .Without(x => x.Picture)
-                .Without(x => x.AcceptedColaborations)
-                .Without(x => x.SentColaborations)
-                .Create();
-
-            repositoryManager.PetFarm.Create(farm);
-            await repositoryManager.SaveAsync();
-            return farm.Id;
         }
     }
 }

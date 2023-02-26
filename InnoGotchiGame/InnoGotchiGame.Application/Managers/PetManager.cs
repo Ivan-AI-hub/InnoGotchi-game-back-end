@@ -4,6 +4,7 @@ using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters.Base;
 using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Interfaces;
 using InnoGotchiGame.Persistence.Interfaces;
 using InnoGotchiGame.Persistence.Managers;
 using Microsoft.EntityFrameworkCore;
@@ -15,13 +16,13 @@ namespace InnoGotchiGame.Application.Managers
     /// </summary>
     public class PetManager
     {
-        private IValidator<Pet> _validator;
+        private IValidator<IPet> _validator;
         private IRepositoryManager _repositoryManager;
-        private IRepositoryBase<Pet> _petRepository;
-        private IRepositoryBase<PetFarm> _farmRepository;
+        private IPetRepository _petRepository;
+        private IPetFarmRepository _farmRepository;
         private IMapper _mapper;
 
-        public PetManager(IRepositoryManager repositoryManager, IMapper mapper, IValidator<Pet> validator)
+        public PetManager(IRepositoryManager repositoryManager, IMapper mapper, IValidator<IPet> validator)
         {
             _validator = validator;
             _repositoryManager = repositoryManager;
@@ -34,12 +35,12 @@ namespace InnoGotchiGame.Application.Managers
         /// Creates a pet for the <paramref name="farmId"/> farm
         /// </summary>
         /// <param name="farmId">id of the farm containing the pet</param>
-        /// <param name="name">Pet name</param>
+        /// <param name="name">IPet name</param>
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> AddAsync(int farmId, string name, PetViewDTO? view)
         {
             var petStatistic = new PetStatistic(name);
-            var dataPet = new Pet(petStatistic, _mapper.Map<PetView>(view), farmId);
+            var dataPet = new Pet(petStatistic, _mapper.Map<IPetView>(view), farmId);
 
             var validationResult = _validator.Validate(dataPet);
             var managerResult = new ManagerResult(validationResult);
@@ -55,7 +56,7 @@ namespace InnoGotchiGame.Application.Managers
         /// <summary>
         /// Updates the pet name with a special <paramref name="id"/> 
         /// </summary>
-        /// <param name="id">Pet id</param>
+        /// <param name="id">IPet id</param>
         /// <param name="name">New name for the pet</param>
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> UpdateAsync(int id, string name)
@@ -80,7 +81,7 @@ namespace InnoGotchiGame.Application.Managers
         /// <summary>
         /// Feeds a pet with a special id
         /// </summary>
-        /// <param name="id">Pet id</param>
+        /// <param name="id">IPet id</param>
         /// <param name="feederId">id of the user who initiated the feeding</param>
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> FeedAsync(int id, int feederId)
@@ -107,7 +108,7 @@ namespace InnoGotchiGame.Application.Managers
         /// <summary>
         /// Gives a drink to a  pet with a special id
         /// </summary>
-        /// <param name="id">Pet id</param>
+        /// <param name="id">IPet id</param>
         /// <param name="drinkerId">id of the user who initiated the drinking</param>
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> GiveDrinkAsync(int id, int drinkerId)
@@ -134,7 +135,7 @@ namespace InnoGotchiGame.Application.Managers
         /// <summary>
         /// Sets the dead status to the pet
         /// </summary>
-        /// <param name="id">Pet id</param>
+        /// <param name="id">IPet id</param>
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> SetDeadStatusAsync(int id, DateTime deadDate)
         {
@@ -153,7 +154,7 @@ namespace InnoGotchiGame.Application.Managers
         /// <summary>
         /// Resets HappinessDay for the pet
         /// </summary>
-        /// <param name="id">Pet id</param>
+        /// <param name="id">IPet id</param>
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> ResetHappinessDayAsync(int id)
         {
@@ -172,7 +173,7 @@ namespace InnoGotchiGame.Application.Managers
         /// <summary>
         /// Deletes the pet 
         /// </summary>
-        /// <param name="id">Pet id</param>
+        /// <param name="id">IPet id</param>
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> DeleteAsync(int id)
         {
@@ -194,14 +195,14 @@ namespace InnoGotchiGame.Application.Managers
         }
 
         /// <returns>Filtered and sorted list of pets</returns>
-        public async Task<IEnumerable<PetDTO>> GetPetsAsync(Filtrator<Pet>? filtrator = null, Sorter<Pet>? sorter = null)
+        public async Task<IEnumerable<PetDTO>> GetPetsAsync(Filtrator<IPet>? filtrator = null, Sorter<IPet>? sorter = null)
         {
             var pets = await GetPetsQuary(filtrator, sorter).ToListAsync();
             return _mapper.Map<IEnumerable<PetDTO>>(pets);
         }
 
         /// <returns>A filtered and sorted page containing <paramref name="pageSize"/> pets</returns>
-        public async Task<IEnumerable<PetDTO>> GetPetsPageAsync(int pageSize, int pageNumber, Filtrator<Pet>? filtrator = null, Sorter<Pet>? sorter = null)
+        public async Task<IEnumerable<PetDTO>> GetPetsPageAsync(int pageSize, int pageNumber, Filtrator<IPet>? filtrator = null, Sorter<IPet>? sorter = null)
         {
             var pets = GetPetsQuary(filtrator, sorter);
             pets = pets.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
@@ -209,9 +210,9 @@ namespace InnoGotchiGame.Application.Managers
             return _mapper.Map<IEnumerable<PetDTO>>(petsList);
         }
 
-        private IQueryable<Pet> GetPetsQuary(Filtrator<Pet>? filtrator = null, Sorter<Pet>? sorter = null)
+        private IQueryable<IPet> GetPetsQuary(Filtrator<IPet>? filtrator = null, Sorter<IPet>? sorter = null)
         {
-            var pets = _petRepository.GetItems(false);
+            var pets = _petRepository.GetItems(false).OfType<IPet>();
             pets = filtrator != null ? filtrator.Filter(pets) : pets;
             pets = sorter != null ? sorter.Sort(pets) : pets;
             return pets;

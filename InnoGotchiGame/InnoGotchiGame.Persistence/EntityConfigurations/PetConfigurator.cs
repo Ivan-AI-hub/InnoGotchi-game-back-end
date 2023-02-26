@@ -18,7 +18,7 @@ namespace InnoGotchiGame.Persistence.EntityConfigurations
             });
 
             builder.HasOne(d => d.Farm)
-                .WithMany(p => p.Pets)
+                .WithMany(p => p.Pets.OfType<Pet>())
                 .HasForeignKey(d => d.FarmId)
                 .OnDelete(DeleteBehavior.Cascade);
         }

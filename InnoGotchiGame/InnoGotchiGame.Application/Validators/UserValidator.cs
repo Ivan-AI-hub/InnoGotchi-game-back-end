@@ -1,9 +1,10 @@
 ﻿using FluentValidation;
 using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Interfaces;
 
 namespace InnoGotchiGame.Application.Validators
 {
-    public class UserValidator : AbstractValidator<User>
+    public class UserValidator : AbstractValidator<IUser>
     {
         public UserValidator()
         {

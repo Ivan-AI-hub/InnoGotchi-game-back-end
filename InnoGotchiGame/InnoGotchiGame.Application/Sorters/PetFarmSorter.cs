@@ -1,14 +1,15 @@
 ﻿using InnoGotchiGame.Application.Sorters.Base;
 using InnoGotchiGame.Application.Sorters.SortRules;
 using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Interfaces;
 
 namespace InnoGotchiGame.Application.Sorters
 {
-    public class PetFarmSorter : Sorter<PetFarm>
+    public class PetFarmSorter : Sorter<IPetFarm>
     {
         public PetFarmSortRule SortRule { get; set; }
 
-        internal override IQueryable<PetFarm> Sort(IQueryable<PetFarm> petFarms)
+        internal override IQueryable<IPetFarm> Sort(IQueryable<IPetFarm> petFarms)
         {
             if (!IsDescendingSort)
             {

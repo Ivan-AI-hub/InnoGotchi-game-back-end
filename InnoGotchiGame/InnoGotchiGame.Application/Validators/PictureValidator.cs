@@ -1,9 +1,10 @@
 ﻿using FluentValidation;
 using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Interfaces;
 
 namespace InnoGotchiGame.Application.Validators
 {
-    public class PictureValidator : AbstractValidator<Picture>
+    public class PictureValidator : AbstractValidator<IPicture>
     {
         public PictureValidator()
         {

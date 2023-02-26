@@ -3,6 +3,7 @@ using FluentValidation;
 using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Interfaces;
 using InnoGotchiGame.Persistence.Interfaces;
 using InnoGotchiGame.Persistence.Managers;
 using Microsoft.EntityFrameworkCore;
@@ -15,11 +16,11 @@ namespace InnoGotchiGame.Application.Managers
     /// </summary>
     public class PictureManager
     {
-        private IValidator<Picture> _validator;
+        private IValidator<IPicture> _validator;
         private IRepositoryManager _repositoryManager;
-        private IRepositoryBase<Picture> _pictureRepository;
+        private IPictureRepository _pictureRepository;
         private IMapper _mapper;
-        public PictureManager(IRepositoryManager repositoryManager, IMapper mapper, IValidator<Picture> validator)
+        public PictureManager(IRepositoryManager repositoryManager, IMapper mapper, IValidator<IPicture> validator)
         {
             _repositoryManager = repositoryManager;
             _pictureRepository = repositoryManager.Picture;
@@ -33,12 +34,12 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> AddAsync(PictureDTO picture)
         {
-            var pictureData = _mapper.Map<Picture>(picture);
+            var pictureData = _mapper.Map<IPicture>(picture);
             var validationResult = _validator.Validate(pictureData);
             var result = new ManagerResult(validationResult);
             if (validationResult.IsValid && await IsUniqueNameAsync(pictureData.Name, result))
             {
-                _pictureRepository.Create(pictureData);
+                _pictureRepository.Create((Picture)pictureData);//BAD
                 await _repositoryManager.SaveAsync();
                 _repositoryManager.Detach(pictureData);
             }
@@ -52,16 +53,17 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> UpdateAsync(int updatedId, PictureDTO newPicture)
         {
-            var pictureData = _mapper.Map<Picture>(newPicture);
+            var pictureData = _mapper.Map<IPicture>(newPicture);
             var validationResult = _validator.Validate(pictureData);
             var result = new ManagerResult(validationResult);
             if (validationResult.IsValid && await CheckPictureIdAsync(updatedId, result) && await IsUniqueNameAsync(pictureData.Name, result))
             {
-                pictureData.Id = updatedId;
-                _pictureRepository.Update(pictureData);
-                await _repositoryManager.SaveAsync();
-                _repositoryManager.Detach(pictureData);
-                newPicture.Id = updatedId;
+                throw new NotImplementedException();
+                //pictureData.Id = updatedId;
+                //_pictureRepository.Update(pictureData);
+                //await _repositoryManager.SaveAsync();
+                //_repositoryManager.Detach(pictureData);
+                //newPicture.Id = updatedId;
             }
             return result;
         }
@@ -69,7 +71,7 @@ namespace InnoGotchiGame.Application.Managers
         /// <summary>
         /// Deletes the picture
         /// </summary>
-        /// <param name="id">Picture id</param>
+        /// <param name="id">IPicture id</param>
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> DeleteAsync(int id)
         {
@@ -90,9 +92,9 @@ namespace InnoGotchiGame.Application.Managers
         }
 
         /// <returns>Filtered list of pictures</returns>
-        public async Task<IEnumerable<PictureDTO>> GetAllAsync(Filtrator<Picture>? filtrator)
+        public async Task<IEnumerable<PictureDTO>> GetAllAsync(Filtrator<IPicture>? filtrator)
         {
-            var pictures = _pictureRepository.GetItems(false);
+            var pictures = _pictureRepository.GetItems(false).OfType<IPicture>();
             pictures = filtrator != null ? filtrator.Filter(pictures) : pictures;
             pictures = pictures.OrderBy(x => x.Name);
             return _mapper.Map<IEnumerable<PictureDTO>>(await pictures.ToListAsync());

@@ -4,6 +4,7 @@ using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters.Base;
 using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Interfaces;
 using InnoGotchiGame.Persistence.Interfaces;
 using InnoGotchiGame.Persistence.Managers;
 using Microsoft.EntityFrameworkCore;
@@ -15,12 +16,12 @@ namespace InnoGotchiGame.Application.Managers
     /// </summary>
     public class PetFarmManager
     {
-        private IValidator<PetFarm> _validator;
+        private IValidator<IPetFarm> _validator;
         private IRepositoryManager _repositoryManager;
-        private IRepositoryBase<PetFarm> _farmRepository;
+        private IPetFarmRepository _farmRepository;
         private IMapper _mapper;
 
-        public PetFarmManager(IRepositoryManager repositoryManager, IMapper mapper, IValidator<PetFarm> validator)
+        public PetFarmManager(IRepositoryManager repositoryManager, IMapper mapper, IValidator<IPetFarm> validator)
         {
             _validator = validator;
             _repositoryManager = repositoryManager;
@@ -100,14 +101,14 @@ namespace InnoGotchiGame.Application.Managers
         }
 
         /// <returns>Filtered and sorted list of farms</returns>
-        public async Task<IEnumerable<PetFarmDTO>> GetPetFarmsAsync(Filtrator<PetFarm>? filtrator = null, Sorter<PetFarm>? sorter = null)
+        public async Task<IEnumerable<PetFarmDTO>> GetPetFarmsAsync(Filtrator<IPetFarm>? filtrator = null, Sorter<IPetFarm>? sorter = null)
         {
             var farms = await GetPetFarmsQuary(filtrator, sorter).ToListAsync();
             return _mapper.Map<IEnumerable<PetFarmDTO>>(farms);
         }
 
         /// <returns>A filtered and sorted page containing <paramref name="pageSize"/> farms</returns>
-        public async Task<IEnumerable<PetFarmDTO>> GetPetFarmsPageAsync(int pageSize, int pageNumber, Filtrator<PetFarm>? filtrator = null, Sorter<PetFarm>? sorter = null)
+        public async Task<IEnumerable<PetFarmDTO>> GetPetFarmsPageAsync(int pageSize, int pageNumber, Filtrator<IPetFarm>? filtrator = null, Sorter<IPetFarm>? sorter = null)
         {
             var farms = GetPetFarmsQuary(filtrator, sorter);
             farms = farms.Skip(pageSize * (pageNumber - 1)).Take(pageSize);
@@ -125,9 +126,9 @@ namespace InnoGotchiGame.Application.Managers
             return true;
         }
 
-        private IQueryable<PetFarm> GetPetFarmsQuary(Filtrator<PetFarm>? filtrator = null, Sorter<PetFarm>? sorter = null)
+        private IQueryable<IPetFarm> GetPetFarmsQuary(Filtrator<IPetFarm>? filtrator = null, Sorter<IPetFarm>? sorter = null)
         {
-            var farms = _farmRepository.GetItems(false);
+            var farms = _farmRepository.GetItems(false).OfType<IPetFarm>();
             farms = filtrator != null ? filtrator.Filter(farms) : farms;
             farms = sorter != null ? sorter.Sort(farms) : farms;
             return farms;

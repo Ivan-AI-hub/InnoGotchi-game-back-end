@@ -1,9 +1,10 @@
 ﻿using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Interfaces;
 
 namespace InnoGotchiGame.Application.Filtrators
 {
-    public class PetFiltrator : Filtrator<Pet>
+    public class PetFiltrator : Filtrator<IPet>
     {
         public string Name { get; set; } = "";
         public int DaysAlive { get; set; } = -1;
@@ -13,7 +14,7 @@ namespace InnoGotchiGame.Application.Filtrators
         public int MinDaysFromLastDrinking { get; set; } = -1;
 
 
-        internal override IQueryable<Pet> Filter(IQueryable<Pet> pets)
+        internal override IQueryable<IPet> Filter(IQueryable<IPet> pets)
         {
             pets = pets.Where(x => x.Statistic.Name.Contains(Name));
 
