@@ -13,27 +13,24 @@ namespace InnoGotchiGame.Application.Sorters
         {
             if (!IsDescendingSort)
             {
-                if (SortRule == PetSortRule.Age)
-                    return pets.OrderBy(x => x.Statistic.BornDate);
-                else if (SortRule == PetSortRule.Drink)
-                    return pets.OrderBy(x => x.Statistic.DateLastDrink);
-                else if (SortRule == PetSortRule.Feeding)
-                    return pets.OrderBy(x => x.Statistic.DateLastFeed);
-                else if (SortRule == PetSortRule.happinessDays)
-                    return pets.OrderBy(x => x.Statistic.FirstHappinessDay);
+                switch(SortRule)
+                {
+                    case PetSortRule.Age: return pets.OrderBy(x => x.Statistic.BornDate);
+                    case PetSortRule.Drink: return pets.OrderBy(x => x.Statistic.DateLastDrink);
+                    case PetSortRule.Feeding: return pets.OrderBy(x => x.Statistic.DateLastFeed);
+                    case PetSortRule.happinessDays: return pets.OrderBy(x => x.Statistic.FirstHappinessDay);
+                    default: throw new NotImplementedException();
+                }
             }
-            else
+
+            switch (SortRule)
             {
-                if (SortRule == PetSortRule.Age)
-                    return pets.OrderByDescending(x => x.Statistic.BornDate);
-                else if (SortRule == PetSortRule.Drink)
-                    return pets.OrderByDescending(x => x.Statistic.DateLastDrink);
-                else if (SortRule == PetSortRule.Feeding)
-                    return pets.OrderByDescending(x => x.Statistic.DateLastFeed);
-                else if (SortRule == PetSortRule.happinessDays)
-                    return pets.OrderByDescending(x => x.Statistic.FirstHappinessDay);
+                case PetSortRule.Age: return pets.OrderByDescending(x => x.Statistic.BornDate);
+                case PetSortRule.Drink: return pets.OrderByDescending(x => x.Statistic.DateLastDrink);
+                case PetSortRule.Feeding: return pets.OrderByDescending(x => x.Statistic.DateLastFeed);
+                case PetSortRule.happinessDays: return pets.OrderByDescending(x => x.Statistic.FirstHappinessDay);
+                default: throw new NotImplementedException();
             }
-            return pets;
         }
     }
 }

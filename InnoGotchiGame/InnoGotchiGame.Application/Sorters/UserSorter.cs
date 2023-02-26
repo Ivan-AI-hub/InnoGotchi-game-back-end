@@ -14,23 +14,23 @@ namespace InnoGotchiGame.Application.Sorters
         {
             if (!IsDescendingSort)
             {
-                if (SortRule == UserSortRule.FirstName)
-                    return users.OrderBy(x => x.FirstName);
-                else if (SortRule == UserSortRule.LastName)
-                    return users.OrderBy(x => x.LastName);
-                else if (SortRule == UserSortRule.Email)
-                    return users.OrderBy(x => x.Email);
+                switch (SortRule)
+                {
+                    case UserSortRule.FirstName: return users.OrderBy(x => x.FirstName);
+                    case UserSortRule.LastName: return users.OrderBy(x => x.LastName);
+                    case UserSortRule.Email: return users.OrderBy(x => x.Email);
+                    default: throw new NotImplementedException();
+                }
             }
-            else
+
+            switch (SortRule)
             {
-                if (SortRule == UserSortRule.FirstName)
-                    return users.OrderByDescending(x => x.FirstName);
-                else if (SortRule == UserSortRule.LastName)
-                    return users.OrderByDescending(x => x.LastName);
-                else if (SortRule == UserSortRule.Email)
-                    return users.OrderByDescending(x => x.Email);
+                case UserSortRule.FirstName: return users.OrderByDescending(x => x.FirstName);
+                case UserSortRule.LastName: return users.OrderByDescending(x => x.LastName);
+                case UserSortRule.Email: return users.OrderByDescending(x => x.Email);
+                default: throw new NotImplementedException();
             }
-            return users;
+
         }
     }
 }

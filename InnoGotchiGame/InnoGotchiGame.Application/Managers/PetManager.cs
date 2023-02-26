@@ -39,18 +39,31 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> AddAsync(int farmId, string name, PetViewDTO? view)
         {
+            var result = new ManagerResult();
+
+            if (!await IsUniqueNameAsync(name, result))
+            {
+                return result;
+            }
+
+            if (!await CheckFarmIdAsync(farmId, result))
+            {
+                return result;
+            }
+
             var petStatistic = new PetStatistic(name);
             var dataPet = new Pet(petStatistic, _mapper.Map<IPetView>(view), farmId);
 
             var validationResult = _validator.Validate(dataPet);
-            var managerResult = new ManagerResult(validationResult);
-            if (validationResult.IsValid && await CheckFarmIdAsync(farmId, managerResult) && await IsUniqueNameAsync(name, managerResult))
+            result = new ManagerResult(validationResult);
+
+            if (validationResult.IsValid)
             {
                 _petRepository.Create(dataPet);
                 await _repositoryManager.SaveAsync();
                 _repositoryManager.Detach(dataPet);
             }
-            return managerResult;
+            return result;
         }
 
         /// <summary>
@@ -61,19 +74,28 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> UpdateAsync(int id, string name)
         {
-
             var result = new ManagerResult();
-            if (await IsPetAliveAsync(id, result))
+
+            if (!await IsUniqueNameAsync(name, result))
             {
-                var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
-                dataPet!.Statistic.Name = name;
-                var validationResult = _validator.Validate(dataPet);
-                result = new ManagerResult(validationResult);
-                if (validationResult.IsValid && await IsUniqueNameAsync(dataPet.Statistic.Name, result))
-                {
-                    await _repositoryManager.SaveAsync();
-                    _repositoryManager.Detach(dataPet);
-                }
+                return result;
+            }
+
+            if (!await IsPetAliveAsync(id, result))
+            {
+                return result;
+            }
+
+            var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
+            dataPet!.Statistic.Name = name;
+
+            var validationResult = _validator.Validate(dataPet);
+            result = new ManagerResult(validationResult);
+
+            if (validationResult.IsValid)
+            {
+                await _repositoryManager.SaveAsync();
+                _repositoryManager.Detach(dataPet);
             }
             return result;
         }
@@ -87,21 +109,23 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> FeedAsync(int id, int feederId)
         {
             var result = new ManagerResult();
-            if (await IsPetAliveAsync(id, result))
+            if (!await IsPetAliveAsync(id, result))
             {
-                var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
-                if (dataPet!.Farm.Owner.Id == feederId || dataPet.Farm.Owner.GetColaborators().Any(x => x.Id == feederId))
-                {
-                    dataPet.Statistic.Feed();
-
-                    await _repositoryManager.SaveAsync();
-                    _repositoryManager.Detach(dataPet);
-                }
-                else
-                {
-                    result.Errors.Add($"a user with id = {feederId} cannot feed a pet");
-                }
+                return result;
             }
+
+            var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
+            if (dataPet!.Farm.Owner.Id != feederId && !dataPet.Farm.Owner.GetColaborators().Any(x => x.Id != feederId))
+            {
+                result.Errors.Add($"a user with id = {feederId} cannot feed a pet");
+                return result;
+            }
+
+            dataPet.Statistic.Feed();
+
+            await _repositoryManager.SaveAsync();
+            _repositoryManager.Detach(dataPet);
+            
             return result;
         }
 
@@ -114,21 +138,23 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> GiveDrinkAsync(int id, int drinkerId)
         {
             var result = new ManagerResult();
-            if (await IsPetAliveAsync(id, result))
+            if (!await IsPetAliveAsync(id, result))
             {
-                var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
-                if (dataPet!.Farm.Owner.Id == drinkerId || dataPet.Farm.Owner.GetColaborators().Any(x => x.Id == drinkerId))
-                {
-                    dataPet.Statistic.Drink();
-
-                    await _repositoryManager.SaveAsync();
-                    _repositoryManager.Detach(dataPet);
-                }
-                else
-                {
-                    result.Errors.Add($"a user with id = {drinkerId} cannot give a drink to a pet");
-                }
+                return result;
             }
+
+            var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
+            if (dataPet!.Farm.Owner.Id != drinkerId && !dataPet.Farm.Owner.GetColaborators().Any(x => x.Id != drinkerId))
+            {
+                result.Errors.Add($"a user with id = {drinkerId} cannot give a drink to a pet");
+                return result;
+            }
+
+            dataPet.Statistic.Drink();
+
+            await _repositoryManager.SaveAsync();
+            _repositoryManager.Detach(dataPet);
+            
             return result;
         }
 
@@ -140,14 +166,17 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> SetDeadStatusAsync(int id, DateTime deadDate)
         {
             var result = new ManagerResult();
-            if (await IsPetAliveAsync(id, result))
+            if (!await IsPetAliveAsync(id, result))
             {
-                var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
-                dataPet!.Statistic.DeadDate = deadDate;
-
-                await _repositoryManager.SaveAsync();
-                _repositoryManager.Detach(dataPet);
+                return result;
             }
+
+            var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
+            dataPet!.Statistic.DeadDate = deadDate;
+
+            await _repositoryManager.SaveAsync();
+            _repositoryManager.Detach(dataPet);
+
             return result;
         }
 
@@ -159,14 +188,17 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> ResetHappinessDayAsync(int id)
         {
             var result = new ManagerResult();
-            if (await IsPetAliveAsync(id, result))
+            if (!await IsPetAliveAsync(id, result))
             {
-                var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
-                dataPet!.Statistic.ResetFirstHappinessDay();
-
-                await _repositoryManager.SaveAsync();
-                _repositoryManager.Detach(dataPet);
+                return result;
             }
+
+            var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
+            dataPet!.Statistic.ResetFirstHappinessDay();
+
+            await _repositoryManager.SaveAsync();
+            _repositoryManager.Detach(dataPet);
+
             return result;
         }
 
@@ -178,11 +210,14 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> DeleteAsync(int id)
         {
             var result = new ManagerResult();
-            if (await CheckPetIdAsync(id, result))
+            if (!await CheckPetIdAsync(id, result))
             {
-                var pet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, false);
-                _petRepository.Delete(pet!);
+                return result;
             }
+
+            var pet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, false);
+            _petRepository.Delete(pet!);
+
             return result;
         }
 
@@ -248,17 +283,20 @@ namespace InnoGotchiGame.Application.Managers
         }
         private async Task<bool> IsPetAliveAsync(int id, ManagerResult result)
         {
-            if (await CheckPetIdAsync(id, result))
+            if (!await CheckPetIdAsync(id, result))
             {
-                var pet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, false);
-                if (pet.Statistic.IsAlive)
-                {
-                    return true;
-                }
-
-                result.Errors.Add("The pet dead already");
+                return false;
             }
-            return false;
+
+            var pet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, false);
+
+            if (!pet.Statistic.IsAlive)
+            {
+                result.Errors.Add("The pet dead already");
+                return false;
+            }
+
+            return true;
         }
     }
 }

@@ -37,19 +37,27 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> AddAsync(UserDTO user, string password)
         {
+            var result = new ManagerResult();
+
+            if (!await IsUniqueEmailAsync(user.Email, result))
+            {
+                return result;
+            }
+
             var dataUser = _mapper.Map<IUser>(user);
             dataUser.PasswordHach = StringToHach(password);
 
             var validationResult = _validator.Validate(dataUser);
-            var managerResult = new ManagerResult(validationResult);
-            if (validationResult.IsValid && await IsUniqueEmailAsync(user.Email, managerResult))
+            result = new ManagerResult(validationResult);
+
+            if (validationResult.IsValid)
             {
                 _userRepository.Create((User)dataUser);//Bad
                 await _repositoryManager.SaveAsync();
                 _repositoryManager.Detach(dataUser);
                 user.Id = dataUser.Id;
             }
-            return managerResult;
+            return result;
         }
 
         /// <summary>
@@ -62,21 +70,24 @@ namespace InnoGotchiGame.Application.Managers
             ManagerResult managerResult = new ManagerResult();
             var dataUser = _mapper.Map<IUser>(newUser);
 
-            if (await CheckUserIdAsync(updatedId, managerResult))
+            if (!await CheckUserIdAsync(updatedId, managerResult))
             {
-                var oldUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, false);
-                oldUser.Picture = dataUser.Picture;
-                oldUser.FirstName = dataUser.FirstName;
-                oldUser.LastName = dataUser.LastName;
+                return managerResult;
+            }
 
-                var validationResult = _validator.Validate(oldUser);
-                managerResult = new ManagerResult(validationResult);
-                if (managerResult.IsComplete)
-                {
-                    _repositoryManager.User.Update(oldUser);
-                    await _repositoryManager.SaveAsync();
-                    _repositoryManager.Detach(dataUser);
-                }
+            var oldUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, false);
+            oldUser.Picture = dataUser.Picture;
+            oldUser.FirstName = dataUser.FirstName;
+            oldUser.LastName = dataUser.LastName;
+
+            var validationResult = _validator.Validate(oldUser);
+            managerResult = new ManagerResult(validationResult);
+
+            if (managerResult.IsComplete)
+            {
+                _repositoryManager.User.Update(oldUser);
+                await _repositoryManager.SaveAsync();
+                _repositoryManager.Detach(dataUser);
             }
             return managerResult;
         }
@@ -89,24 +100,24 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> UpdatePasswordAsync(int updatedId, string oldPassword, string newPassword)
         {
             ManagerResult managerResult = new ManagerResult();
-            if (await CheckUserIdAsync(updatedId, managerResult))
+            if (!await CheckUserIdAsync(updatedId, managerResult))
             {
-                var dataUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, false);
-
-                var validationResult = _validator.Validate(dataUser);
-                managerResult = new ManagerResult(validationResult);
-                if (dataUser.PasswordHach == StringToHach(oldPassword))
-                {
-                    dataUser.PasswordHach = StringToHach(newPassword);
-                    _repositoryManager.User.Update(dataUser);
-                    await _repositoryManager.SaveAsync();
-                    _repositoryManager.Detach(dataUser);
-                }
-                else
-                {
-                    managerResult.Errors.Add("Old and new password are not equal");
-                }
+                return managerResult;
             }
+
+            var dataUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, false);
+
+            if (dataUser.PasswordHach != StringToHach(oldPassword))
+            {
+                managerResult.Errors.Add("Old and new password are not equal");
+                return managerResult;
+            }
+
+            dataUser.PasswordHach = StringToHach(newPassword);
+            _repositoryManager.User.Update(dataUser);
+            await _repositoryManager.SaveAsync();
+            _repositoryManager.Detach(dataUser);
+
             return managerResult;
         }
 
@@ -118,11 +129,13 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> DeleteAsync(int deletedId)
         {
             var result = new ManagerResult();
-            if (await CheckUserIdAsync(deletedId, result))
+            if (!await CheckUserIdAsync(deletedId, result))
             {
-                var user = await _userRepository.FirstOrDefaultAsync(x => x.Id == deletedId, false);
-                _userRepository.Delete(user);
+                return result;
             }
+
+            var user = await _userRepository.FirstOrDefaultAsync(x => x.Id == deletedId, false);
+            _userRepository.Delete(user);
 
             return result;
         }

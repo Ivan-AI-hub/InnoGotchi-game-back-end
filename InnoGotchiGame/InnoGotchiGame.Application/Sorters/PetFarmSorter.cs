@@ -13,15 +13,19 @@ namespace InnoGotchiGame.Application.Sorters
         {
             if (!IsDescendingSort)
             {
-                if (SortRule == PetFarmSortRule.Name)
-                    return petFarms.OrderBy(x => x.Name);
+                switch(SortRule)
+                {
+                    case PetFarmSortRule.Name: return petFarms.OrderBy(x => x.Name);
+                    default: throw new NotImplementedException();
+                }    
             }
-            else
+
+            switch (SortRule)
             {
-                if (SortRule == PetFarmSortRule.Name)
-                    return petFarms.OrderByDescending(x => x.Name);
+                case PetFarmSortRule.Name: return petFarms.OrderByDescending(x => x.Name);
+                default: throw new NotImplementedException();
             }
-            return petFarms;
+            
         }
     }
 }

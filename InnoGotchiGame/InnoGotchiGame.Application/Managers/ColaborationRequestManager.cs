@@ -35,13 +35,13 @@ namespace InnoGotchiGame.Application.Managers
             if (isSecondRequest)
             {
                 result.Errors.Add("The collaborating request for these users already exists");
+                return result;
             }
-            else
-            {
-                _requestRepository.Create(request);
-                await _repositoryManager.SaveAsync();
-                _repositoryManager.Detach(request);
-            }
+
+            _requestRepository.Create(request);
+            await _repositoryManager.SaveAsync();
+            _repositoryManager.Detach(request);
+            
 
             return result;
         }
@@ -56,26 +56,26 @@ namespace InnoGotchiGame.Application.Managers
         {
             var result = new ManagerResult();
             var request = await _requestRepository.FirstOrDefaultAsync(x => x.Id == requestId, false);
-            if (request != null)
-            {
-                if (request.Status == ColaborationRequestStatus.Colaborators)
-                    result.Errors.Add("Request already confirmed");
-
-                if (request.RequestReceiverId != recipientId)
-                    result.Errors.Add("Only the recipient of the request can confirm the request. The recipient's ID does not match");
-
-                if (result.IsComplete)
-                {
-                    request.Status = ColaborationRequestStatus.Colaborators;
-                    _repositoryManager.ColaborationRequest.Update(request);
-                    await _repositoryManager.SaveAsync();
-                    _repositoryManager.Detach(request);
-                }
-            }
-            else
+            if (request == null)
             {
                 result.Errors.Add("The request ID is not in the database");
+                return result;
             }
+
+            if (request.Status == ColaborationRequestStatus.Colaborators)
+                result.Errors.Add("Request already confirmed");
+
+            if (request.RequestReceiverId != recipientId)
+                result.Errors.Add("Only the recipient of the request can confirm the request. The recipient's ID does not match");
+
+            if (result.IsComplete)
+            {
+                request.Status = ColaborationRequestStatus.Colaborators;
+                _repositoryManager.ColaborationRequest.Update(request);
+                await _repositoryManager.SaveAsync();
+                _repositoryManager.Detach(request);
+            }
+            
 
             return result;
         }
@@ -90,25 +90,25 @@ namespace InnoGotchiGame.Application.Managers
         {
             var result = new ManagerResult();
             var request = await _requestRepository.FirstOrDefaultAsync(x => x.Id == requestId, false);
-            if (request != null)
-            {
-                if (request.Status == ColaborationRequestStatus.NotColaborators)
-                    result.Errors.Add("Request already rejected");
-                if (request.RequestReceiverId != participantId && request.RequestSenderId != participantId)
-                    result.Errors.Add("Only the participant of the request can reject the request. The recipient's ID does not match");
-
-                if (result.IsComplete)
-                {
-                    request.Status = ColaborationRequestStatus.NotColaborators;
-                    _repositoryManager.ColaborationRequest.Update(request);
-                    await _repositoryManager.SaveAsync();
-                    _repositoryManager.Detach(request);
-                }
-            }
-            else
+            if (request == null)
             {
                 result.Errors.Add("The request ID is not in the database");
+                return result;
             }
+
+            if (request.Status == ColaborationRequestStatus.NotColaborators)
+                result.Errors.Add("Request already rejected");
+            if (request.RequestReceiverId != participantId && request.RequestSenderId != participantId)
+                result.Errors.Add("Only the participant of the request can reject the request. The recipient's ID does not match");
+
+            if (result.IsComplete)
+            {
+                request.Status = ColaborationRequestStatus.NotColaborators;
+                _repositoryManager.ColaborationRequest.Update(request);
+                await _repositoryManager.SaveAsync();
+                _repositoryManager.Detach(request);
+            }
+            
 
             return result;
         }
@@ -122,15 +122,16 @@ namespace InnoGotchiGame.Application.Managers
         {
             var result = new ManagerResult();
             var request = await _requestRepository.FirstOrDefaultAsync(x => x.Id == requestId, false);
-            if (request != null)
-            {
-                _requestRepository.Delete(request);
-                await _repositoryManager.SaveAsync();
-            }
-            else
+
+            if (request == null)
             {
                 result.Errors.Add("The request ID is not in the database");
+                return result;
             }
+
+            _requestRepository.Delete(request);
+            await _repositoryManager.SaveAsync();
+            
 
             return result;
         }

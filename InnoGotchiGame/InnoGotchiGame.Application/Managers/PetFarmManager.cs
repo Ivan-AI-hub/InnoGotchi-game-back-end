@@ -37,11 +37,17 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> AddAsync(int ownerId, string name)
         {
-            var dataFarm = new PetFarm(name, ownerId);
+            var result = new ManagerResult();
+            if(!await IsUniqueNameAsync(name, result))
+            {
+                return result;
+            }
 
+            var dataFarm = new PetFarm(name, ownerId);
             var validationResult = _validator.Validate(dataFarm);
-            var result = new ManagerResult(validationResult);
-            if (validationResult.IsValid && await IsUniqueNameAsync(dataFarm.Name, result))
+
+            result = new ManagerResult(validationResult);
+            if (validationResult.IsValid)
             {
                 _farmRepository.Create(dataFarm);
                 await _repositoryManager.SaveAsync();
@@ -59,18 +65,27 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> UpdateNameAsync(int id, string newName)
         {
             var result = new ManagerResult();
-            if (await CheckFarmIdExistAsync(id, result))
+            if (!await IsUniqueNameAsync(newName, result))
             {
-                var dataFarm = await _farmRepository.FirstOrDefaultAsync(x => x.Id == id, false);
-                dataFarm!.Name = newName;
-                var validationResult = _validator.Validate(dataFarm);
-                result = new ManagerResult(validationResult);
-                if (validationResult.IsValid && await IsUniqueNameAsync(newName, result))
-                {
-                    _farmRepository.Update(dataFarm);
-                    await _repositoryManager.SaveAsync();
-                    _repositoryManager.Detach(dataFarm);
-                }
+                return result;
+            }
+
+            if (!await CheckFarmIdExistAsync(id, result))
+            {
+                return result;
+            }
+
+            var dataFarm = await _farmRepository.FirstOrDefaultAsync(x => x.Id == id, false);
+            dataFarm!.Name = newName;
+
+            var validationResult = _validator.Validate(dataFarm);
+            result = new ManagerResult(validationResult);
+
+            if (validationResult.IsValid)
+            {
+                _farmRepository.Update(dataFarm);
+                await _repositoryManager.SaveAsync();
+                _repositoryManager.Detach(dataFarm);
             }
             return result;
         }
