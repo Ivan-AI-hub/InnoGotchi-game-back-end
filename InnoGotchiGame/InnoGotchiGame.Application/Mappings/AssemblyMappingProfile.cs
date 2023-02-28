@@ -1,8 +1,11 @@
 ﻿using AutoMapper;
 using InnoGotchiGame.Application.Models;
-using InnoGotchiGame.Domain;
-using InnoGotchiGame.Domain.Enums;
-using InnoGotchiGame.Domain.Interfaces;
+using InnoGotchiGame.Domain.AggragatesModel.ColaborationRequestAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PetAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PictureAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.UserAggregate;
+using InnoGotchiGame.Persistence.Models;
 
 namespace InnoGotchiGame.Application.Mappings
 {

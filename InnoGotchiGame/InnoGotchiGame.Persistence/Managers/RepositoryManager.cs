@@ -1,4 +1,9 @@
-﻿using InnoGotchiGame.Persistence.Interfaces;
+﻿using InnoGotchiGame.Domain.AggragatesModel.ColaborationRequestAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PetAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PictureAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.UserAggregate;
+using InnoGotchiGame.Domain.BaseModels;
 using InnoGotchiGame.Persistence.Repositories;
 
 namespace InnoGotchiGame.Persistence.Managers

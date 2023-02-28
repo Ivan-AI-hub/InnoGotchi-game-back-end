@@ -1,6 +1,6 @@
-﻿using InnoGotchiGame.Domain.Interfaces;
+﻿using InnoGotchiGame.Domain.AggragatesModel.PictureAggregate;
 
-namespace InnoGotchiGame.Domain
+namespace InnoGotchiGame.Persistence.Models
 {
     public class Picture : IPicture
     {

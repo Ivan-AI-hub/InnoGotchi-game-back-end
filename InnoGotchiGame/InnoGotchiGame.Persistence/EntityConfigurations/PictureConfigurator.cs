@@ -1,4 +1,4 @@
-﻿using InnoGotchiGame.Domain;
+﻿using InnoGotchiGame.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

@@ -1,4 +1,6 @@
-﻿namespace InnoGotchiGame.Domain.Interfaces
+﻿using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
+
+namespace InnoGotchiGame.Domain.AggragatesModel.PetAggregate
 {
     public interface IPet
     {

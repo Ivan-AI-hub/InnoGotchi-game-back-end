@@ -4,9 +4,9 @@ using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters.Base;
 using InnoGotchiGame.Domain;
-using InnoGotchiGame.Domain.Interfaces;
-using InnoGotchiGame.Persistence.Interfaces;
-using InnoGotchiGame.Persistence.Managers;
+using InnoGotchiGame.Domain.AggragatesModel.PetAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
+using InnoGotchiGame.Domain.BaseModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Application.Managers

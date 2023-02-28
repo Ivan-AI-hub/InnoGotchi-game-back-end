@@ -1,7 +1,8 @@
-﻿
-using InnoGotchiGame.Domain.Interfaces;
+﻿using InnoGotchiGame.Domain.AggragatesModel.PetAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.UserAggregate;
 
-namespace InnoGotchiGame.Domain
+namespace InnoGotchiGame.Persistence.Models
 {
     public class PetFarm : IPetFarm
     {

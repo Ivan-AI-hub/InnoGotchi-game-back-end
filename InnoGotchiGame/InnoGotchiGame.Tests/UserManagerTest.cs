@@ -1,4 +1,6 @@
+using InnoGotchiGame.Domain.BaseModels;
 using InnoGotchiGame.Persistence.Managers;
+using InnoGotchiGame.Persistence.Models;
 
 namespace InnoGotchiGame.Tests
 {

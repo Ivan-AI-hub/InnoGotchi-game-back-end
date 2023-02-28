@@ -1,4 +1,8 @@
-﻿namespace InnoGotchiGame.Domain.Interfaces
+﻿using InnoGotchiGame.Domain.AggragatesModel.ColaborationRequestAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PictureAggregate;
+
+namespace InnoGotchiGame.Domain.AggragatesModel.UserAggregate
 {
     public interface IUser
     {

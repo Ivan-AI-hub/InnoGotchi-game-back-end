@@ -1,5 +1,8 @@
-﻿using InnoGotchiGame.Domain.Interfaces;
+﻿using InnoGotchiGame.Domain.AggragatesModel.PetAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
+using InnoGotchiGame.Domain.BaseModels;
 using InnoGotchiGame.Persistence.Managers;
+using InnoGotchiGame.Persistence.Models;
 
 namespace InnoGotchiGame.Tests
 {

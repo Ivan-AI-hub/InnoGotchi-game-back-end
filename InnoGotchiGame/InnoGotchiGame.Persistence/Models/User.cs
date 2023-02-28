@@ -1,7 +1,9 @@
-﻿using InnoGotchiGame.Domain.Enums;
-using InnoGotchiGame.Domain.Interfaces;
+﻿using InnoGotchiGame.Domain.AggragatesModel.ColaborationRequestAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PictureAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.UserAggregate;
 
-namespace InnoGotchiGame.Domain
+namespace InnoGotchiGame.Persistence.Models
 {
     public class User : IUser
     {
@@ -29,7 +31,7 @@ namespace InnoGotchiGame.Domain
             SentColaborations = new List<IColaborationRequest>();
             AcceptedColaborations = new List<IColaborationRequest>();
         }
-        public User(string firstName, string lastName, string email, string passwordHach, IPicture? picture, IPetFarm ownPetFarm) 
+        public User(string firstName, string lastName, string email, string passwordHach, IPicture? picture, IPetFarm ownPetFarm)
             : this(firstName, lastName, email, passwordHach, picture)
         {
             OwnPetFarm = ownPetFarm;

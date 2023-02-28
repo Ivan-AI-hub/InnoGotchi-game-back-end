@@ -1,4 +1,4 @@
-﻿namespace InnoGotchiGame.Domain.Enums
+﻿namespace InnoGotchiGame.Domain.AggragatesModel.ColaborationRequestAggregate
 {
     public enum ColaborationRequestStatus
     {

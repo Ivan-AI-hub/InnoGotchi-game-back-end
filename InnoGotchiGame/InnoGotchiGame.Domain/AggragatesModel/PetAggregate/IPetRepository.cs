@@ -1,7 +1,7 @@
 ﻿using InnoGotchiGame.Domain;
-using InnoGotchiGame.Domain.Interfaces;
+using InnoGotchiGame.Domain.BaseModels;
 
-namespace InnoGotchiGame.Persistence.Interfaces
+namespace InnoGotchiGame.Domain.AggragatesModel.PetAggregate
 {
     public interface IPetRepository : IRepository<IPet>
     {

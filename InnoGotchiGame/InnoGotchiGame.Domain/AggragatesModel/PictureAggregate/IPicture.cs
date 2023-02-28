@@ -1,4 +1,4 @@
-﻿namespace InnoGotchiGame.Domain.Interfaces
+﻿namespace InnoGotchiGame.Domain.AggragatesModel.PictureAggregate
 {
     public interface IPicture
     {

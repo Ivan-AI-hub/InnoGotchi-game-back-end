@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 using InnoGotchiGame.Domain;
-using InnoGotchiGame.Domain.Interfaces;
+using InnoGotchiGame.Domain.AggragatesModel.PictureAggregate;
 
 namespace InnoGotchiGame.Application.Validators
 {

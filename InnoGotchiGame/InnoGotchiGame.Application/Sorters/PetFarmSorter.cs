@@ -1,7 +1,7 @@
 ﻿using InnoGotchiGame.Application.Sorters.Base;
 using InnoGotchiGame.Application.Sorters.SortRules;
 using InnoGotchiGame.Domain;
-using InnoGotchiGame.Domain.Interfaces;
+using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
 
 namespace InnoGotchiGame.Application.Sorters
 {

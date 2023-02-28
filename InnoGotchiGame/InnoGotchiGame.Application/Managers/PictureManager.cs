@@ -3,9 +3,8 @@ using FluentValidation;
 using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Domain;
-using InnoGotchiGame.Domain.Interfaces;
-using InnoGotchiGame.Persistence.Interfaces;
-using InnoGotchiGame.Persistence.Managers;
+using InnoGotchiGame.Domain.AggragatesModel.PictureAggregate;
+using InnoGotchiGame.Domain.BaseModels;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 

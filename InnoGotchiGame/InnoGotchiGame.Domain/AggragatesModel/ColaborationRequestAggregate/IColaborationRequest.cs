@@ -1,6 +1,6 @@
-﻿using InnoGotchiGame.Domain.Enums;
+﻿using InnoGotchiGame.Domain.AggragatesModel.UserAggregate;
 
-namespace InnoGotchiGame.Domain.Interfaces
+namespace InnoGotchiGame.Domain.AggragatesModel.ColaborationRequestAggregate
 {
     public interface IColaborationRequest
     {

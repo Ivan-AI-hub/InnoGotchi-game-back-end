@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace InnoGotchiGame.Persistence.Interfaces
+namespace InnoGotchiGame.Domain.BaseModels
 {
     public interface IRepository<T>
     {

@@ -1,6 +1,7 @@
-﻿using InnoGotchiGame.Domain.Interfaces;
+﻿using InnoGotchiGame.Domain.AggragatesModel.PetAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
 
-namespace InnoGotchiGame.Domain
+namespace InnoGotchiGame.Persistence.Models
 {
     public class Pet : IPet
     {
@@ -12,7 +13,7 @@ namespace InnoGotchiGame.Domain
         public int FarmId { get; private set; }
         public IPetFarm? Farm { get; private set; }
 
-        private Pet(){ }
+        private Pet() { }
         private Pet(IPetStatistic statistic, IPetView view)
         {
             Statistic = statistic;

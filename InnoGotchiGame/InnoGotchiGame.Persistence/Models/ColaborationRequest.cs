@@ -1,7 +1,7 @@
-﻿using InnoGotchiGame.Domain.Enums;
-using InnoGotchiGame.Domain.Interfaces;
+﻿using InnoGotchiGame.Domain.AggragatesModel.ColaborationRequestAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.UserAggregate;
 
-namespace InnoGotchiGame.Domain
+namespace InnoGotchiGame.Persistence.Models
 {
     public class ColaborationRequest : IColaborationRequest
     {

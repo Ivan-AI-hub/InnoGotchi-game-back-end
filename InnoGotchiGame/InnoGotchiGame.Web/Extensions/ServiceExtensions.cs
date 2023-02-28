@@ -1,4 +1,5 @@
 ﻿using InnoGotchiGame.Application.Managers;
+using InnoGotchiGame.Domain.BaseModels;
 using InnoGotchiGame.Persistence;
 using InnoGotchiGame.Persistence.Managers;
 using LoggerService;

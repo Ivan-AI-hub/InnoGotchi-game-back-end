@@ -1,5 +1,6 @@
-﻿using InnoGotchiGame.Domain.Interfaces;
-using InnoGotchiGame.Persistence.Managers;
+﻿using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
+using InnoGotchiGame.Domain.BaseModels;
+using InnoGotchiGame.Persistence.Models;
 using InnoGotchiGame.Web.Controllers;
 using InnoGotchiGame.Web.Models.Pets;
 using Microsoft.AspNetCore.Mvc;

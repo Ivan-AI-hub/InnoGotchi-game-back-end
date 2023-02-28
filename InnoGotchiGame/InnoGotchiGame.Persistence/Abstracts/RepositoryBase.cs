@@ -1,4 +1,4 @@
-﻿using InnoGotchiGame.Persistence.Interfaces;
+﻿using InnoGotchiGame.Domain.BaseModels;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 

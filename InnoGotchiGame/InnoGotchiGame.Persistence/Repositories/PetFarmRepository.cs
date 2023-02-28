@@ -1,7 +1,6 @@
-﻿using InnoGotchiGame.Domain;
-using InnoGotchiGame.Domain.Interfaces;
+﻿using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
 using InnoGotchiGame.Persistence.Abstracts;
-using InnoGotchiGame.Persistence.Interfaces;
+using InnoGotchiGame.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Persistence.Repositories
