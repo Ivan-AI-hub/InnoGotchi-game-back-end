@@ -2,6 +2,7 @@
 using InnoGotchiGame.Domain.Enums;
 using InnoGotchiGame.Persistence.Interfaces;
 using InnoGotchiGame.Persistence.Managers;
+using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Application.Managers
 {
@@ -28,7 +29,6 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> SendColaborationRequestAsync(int senderId, int recipientId)
         {
             var result = new ManagerResult();
-            var request = new ColaborationRequest(senderId, recipientId, ColaborationRequestStatus.Undefined);
 
             var isSecondRequest = await _requestRepository.IsItemExistAsync(x => x.RequestSenderId == senderId && x.RequestReceiverId == recipientId ||
                                                            x.RequestReceiverId == senderId && x.RequestSenderId == recipientId);
@@ -37,6 +37,8 @@ namespace InnoGotchiGame.Application.Managers
                 result.Errors.Add("The collaborating request for these users already exists");
                 return result;
             }
+
+            var request = new ColaborationRequest(senderId, recipientId, ColaborationRequestStatus.Undefined);
 
             _requestRepository.Create(request);
             await _repositoryManager.SaveAsync();
@@ -55,27 +57,28 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> ConfirmRequestAsync(int requestId, int recipientId)
         {
             var result = new ManagerResult();
-            var request = await _requestRepository.FirstOrDefaultAsync(x => x.Id == requestId, false);
-            if (request == null)
+            if (!await IsRequestIdExistAsync(requestId, result))
             {
-                result.Errors.Add("The request ID is not in the database");
                 return result;
             }
 
+            var request = await _requestRepository.GetItems(false).FirstAsync(x => x.Id == requestId);
+
             if (request.Status == ColaborationRequestStatus.Colaborators)
                 result.Errors.Add("Request already confirmed");
-
             if (request.RequestReceiverId != recipientId)
                 result.Errors.Add("Only the recipient of the request can confirm the request. The recipient's ID does not match");
 
-            if (result.IsComplete)
+            if (!result.IsComplete)
             {
-                request.Status = ColaborationRequestStatus.Colaborators;
-                _repositoryManager.ColaborationRequest.Update(request);
-                await _repositoryManager.SaveAsync();
-                _repositoryManager.Detach(request);
+                return result;
             }
-            
+
+            request.Status = ColaborationRequestStatus.Colaborators;
+            _repositoryManager.ColaborationRequest.Update(request);
+            await _repositoryManager.SaveAsync();
+
+            _repositoryManager.Detach(request);
 
             return result;
         }
@@ -89,26 +92,28 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> RejectRequestAsync(int requestId, int participantId)
         {
             var result = new ManagerResult();
-            var request = await _requestRepository.FirstOrDefaultAsync(x => x.Id == requestId, false);
-            if (request == null)
+            if (!await IsRequestIdExistAsync(requestId, result))
             {
-                result.Errors.Add("The request ID is not in the database");
                 return result;
             }
+
+            var request = await _requestRepository.GetItems(false).FirstAsync(x => x.Id == requestId);
 
             if (request.Status == ColaborationRequestStatus.NotColaborators)
                 result.Errors.Add("Request already rejected");
             if (request.RequestReceiverId != participantId && request.RequestSenderId != participantId)
                 result.Errors.Add("Only the participant of the request can reject the request. The recipient's ID does not match");
 
-            if (result.IsComplete)
+            if (!result.IsComplete)
             {
-                request.Status = ColaborationRequestStatus.NotColaborators;
-                _repositoryManager.ColaborationRequest.Update(request);
-                await _repositoryManager.SaveAsync();
-                _repositoryManager.Detach(request);
+                return result;
             }
-            
+
+            request.Status = ColaborationRequestStatus.NotColaborators;
+            _repositoryManager.ColaborationRequest.Update(request);
+            await _repositoryManager.SaveAsync();
+
+            _repositoryManager.Detach(request);
 
             return result;
         }
@@ -121,19 +126,28 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> DeleteRequestAsync(int requestId)
         {
             var result = new ManagerResult();
-            var request = await _requestRepository.FirstOrDefaultAsync(x => x.Id == requestId, false);
-
-            if (request == null)
+            if (!await IsRequestIdExistAsync(requestId, result))
             {
-                result.Errors.Add("The request ID is not in the database");
                 return result;
             }
+
+            var request = await _requestRepository.GetItems(false).FirstAsync(x => x.Id == requestId);
 
             _requestRepository.Delete(request);
             await _repositoryManager.SaveAsync();
             
 
             return result;
+        }
+
+        private async Task<bool> IsRequestIdExistAsync(int id, ManagerResult result)
+        {
+            if (!(await _requestRepository.IsItemExistAsync(x => x.Id == id)))
+            {
+                result.Errors.Add("The request ID is not in the database");
+                return false;
+            }
+            return true;
         }
     }
 }

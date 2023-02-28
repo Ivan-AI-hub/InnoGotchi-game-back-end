@@ -18,16 +18,7 @@ namespace InnoGotchiGame.Persistence.Repositories
             return GetOnlyDiscribeData(trackChanges);
         }
 
-        public override Task<IPet?> FirstOrDefaultAsync(Expression<Func<IPet, bool>> predicate, bool trackChanges)
-        {
-            return GetFullData(trackChanges).Where(predicate).FirstOrDefaultAsync();
-        }
-        public override Task<IPet> FirstAsync(Expression<Func<IPet, bool>> predicate, bool trackChanges)
-        {
-            return GetFullData(trackChanges).Where(predicate).FirstAsync();
-        }
-
-        private IQueryable<IPet> GetFullData(bool trackChanges)
+        public IQueryable<IPet> GetItemsWithFullData(bool trackChanges)
         {
             var pets = Context.Pets
                  .Include(x => x.Farm)

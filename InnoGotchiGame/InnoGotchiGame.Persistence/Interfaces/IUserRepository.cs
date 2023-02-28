@@ -5,5 +5,6 @@ namespace InnoGotchiGame.Persistence.Interfaces
 {
     public interface IUserRepository : IRepository<IUser>
     {
+        public IQueryable<IUser> GetFullData(bool trackChanges);
     }
 }

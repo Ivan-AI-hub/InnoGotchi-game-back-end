@@ -34,24 +34,26 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> AddAsync(PictureDTO picture)
         {
-            var result = new ManagerResult();
+            var managerResult = new ManagerResult();
 
-            if (!await IsUniqueNameAsync(picture.Name, result))
+            if (!await IsUniqueNameAsync(picture.Name, managerResult))
             {
-                return result;
+                return managerResult;
             }
 
             var pictureData = _mapper.Map<IPicture>(picture);
             var validationResult = _validator.Validate(pictureData);
-            result = new ManagerResult(validationResult);
 
-            if (validationResult.IsValid)
+            if (!validationResult.IsValid)
             {
-                _pictureRepository.Create((Picture)pictureData);//BAD
-                await _repositoryManager.SaveAsync();
-                _repositoryManager.Detach(pictureData);
+                return new ManagerResult(validationResult);
             }
-            return result;
+
+            _pictureRepository.Create(pictureData);
+            await _repositoryManager.SaveAsync();
+            _repositoryManager.Detach(pictureData);
+
+            return managerResult;
         }
 
         /// <summary>
@@ -61,30 +63,30 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> UpdateAsync(int updatedId, PictureDTO newPicture)
         {
-            var result = new ManagerResult();
+            var managerResult = new ManagerResult();
 
-            if (!await CheckPictureIdAsync(updatedId, result))
+            if (!await CheckPictureIdAsync(updatedId, managerResult))
             {
-                return result;
+                return managerResult;
             }
 
-            var pictureData = await _pictureRepository.FirstOrDefaultAsync(x => x.Id == updatedId, false);
+            var pictureData = await _pictureRepository.GetItems(true).FirstAsync(x => x.Id == updatedId);
             pictureData.Description = newPicture.Description;
             pictureData.Format = newPicture.Format;
             pictureData.Image = newPicture.Image;
 
             var validationResult = _validator.Validate(pictureData);
-            result = new ManagerResult(validationResult);
 
-            if (validationResult.IsValid)
+            if (!validationResult.IsValid)
             {
-                _pictureRepository.Update(pictureData);
-                await _repositoryManager.SaveAsync();
-                _repositoryManager.Detach(pictureData);
-
-                newPicture.Id = updatedId;
+                return new ManagerResult(validationResult);
             }
-            return result;
+
+            await _repositoryManager.SaveAsync();
+            _repositoryManager.Detach(pictureData);
+
+            newPicture.Id = updatedId;
+            return managerResult;
         }
 
         /// <summary>
@@ -94,22 +96,22 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> DeleteAsync(int id)
         {
-            var result = new ManagerResult();
-            if (!await CheckPictureIdAsync(id, result))
+            var managerResult = new ManagerResult();
+            if (!await CheckPictureIdAsync(id, managerResult))
             {
-                return result;
+                return managerResult;
             }
 
-            _pictureRepository.Delete(await _pictureRepository.FirstOrDefaultAsync(x => x.Id == id, false));
+            _pictureRepository.Delete(await _pictureRepository.GetItems(false).FirstAsync(x => x.Id == id));
             await _repositoryManager.SaveAsync();
 
-            return result;
+            return managerResult;
         }
 
         /// <returns>picture with special <paramref name="id"/> </returns>
         public async Task<PictureDTO?> GetByIdAsync(int id)
         {
-            var picture = _mapper.Map<PictureDTO>(await _pictureRepository.FirstOrDefaultAsync(x => x.Id == id, false));
+            var picture = _mapper.Map<PictureDTO>(await _pictureRepository.GetItems(false).FirstAsync(x => x.Id == id));
             return picture;
         }
 
@@ -133,11 +135,11 @@ namespace InnoGotchiGame.Application.Managers
             return true;
         }
 
-        private async Task<bool> CheckPictureIdAsync(int id, ManagerResult result)
+        private async Task<bool> CheckPictureIdAsync(int id, ManagerResult managerResult)
         {
             if (!await _pictureRepository.IsItemExistAsync(x => x.Id == id))
             {
-                result.Errors.Add("The farm ID is not in the database");
+                managerResult.Errors.Add("The farm ID is not in the database");
                 return false;
             }
             return true;

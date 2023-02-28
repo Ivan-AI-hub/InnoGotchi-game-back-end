@@ -3,7 +3,6 @@ using FluentValidation;
 using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters.Base;
-using InnoGotchiGame.Domain;
 using InnoGotchiGame.Domain.Interfaces;
 using InnoGotchiGame.Persistence.Interfaces;
 using InnoGotchiGame.Persistence.Managers;
@@ -37,27 +36,27 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> AddAsync(UserDTO user, string password)
         {
-            var result = new ManagerResult();
+            var managerResult = new ManagerResult();
 
-            if (!await IsUniqueEmailAsync(user.Email, result))
+            if (!await IsUniqueEmailAsync(user.Email, managerResult))
             {
-                return result;
+                return managerResult;
             }
 
             var dataUser = _mapper.Map<IUser>(user);
             dataUser.PasswordHach = StringToHach(password);
 
             var validationResult = _validator.Validate(dataUser);
-            result = new ManagerResult(validationResult);
-
-            if (validationResult.IsValid)
+            if (!validationResult.IsValid)
             {
-                _userRepository.Create((User)dataUser);//Bad
-                await _repositoryManager.SaveAsync();
-                _repositoryManager.Detach(dataUser);
-                user.Id = dataUser.Id;
+                return new ManagerResult(validationResult);
             }
-            return result;
+
+            _userRepository.Create(dataUser);
+            await _repositoryManager.SaveAsync();
+            _repositoryManager.Detach(dataUser);
+            user.Id = dataUser.Id;
+            return managerResult;
         }
 
         /// <summary>
@@ -75,20 +74,14 @@ namespace InnoGotchiGame.Application.Managers
                 return managerResult;
             }
 
-            var oldUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, false);
+            var oldUser = await _userRepository.GetItems(true).FirstAsync(x => x.Id == updatedId);
             oldUser.Picture = dataUser.Picture;
             oldUser.FirstName = dataUser.FirstName;
             oldUser.LastName = dataUser.LastName;
 
-            var validationResult = _validator.Validate(oldUser);
-            managerResult = new ManagerResult(validationResult);
-
-            if (managerResult.IsComplete)
-            {
-                _repositoryManager.User.Update(oldUser);
-                await _repositoryManager.SaveAsync();
-                _repositoryManager.Detach(dataUser);
-            }
+            await _repositoryManager.SaveAsync();
+            _repositoryManager.Detach(dataUser);
+            
             return managerResult;
         }
 
@@ -105,7 +98,7 @@ namespace InnoGotchiGame.Application.Managers
                 return managerResult;
             }
 
-            var dataUser = await _userRepository.FirstOrDefaultAsync(x => x.Id == updatedId, false);
+            var dataUser = await _userRepository.GetItems(true).FirstAsync(x => x.Id == updatedId);
 
             if (dataUser.PasswordHach != StringToHach(oldPassword))
             {
@@ -114,7 +107,7 @@ namespace InnoGotchiGame.Application.Managers
             }
 
             dataUser.PasswordHach = StringToHach(newPassword);
-            _repositoryManager.User.Update(dataUser);
+
             await _repositoryManager.SaveAsync();
             _repositoryManager.Detach(dataUser);
 
@@ -128,22 +121,22 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> DeleteAsync(int deletedId)
         {
-            var result = new ManagerResult();
-            if (!await CheckUserIdAsync(deletedId, result))
+            var managerResult = new ManagerResult();
+            if (!await CheckUserIdAsync(deletedId, managerResult))
             {
-                return result;
+                return managerResult;
             }
 
-            var user = await _userRepository.FirstOrDefaultAsync(x => x.Id == deletedId, false);
+            var user = await _userRepository.GetItems(false).FirstAsync(x => x.Id == deletedId);
             _userRepository.Delete(user);
 
-            return result;
+            return managerResult;
         }
 
         /// <returns>user with special <paramref name="id"/> </returns>
         public async Task<UserDTO?> GetUserByIdAsync(int userId)
         {
-            var user = await _userRepository.FirstOrDefaultAsync(x => x.Id == userId, false);
+            var user = await _userRepository.GetItems(false).FirstAsync(x => x.Id == userId);
             return _mapper.Map<UserDTO>(user);
         }
 
@@ -154,7 +147,7 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<UserDTO?> FindUserInDbAsync(string email, string password)
         {
             string passwordHach = StringToHach(password);
-            var user = await _userRepository.FirstOrDefaultAsync(x => x.Email == email && x.PasswordHach == passwordHach, false);
+            var user = await _userRepository.GetItems(false).FirstAsync(x => x.Email == email && x.PasswordHach == passwordHach);
             return _mapper.Map<UserDTO>(user);
         }
 
@@ -187,11 +180,11 @@ namespace InnoGotchiGame.Application.Managers
             }
         }
 
-        private async Task<bool> CheckUserIdAsync(int userId, ManagerResult result)
+        private async Task<bool> CheckUserIdAsync(int userId, ManagerResult managerResult)
         {
             if (!await _userRepository.IsItemExistAsync(x => x.Id == userId))
             {
-                result.Errors.Add("The user ID is not in the database");
+                managerResult.Errors.Add("The user ID is not in the database");
                 return false;
             }
             return true;

@@ -14,10 +14,6 @@ namespace InnoGotchiGame.Persistence.Interfaces
 
         /// <returns>queryable items from the database</returns>
         public IQueryable<T> GetItems(bool trackChanges);
-
-        /// <returns>item from database with special id</returns>
-        public Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, bool trackChanges);
-        public Task<T> FirstAsync(Expression<Func<T, bool>> predicate, bool trackChanges);
         /// <summary>
         /// Create item in database
         /// </summary>

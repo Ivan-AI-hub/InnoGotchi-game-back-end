@@ -44,16 +44,6 @@ namespace InnoGotchiGame.Persistence.Abstracts
             return GetItems(trackChanges).Where(predicate);
         }
 
-        public virtual Task<TInterface?> FirstOrDefaultAsync(Expression<Func<TInterface, bool>> predicate, bool trackChanges)
-        {
-            return GetItems(trackChanges).Where(predicate).FirstOrDefaultAsync();
-        }
-
-        public virtual Task<TInterface> FirstAsync(Expression<Func<TInterface, bool>> predicate, bool trackChanges)
-        {
-            return GetItems(trackChanges).Where(predicate).FirstAsync();
-        }
-
         public abstract IQueryable<TInterface> GetItems(bool trackChanges);
     }
 }

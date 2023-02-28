@@ -18,15 +18,7 @@ namespace InnoGotchiGame.Persistence.Repositories
             return GetOnlyDiscribeData(trackChanges);
         }
 
-        public override Task<IUser?> FirstOrDefaultAsync(Expression<Func<IUser, bool>> predicate, bool trackChanges)
-        {
-            return GetFullData(trackChanges).Where(predicate).FirstOrDefaultAsync(predicate);
-        }
-        public override Task<IUser> FirstAsync(Expression<Func<IUser, bool>> predicate, bool trackChanges)
-        {
-            return GetFullData(trackChanges).Where(predicate).FirstAsync(predicate);
-        }
-        private IQueryable<IUser> GetFullData(bool trackChanges)
+        public IQueryable<IUser> GetFullData(bool trackChanges)
         {
             var users = Context.Users
                 .Include(x => x.Picture)
