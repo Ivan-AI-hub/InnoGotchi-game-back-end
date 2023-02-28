@@ -114,8 +114,8 @@ namespace InnoGotchiGame.Application.Managers
                 return result;
             }
 
-            var dataPet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, true);
-            if (dataPet!.Farm.Owner.Id != feederId && !dataPet.Farm.Owner.GetColaborators().Any(x => x.Id != feederId))
+            var dataPet = await _petRepository.GetItems(true).FirstAsync(x => x.Id == id);
+            if (dataPet.Farm.Owner.Id != feederId && !dataPet.Farm.Owner.GetColaborators().Any(x => x.Id != feederId))
             {
                 result.Errors.Add($"a user with id = {feederId} cannot feed a pet");
                 return result;
@@ -247,7 +247,7 @@ namespace InnoGotchiGame.Application.Managers
 
         private IQueryable<IPet> GetPetsQuary(Filtrator<IPet>? filtrator = null, Sorter<IPet>? sorter = null)
         {
-            var pets = _petRepository.GetItems(false).OfType<IPet>();
+            var pets = _petRepository.GetItems(false);
             pets = filtrator != null ? filtrator.Filter(pets) : pets;
             pets = sorter != null ? sorter.Sort(pets) : pets;
             return pets;
@@ -288,7 +288,7 @@ namespace InnoGotchiGame.Application.Managers
                 return false;
             }
 
-            var pet = await _petRepository.FirstOrDefaultAsync(x => x.Id == id, false);
+            var pet = await _petRepository.GetItems(false).FirstAsync(x => x.Id == id);
 
             if (!pet.Statistic.IsAlive)
             {

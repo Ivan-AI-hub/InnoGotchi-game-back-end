@@ -4,7 +4,9 @@ using System.Linq.Expressions;
 
 namespace InnoGotchiGame.Persistence.Abstracts
 {
-    public abstract class RepositoryBase<T> : IRepositoryBase<T> where T : class
+    public abstract class RepositoryBase<TInterface,T> : IRepository<TInterface> 
+        where TInterface : class
+        where T : class, TInterface
     {
         protected InnoGotchiGameContext Context;
         public RepositoryBase(InnoGotchiGameContext context)
@@ -12,19 +14,46 @@ namespace InnoGotchiGame.Persistence.Abstracts
             Context = context;
         }
 
-        public virtual void Create(T item) => Context.Set<T>().Add(item);
-        public void Update(T item) => Context.Set<T>().Update(item);
-        public void Delete(T item) => Context.Set<T>().Remove(item);
-        public Task<bool> IsItemExistAsync(Expression<Func<T, bool>> predicate) => Context.Set<T>().AnyAsync(predicate);
-        public abstract IQueryable<T> GetItems(bool trackChanges);
-        public IQueryable<T> GetItemsByCondition(Expression<Func<T, bool>> predicate, bool trackChanges)
+        public virtual void Create(TInterface item)
+        {
+            if (item is not T)
+                throw new Exception($"The {item.GetType()} type is not supported");
+            Context.Set<T>().Add((T)item);
+
+        }
+        public void Update(TInterface item)
+        {
+            if (item is not T)
+                throw new Exception($"The {item.GetType()} type is not supported");
+
+            Context.Set<T>().Update((T)item);
+        }
+
+        public void Delete(TInterface item)
+        {
+            if (item is not T)
+                throw new Exception($"The {item.GetType()} type is not supported");
+
+            Context.Set<T>().Remove((T)item);
+        }
+
+        public Task<bool> IsItemExistAsync(Expression<Func<TInterface, bool>> predicate) => Context.Set<T>().AnyAsync(predicate);
+
+        public IQueryable<TInterface> GetItemsByCondition(Expression<Func<TInterface, bool>> predicate, bool trackChanges)
         {
             return GetItems(trackChanges).Where(predicate);
         }
 
-        public virtual Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, bool trackChanges)
+        public virtual Task<TInterface?> FirstOrDefaultAsync(Expression<Func<TInterface, bool>> predicate, bool trackChanges)
         {
             return GetItems(trackChanges).Where(predicate).FirstOrDefaultAsync();
         }
+
+        public virtual Task<TInterface> FirstAsync(Expression<Func<TInterface, bool>> predicate, bool trackChanges)
+        {
+            return GetItems(trackChanges).Where(predicate).FirstAsync();
+        }
+
+        public abstract IQueryable<TInterface> GetItems(bool trackChanges);
     }
 }

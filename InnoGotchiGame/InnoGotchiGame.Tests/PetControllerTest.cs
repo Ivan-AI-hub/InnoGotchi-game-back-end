@@ -1,4 +1,5 @@
-﻿using InnoGotchiGame.Persistence.Managers;
+﻿using InnoGotchiGame.Domain.Interfaces;
+using InnoGotchiGame.Persistence.Managers;
 using InnoGotchiGame.Web.Controllers;
 using InnoGotchiGame.Web.Models.Pets;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ namespace InnoGotchiGame.Tests
                 Mock<IMapper> mapper,
                 Mock<AbstractValidator<Pet>> validator)
         {
-            repManager.Setup(x => x.PetFarm.IsItemExistAsync(It.IsAny<Expression<Func<PetFarm, bool>>>())).Returns(Task.FromResult(true));
+            repManager.Setup(x => x.PetFarm.IsItemExistAsync(It.IsAny<Expression<Func<IPetFarm, bool>>>())).Returns(Task.FromResult(true));
             var mock = new Mock<PetManager>(repManager.Object, mapper.Object, validator.Object);
             var controller = new PetController(mock.Object);
             var result = await controller.PostAsync(addModel);

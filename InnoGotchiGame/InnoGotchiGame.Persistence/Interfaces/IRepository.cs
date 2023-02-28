@@ -2,7 +2,7 @@
 
 namespace InnoGotchiGame.Persistence.Interfaces
 {
-    public interface IRepositoryBase<T> where T : class
+    public interface IRepository<T>
     {
 
         /// <returns>true if the element exists, and false if not</returns>
@@ -17,7 +17,7 @@ namespace InnoGotchiGame.Persistence.Interfaces
 
         /// <returns>item from database with special id</returns>
         public Task<T?> FirstOrDefaultAsync(Expression<Func<T, bool>> predicate, bool trackChanges);
-
+        public Task<T> FirstAsync(Expression<Func<T, bool>> predicate, bool trackChanges);
         /// <summary>
         /// Create item in database
         /// </summary>

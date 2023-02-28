@@ -15,11 +15,11 @@ namespace InnoGotchiGame.Domain
         public int OwnPetFarmId { get; set; }
         public IPetFarm? OwnPetFarm { get; set; }
 
-        public IList<IColaborationRequest> SentColaborations { get; private set; }
-        public IList<IColaborationRequest> AcceptedColaborations { get; private set; }
+        public IEnumerable<IColaborationRequest> SentColaborations { get; private set; }
+        public IEnumerable<IColaborationRequest> AcceptedColaborations { get; private set; }
 
         private User() { }
-        private User(string firstName, string lastName, string email, string passwordHach, IPicture? picture)
+        public User(string firstName, string lastName, string email, string passwordHach, IPicture? picture)
         {
             FirstName = firstName;
             LastName = lastName;

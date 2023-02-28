@@ -209,7 +209,7 @@ namespace InnoGotchiGame.Application.Managers
 
         private IQueryable<IUser> GetUsersQuary(Filtrator<IUser>? filtrator = null, Sorter<IUser>? sorter = null)
         {
-            var users = _userRepository.GetItems(false).OfType<IUser>();
+            var users = _userRepository.GetItems(false);
             users = filtrator != null ? filtrator.Filter(users) : users;
             users = sorter != null ? sorter.Sort(users) : users;
             return users;

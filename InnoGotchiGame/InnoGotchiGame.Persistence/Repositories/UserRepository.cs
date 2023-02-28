@@ -1,4 +1,5 @@
 ﻿using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Interfaces;
 using InnoGotchiGame.Persistence.Abstracts;
 using InnoGotchiGame.Persistence.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -6,23 +7,26 @@ using System.Linq.Expressions;
 
 namespace InnoGotchiGame.Persistence.Repositories
 {
-    public class UserRepository : RepositoryBase<User>, IUserRepository
+    public class UserRepository : RepositoryBase<IUser, User>, IUserRepository
     {
         public UserRepository(InnoGotchiGameContext context) : base(context)
         {
         }
 
-        public override IQueryable<User> GetItems(bool trackChanges)
+        public override IQueryable<IUser> GetItems(bool trackChanges)
         {
             return GetOnlyDiscribeData(trackChanges);
         }
 
-        public override Task<User?> FirstOrDefaultAsync(Expression<Func<User, bool>> predicate, bool trackChanges)
+        public override Task<IUser?> FirstOrDefaultAsync(Expression<Func<IUser, bool>> predicate, bool trackChanges)
         {
             return GetFullData(trackChanges).Where(predicate).FirstOrDefaultAsync(predicate);
         }
-
-        private IQueryable<User> GetFullData(bool trackChanges)
+        public override Task<IUser> FirstAsync(Expression<Func<IUser, bool>> predicate, bool trackChanges)
+        {
+            return GetFullData(trackChanges).Where(predicate).FirstAsync(predicate);
+        }
+        private IQueryable<IUser> GetFullData(bool trackChanges)
         {
             var users = Context.Users
                 .Include(x => x.Picture)
@@ -37,7 +41,7 @@ namespace InnoGotchiGame.Persistence.Repositories
             return trackChanges ? users : users.AsNoTracking();
         }
 
-        private IQueryable<User> GetOnlyDiscribeData(bool trackChanges)
+        private IQueryable<IUser> GetOnlyDiscribeData(bool trackChanges)
         {
             var users = Context.Users.Include(x => x.Picture);
 

@@ -1,4 +1,5 @@
-﻿using InnoGotchiGame.Persistence.Managers;
+﻿using InnoGotchiGame.Domain.Interfaces;
+using InnoGotchiGame.Persistence.Managers;
 
 namespace InnoGotchiGame.Tests
 {
@@ -19,6 +20,9 @@ namespace InnoGotchiGame.Tests
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
             _fixture.Register<IRepositoryManager>(() => new RepositoryManager(context));
+            _fixture.Register<IPetStatistic>(() => _fixture.Create<PetStatistic>());
+            _fixture.Register<IPetView>(() => new PetView());
+            _fixture.Register<IPetFarm>(() => new PetFarm(_fixture.Create<string>(), _fixture.Create<int>()));
         }
 
         [Fact]

@@ -12,8 +12,8 @@
         int OwnPetFarmId { get; set; }
         IPetFarm? OwnPetFarm { get; set; }
 
-        IList<IColaborationRequest> SentColaborations { get; }
-        IList<IColaborationRequest> AcceptedColaborations { get; }
+        IEnumerable<IColaborationRequest> SentColaborations { get; }
+        IEnumerable<IColaborationRequest> AcceptedColaborations { get; }
 
         IEnumerable<IUser> GetColaborators();
     }

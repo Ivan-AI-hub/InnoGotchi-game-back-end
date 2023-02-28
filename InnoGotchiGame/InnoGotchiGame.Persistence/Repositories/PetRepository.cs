@@ -1,4 +1,5 @@
 ﻿using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Interfaces;
 using InnoGotchiGame.Persistence.Abstracts;
 using InnoGotchiGame.Persistence.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -6,23 +7,27 @@ using System.Linq.Expressions;
 
 namespace InnoGotchiGame.Persistence.Repositories
 {
-    public class PetRepository : RepositoryBase<Pet>, IPetRepository
+    public class PetRepository : RepositoryBase<IPet, Pet>, IPetRepository
     {
         public PetRepository(InnoGotchiGameContext context) : base(context)
         {
         }
 
-        public override IQueryable<Pet> GetItems(bool trackChanges)
+        public override IQueryable<IPet> GetItems(bool trackChanges)
         {
             return GetOnlyDiscribeData(trackChanges);
         }
 
-        public override Task<Pet?> FirstOrDefaultAsync(Expression<Func<Pet, bool>> predicate, bool trackChanges)
+        public override Task<IPet?> FirstOrDefaultAsync(Expression<Func<IPet, bool>> predicate, bool trackChanges)
         {
             return GetFullData(trackChanges).Where(predicate).FirstOrDefaultAsync();
         }
+        public override Task<IPet> FirstAsync(Expression<Func<IPet, bool>> predicate, bool trackChanges)
+        {
+            return GetFullData(trackChanges).Where(predicate).FirstAsync();
+        }
 
-        private IQueryable<Pet> GetFullData(bool trackChanges)
+        private IQueryable<IPet> GetFullData(bool trackChanges)
         {
             var pets = Context.Pets
                  .Include(x => x.Farm)
@@ -37,7 +42,7 @@ namespace InnoGotchiGame.Persistence.Repositories
             return trackChanges ? pets : pets.AsNoTracking();
         }
 
-        private IQueryable<Pet> GetOnlyDiscribeData(bool trackChanges)
+        private IQueryable<IPet> GetOnlyDiscribeData(bool trackChanges)
         {
             var pets = Context.Pets
                 .Include(x => x.View.Picture);

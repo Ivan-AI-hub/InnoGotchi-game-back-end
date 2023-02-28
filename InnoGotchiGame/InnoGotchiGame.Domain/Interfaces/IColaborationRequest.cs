@@ -11,6 +11,6 @@ namespace InnoGotchiGame.Domain.Interfaces
         IUser RequestSender { get; }
         int RequestSenderId { get; }
 
-        ColaborationRequestStatus Status { get; }
+        ColaborationRequestStatus Status { get; set; }
     }
 }

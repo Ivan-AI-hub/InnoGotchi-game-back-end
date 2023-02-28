@@ -8,13 +8,13 @@ namespace InnoGotchiGame.Persistence.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<ColaborationRequest> builder)
         {
-            builder.HasOne(d => d.RequestSender)
-                .WithMany(p => p.SentColaborations.OfType<ColaborationRequest>())
+            builder.HasOne(d => (User) d.RequestSender)
+                .WithMany(p => (IEnumerable<ColaborationRequest>) p.SentColaborations)
                 .HasForeignKey(d => d.RequestSenderId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.HasOne(d => d.RequestReceiver)
-                .WithMany(p => p.AcceptedColaborations.OfType<ColaborationRequest>())
+            builder.HasOne(d => (User)d.RequestReceiver)
+                .WithMany(p => (IEnumerable<ColaborationRequest>) p.AcceptedColaborations)
                 .HasForeignKey(d => d.RequestReceiverId)
                 .OnDelete(DeleteBehavior.ClientCascade);
         }

@@ -13,10 +13,10 @@ namespace InnoGotchiGame.Domain
         public int OwnerId { get; private set; }
         public IUser? Owner { get; private set; }
 
-        public IList<IPet> Pets { get; private set; }
+        public IEnumerable<IPet> Pets { get; private set; }
 
         private PetFarm() { }
-        private PetFarm(string name)
+        public PetFarm(string name)
         {
             Name = name;
             CreateDate = DateTime.UtcNow;

@@ -11,27 +11,27 @@ namespace InnoGotchiGame.Application.Mappings
         public AssemblyMappingProfile()
         {
             CreateMap<UserDTO, IUser>().As<User>();
-            CreateMap<User, UserDTO>();
+            CreateMap<User, UserDTO>().ReverseMap();
 
             CreateMap<PictureDTO, IPicture>().As<Picture>();
-            CreateMap<Picture, PictureDTO>();
+            CreateMap<Picture, PictureDTO>().ReverseMap();
 
             CreateMap<PetFarmDTO, IPetFarm>().As<PetFarm>();
-            CreateMap<PetFarm, PetFarmDTO>();
+            CreateMap<PetFarm, PetFarmDTO>().ReverseMap();
 
             CreateMap<ColaborationRequestDTO, IColaborationRequest>().As<ColaborationRequest>();
-            CreateMap<ColaborationRequest, ColaborationRequestDTO>();
+            CreateMap<ColaborationRequest, ColaborationRequestDTO>().ReverseMap();
 
             CreateMap<ColaborationRequestStatus, ColaborationRequestStatusDTO>().ReverseMap();
 
             CreateMap<PetDTO, IPet>().As<Pet>();
-            CreateMap<Pet, PetDTO>();
+            CreateMap<Pet, PetDTO>().ReverseMap();
 
             CreateMap<PetStatisticDTO, IPetStatistic>().As<PetStatistic>();
-            CreateMap<PetStatistic, PetStatisticDTO>();
+            CreateMap<PetStatistic, PetStatisticDTO>().ReverseMap();
 
             CreateMap<PetViewDTO, IPetView>().As<PetView>();
-            CreateMap<PetView, PetViewDTO>();
+            CreateMap<PetView, PetViewDTO>().ReverseMap();
         }
     }
 }

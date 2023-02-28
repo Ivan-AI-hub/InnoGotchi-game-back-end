@@ -8,17 +8,17 @@ namespace InnoGotchiGame.Persistence.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<Pet> builder)
         {
-            builder.OwnsOne(p => p.View, view =>
+            builder.OwnsOne(p => (PetView) p.View, view =>
             {
-                view.HasOne(x => x.Picture).WithMany().OnDelete(DeleteBehavior.SetNull);
+                view.HasOne(x => (Picture) x.Picture).WithMany().OnDelete(DeleteBehavior.SetNull);
             });
-            builder.OwnsOne(p => p.Statistic, cb =>
+            builder.OwnsOne(p => (PetStatistic) p.Statistic, cb =>
             {
                 cb.HasIndex(x => x.Name).IsUnique();
             });
 
-            builder.HasOne(d => d.Farm)
-                .WithMany(p => p.Pets.OfType<Pet>())
+            builder.HasOne(d => (PetFarm) d.Farm)
+                .WithMany(p => (IEnumerable<Pet>) p.Pets)
                 .HasForeignKey(d => d.FarmId)
                 .OnDelete(DeleteBehavior.Cascade);
         }

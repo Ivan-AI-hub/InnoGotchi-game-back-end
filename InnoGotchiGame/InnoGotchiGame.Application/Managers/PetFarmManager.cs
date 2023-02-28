@@ -76,7 +76,7 @@ namespace InnoGotchiGame.Application.Managers
             }
 
             var dataFarm = await _farmRepository.FirstOrDefaultAsync(x => x.Id == id, false);
-            dataFarm!.Name = newName;
+            dataFarm.Name = newName;
 
             var validationResult = _validator.Validate(dataFarm);
             result = new ManagerResult(validationResult);
@@ -143,7 +143,7 @@ namespace InnoGotchiGame.Application.Managers
 
         private IQueryable<IPetFarm> GetPetFarmsQuary(Filtrator<IPetFarm>? filtrator = null, Sorter<IPetFarm>? sorter = null)
         {
-            var farms = _farmRepository.GetItems(false).OfType<IPetFarm>();
+            var farms = _farmRepository.GetItems(false);
             farms = filtrator != null ? filtrator.Filter(farms) : farms;
             farms = sorter != null ? sorter.Sort(farms) : farms;
             return farms;

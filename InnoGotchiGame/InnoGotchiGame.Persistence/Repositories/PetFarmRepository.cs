@@ -1,17 +1,18 @@
 ﻿using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Interfaces;
 using InnoGotchiGame.Persistence.Abstracts;
 using InnoGotchiGame.Persistence.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Persistence.Repositories
 {
-    public class PetFarmRepository : RepositoryBase<PetFarm>, IPetFarmRepository
+    public class PetFarmRepository : RepositoryBase<IPetFarm, PetFarm>, IPetFarmRepository
     {
         public PetFarmRepository(InnoGotchiGameContext context) : base(context)
         {
         }
 
-        public override IQueryable<PetFarm> GetItems(bool trackChanges)
+        public override IQueryable<IPetFarm> GetItems(bool trackChanges)
         {
             var petFarms = Context.PetFarms
                         .Include(x => x.Owner)

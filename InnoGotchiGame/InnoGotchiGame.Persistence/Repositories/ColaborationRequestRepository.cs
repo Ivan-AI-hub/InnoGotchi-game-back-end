@@ -1,17 +1,18 @@
 ﻿using InnoGotchiGame.Domain;
+using InnoGotchiGame.Domain.Interfaces;
 using InnoGotchiGame.Persistence.Abstracts;
 using InnoGotchiGame.Persistence.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Persistence.Repositories
 {
-    public class ColaborationRequestRepository : RepositoryBase<ColaborationRequest>, IColaborationRequestRepository
+    public class ColaborationRequestRepository : RepositoryBase<IColaborationRequest, ColaborationRequest>, IColaborationRequestRepository
     {
         public ColaborationRequestRepository(InnoGotchiGameContext context) : base(context)
         {
         }
 
-        public override IQueryable<ColaborationRequest> GetItems(bool trackChanges)
+        public override IQueryable<IColaborationRequest> GetItems(bool trackChanges)
         {
             var requests = Context.ColaborationRequests
                 .AsNoTracking()

@@ -116,7 +116,7 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>Filtered list of pictures</returns>
         public async Task<IEnumerable<PictureDTO>> GetAllAsync(Filtrator<IPicture>? filtrator)
         {
-            var pictures = _pictureRepository.GetItems(false).OfType<IPicture>();
+            var pictures = _pictureRepository.GetItems(false);
             pictures = filtrator != null ? filtrator.Filter(pictures) : pictures;
             pictures = pictures.OrderBy(x => x.Name);
             return _mapper.Map<IEnumerable<PictureDTO>>(await pictures.ToListAsync());

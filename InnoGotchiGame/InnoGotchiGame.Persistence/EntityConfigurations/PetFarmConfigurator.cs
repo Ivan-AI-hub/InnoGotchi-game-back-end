@@ -9,7 +9,7 @@ namespace InnoGotchiGame.Persistence.EntityConfigurations
         public void Configure(EntityTypeBuilder<PetFarm> builder)
         {
             builder.HasIndex(x => x.Name).IsUnique();
-            builder.HasOne(p => p.Owner)
+            builder.HasOne(p => (User) p.Owner)
                 .WithOne(d => (PetFarm)d.OwnPetFarm)
                 .HasForeignKey<User>(x => x.OwnPetFarmId);
         }
