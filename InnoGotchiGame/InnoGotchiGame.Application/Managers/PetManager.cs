@@ -3,10 +3,10 @@ using FluentValidation;
 using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters.Base;
-using InnoGotchiGame.Domain;
 using InnoGotchiGame.Domain.AggragatesModel.PetAggregate;
 using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
 using InnoGotchiGame.Domain.BaseModels;
+using InnoGotchiGame.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Application.Managers
@@ -89,7 +89,7 @@ namespace InnoGotchiGame.Application.Managers
             }
 
             var dataPet = await _petRepository.GetItems(true).FirstAsync(x => x.Id == id);
-            dataPet!.Statistic.Name = name;
+            dataPet.Statistic.Name = name;
 
             var validationResult = _validator.Validate(dataPet);
             if (!validationResult.IsValid)
@@ -226,7 +226,7 @@ namespace InnoGotchiGame.Application.Managers
         /// <returns>pet with special <paramref name="id"/> </returns>
         public async Task<PetDTO?> GetPetByIdAsync(int id)
         {
-            var petData = await _petRepository.GetItemsWithFullData(false).FirstAsync(x => x.Id == id);
+            var petData = await _petRepository.GetItems(false).FirstAsync(x => x.Id == id);
             var pet = _mapper.Map<PetDTO>(petData);
             return pet;
         }

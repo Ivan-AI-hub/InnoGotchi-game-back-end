@@ -97,23 +97,16 @@ namespace InnoGotchiGame.Tests
         [Fact]
         public async void Feed_Successfully()
         {
-            try
-            {
-                //arrange
-                var manager = _fixture.Create<PetManager>();
-                var pet = GetValidPet(manager);
+            //arrange
+            var manager = _fixture.Create<PetManager>();
+            var pet = GetValidPet(manager);
 
-                //act
-                var result = await manager.FeedAsync(pet.Id, pet.Farm.OwnerId);
-                var newPet = await manager.GetPetByIdAsync(pet.Id);
-                //assert
-                Assert.True(result.IsComplete, String.Concat(result.Errors));
-                newPet!.Statistic.FeedingCount.Should().BeGreaterThan(pet.Statistic.FeedingCount);
-            }
-            catch (Exception ex)
-            {
-                Assert.True(true);
-            }
+            //act
+            var result = await manager.FeedAsync(pet.Id, pet.Farm.OwnerId);
+            var newPet = await manager.GetPetByIdAsync(pet.Id);
+            //assert
+            Assert.True(result.IsComplete, String.Concat(result.Errors));
+            newPet!.Statistic.FeedingCount.Should().BeGreaterThan(1);
         }
 
         [Fact]
@@ -128,11 +121,11 @@ namespace InnoGotchiGame.Tests
             var newPet = await manager.GetPetByIdAsync(pet.Id);
             //assert
             Assert.True(result.IsComplete, String.Concat(result.Errors));
-            newPet!.Statistic.DrinkingCount.Should().BeGreaterThan(pet.Statistic.DrinkingCount);
+            newPet!.Statistic.DrinkingCount.Should().BeGreaterThan(1);
         }
 
         [Fact]
-        public async void Set_Dead_Status_Successfully()
+        public async Task Set_Dead_Status_Successfully()
         {
             //arrange
             var manager = _fixture.Create<PetManager>();

@@ -1,6 +1,6 @@
-﻿using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
+﻿using InnoGotchiGame.Domain.AggragatesModel.PetAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
 using InnoGotchiGame.Domain.BaseModels;
-using InnoGotchiGame.Persistence.Models;
 using InnoGotchiGame.Web.Controllers;
 using InnoGotchiGame.Web.Models.Pets;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +16,7 @@ namespace InnoGotchiGame.Tests
         public async void Post_Successfully(AddPetModel addModel,
                 Mock<IRepositoryManager> repManager,
                 Mock<IMapper> mapper,
-                Mock<AbstractValidator<Pet>> validator)
+                Mock<AbstractValidator<IPet>> validator)
         {
             repManager.Setup(x => x.PetFarm.IsItemExistAsync(It.IsAny<Expression<Func<IPetFarm, bool>>>())).Returns(Task.FromResult(true));
             var mock = new Mock<PetManager>(repManager.Object, mapper.Object, validator.Object);

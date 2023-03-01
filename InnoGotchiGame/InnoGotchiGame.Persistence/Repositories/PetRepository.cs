@@ -17,21 +17,6 @@ namespace InnoGotchiGame.Persistence.Repositories
             return GetOnlyDiscribeData(trackChanges);
         }
 
-        public IQueryable<IPet> GetItemsWithFullData(bool trackChanges)
-        {
-            var pets = Context.Pets
-                 .Include(x => x.Farm)
-                     .ThenInclude(x => x.Owner)
-                 .Include(x => x.Farm.Owner.AcceptedColaborations)
-                    .ThenInclude(x => x.RequestSender)
-                 .Include(x => x.Farm.Owner.SentColaborations)
-                    .ThenInclude(x => x.RequestReceiver)
-                 .Include(x => x.View.Picture);
-
-
-            return trackChanges ? pets : pets.AsNoTracking();
-        }
-
         private IQueryable<IPet> GetOnlyDiscribeData(bool trackChanges)
         {
             var pets = Context.Pets

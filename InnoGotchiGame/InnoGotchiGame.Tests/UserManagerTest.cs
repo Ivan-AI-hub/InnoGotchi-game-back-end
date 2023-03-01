@@ -1,3 +1,4 @@
+using InnoGotchiGame.Domain.AggragatesModel.UserAggregate;
 using InnoGotchiGame.Domain.BaseModels;
 using InnoGotchiGame.Persistence.Managers;
 using InnoGotchiGame.Persistence.Models;
@@ -22,7 +23,7 @@ namespace InnoGotchiGame.Tests
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
             _fixture.Register<IRepositoryManager>(() => new RepositoryManager(context));
-            _fixture.Register<IValidator<User>>(() => new UserValidator());
+            _fixture.Register<IValidator<IUser>>(() => new UserValidator());
 
             var config = new MapperConfiguration(cnf => cnf.AddProfiles(new List<Profile>() { new AssemblyMappingProfile() }));
             _fixture.Register<IMapper>(() => new Mapper(config));

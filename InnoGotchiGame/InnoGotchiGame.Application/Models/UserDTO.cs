@@ -24,26 +24,8 @@ namespace InnoGotchiGame.Application.Models
         public IEnumerable<ColaborationRequestDTO> RejectedRequests => GetRejectedInvites();
         public IEnumerable<UserDTO> Collaborators => GetUserColaborators();
 
-        public UserDTO(string firstName, string lastName, string email)
-        {
-            SentColaborations = new List<ColaborationRequestDTO>();
-            AcceptedColaborations = new List<ColaborationRequestDTO>();
-            FirstName = firstName;
-            LastName = lastName;
-            Email = email;
-        }
-
-        public UserDTO()
-        {
-            SentColaborations = new List<ColaborationRequestDTO>();
-            AcceptedColaborations = new List<ColaborationRequestDTO>();
-            FirstName = "";
-            LastName = "";
-            Email = "";
-        }
-
         /// <returns>All colaborators of user</returns>
-        public IEnumerable<UserDTO> GetUserColaborators()
+        private IEnumerable<UserDTO> GetUserColaborators()
         {
             Func<ColaborationRequestDTO, bool> whereFunc = x => x.Status == ColaborationRequestStatusDTO.Colaborators;
 
@@ -54,12 +36,12 @@ namespace InnoGotchiGame.Application.Models
         }
 
         /// <returns>All unconfirmed invitations to be colaborators</returns>
-        public IEnumerable<ColaborationRequestDTO> GetUnconfirmedInvites()
+        private IEnumerable<ColaborationRequestDTO> GetUnconfirmedInvites()
         {
             var invites = AcceptedColaborations.Where(x => x.Status == ColaborationRequestStatusDTO.Undefined);
             return invites;
         }
-        public IEnumerable<ColaborationRequestDTO> GetRejectedInvites()
+        private IEnumerable<ColaborationRequestDTO> GetRejectedInvites()
         {
             var invites = SentColaborations.Where(x => x.Status == ColaborationRequestStatusDTO.NotColaborators);
             return invites;

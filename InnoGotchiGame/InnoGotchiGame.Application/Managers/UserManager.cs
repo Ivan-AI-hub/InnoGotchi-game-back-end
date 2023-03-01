@@ -78,8 +78,14 @@ namespace InnoGotchiGame.Application.Managers
             oldUser.FirstName = dataUser.FirstName;
             oldUser.LastName = dataUser.LastName;
 
+            var validationResult = _validator.Validate(oldUser);
+            if (!validationResult.IsValid)
+            {
+                return new ManagerResult(validationResult);
+            }
+
             await _repositoryManager.SaveAsync();
-            _repositoryManager.Detach(dataUser);
+            _repositoryManager.Detach(oldUser);
             
             return managerResult;
         }
@@ -146,7 +152,7 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<UserDTO?> FindUserInDbAsync(string email, string password)
         {
             string passwordHach = StringToHach(password);
-            var user = await _userRepository.GetItems(false).FirstAsync(x => x.Email == email && x.PasswordHach == passwordHach);
+            var user = await _userRepository.GetItems(false).FirstOrDefaultAsync(x => x.Email == email && x.PasswordHach == passwordHach);
             return _mapper.Map<UserDTO>(user);
         }
 

@@ -1,6 +1,7 @@
 ﻿using InnoGotchiGame.Domain;
 using InnoGotchiGame.Domain.AggragatesModel.ColaborationRequestAggregate;
 using InnoGotchiGame.Domain.BaseModels;
+using InnoGotchiGame.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Application.Managers

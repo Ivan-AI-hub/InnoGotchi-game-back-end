@@ -49,7 +49,7 @@ namespace InnoGotchiGame.Tests
             repositoryManager.SaveAsync().Wait();
             repositoryManager.Pet.Delete(pet);
             repositoryManager.SaveAsync().Wait();
-            var dataPet = await repositoryManager.Pet.FirstOrDefaultAsync(x => x.Id == pet.Id, false);
+            var dataPet = await repositoryManager.Pet.GetItems(false).FirstOrDefaultAsync(x => x.Id == pet.Id);
 
             dataPet.Should().BeNull();
         }

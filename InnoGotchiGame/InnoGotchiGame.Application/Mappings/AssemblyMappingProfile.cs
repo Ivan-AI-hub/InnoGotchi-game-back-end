@@ -13,28 +13,28 @@ namespace InnoGotchiGame.Application.Mappings
     {
         public AssemblyMappingProfile()
         {
-            CreateMap<UserDTO, IUser>().As<User>();
             CreateMap<User, UserDTO>().ReverseMap();
+            CreateMap<UserDTO, IUser>().As<User>();
 
-            CreateMap<PictureDTO, IPicture>().As<Picture>();
             CreateMap<Picture, PictureDTO>().ReverseMap();
+            CreateMap<PictureDTO, IPicture>().As<Picture>();
 
-            CreateMap<PetFarmDTO, IPetFarm>().As<PetFarm>();
             CreateMap<PetFarm, PetFarmDTO>().ReverseMap();
+            CreateMap<PetFarmDTO, IPetFarm>().As<PetFarm>();
 
-            CreateMap<ColaborationRequestDTO, IColaborationRequest>().As<ColaborationRequest>();
             CreateMap<ColaborationRequest, ColaborationRequestDTO>().ReverseMap();
+            CreateMap<ColaborationRequestDTO, IColaborationRequest>().As<ColaborationRequest>();
 
             CreateMap<ColaborationRequestStatus, ColaborationRequestStatusDTO>().ReverseMap();
 
-            CreateMap<PetDTO, IPet>().As<Pet>();
             CreateMap<Pet, PetDTO>().ReverseMap();
+            CreateMap<PetDTO, IPet>().As<Pet>();
 
-            CreateMap<PetStatisticDTO, IPetStatistic>().As<PetStatistic>();
             CreateMap<PetStatistic, PetStatisticDTO>().ReverseMap();
+            CreateMap<PetStatisticDTO, IPetStatistic>().As<PetStatistic>();
 
-            CreateMap<PetViewDTO, IPetView>().As<PetView>();
             CreateMap<PetView, PetViewDTO>().ReverseMap();
+            CreateMap<PetViewDTO, IPetView>().As<PetView>();
         }
     }
 }

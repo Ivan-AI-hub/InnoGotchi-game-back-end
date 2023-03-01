@@ -6,6 +6,7 @@ using InnoGotchiGame.Application.Sorters.Base;
 using InnoGotchiGame.Domain;
 using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
 using InnoGotchiGame.Domain.BaseModels;
+using InnoGotchiGame.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace InnoGotchiGame.Application.Managers
@@ -42,7 +43,9 @@ namespace InnoGotchiGame.Application.Managers
                 return managerResult;
             }
 
+            //сейчас 
             var dataFarm = new PetFarm(name, ownerId);
+
             var validationResult = _validator.Validate(dataFarm);
             if (!validationResult.IsValid)
             {
