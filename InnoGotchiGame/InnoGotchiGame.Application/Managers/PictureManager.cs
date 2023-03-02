@@ -2,7 +2,6 @@
 using FluentValidation;
 using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Application.Models;
-using InnoGotchiGame.Domain;
 using InnoGotchiGame.Domain.AggragatesModel.PictureAggregate;
 using InnoGotchiGame.Domain.BaseModels;
 using Microsoft.EntityFrameworkCore;
@@ -34,8 +33,7 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> AddAsync(PictureDTO picture, CancellationToken cancellationToken = default)
         {
             var managerResult = new ManagerResult();
-
-            if (!await IsUniqueNameAsync(picture.Name, managerResult, cancellationToken))
+            if (!await IsNameUniqueAsync(picture.Name, managerResult, cancellationToken))
             {
                 return managerResult;
             }
@@ -56,14 +54,13 @@ namespace InnoGotchiGame.Application.Managers
         }
 
         /// <summary>
-        /// Updates the picture with a special id
+        /// Updates the picture with a special pictureId
         /// </summary>
         /// <param name="updatedId">Id of the picture being updated</param>
         /// <returns>Result of method execution</returns>
         public async Task<ManagerResult> UpdateAsync(int updatedId, PictureDTO newPicture, CancellationToken cancellationToken = default)
         {
             var managerResult = new ManagerResult();
-
             if (!await CheckPictureIdAsync(updatedId, managerResult, cancellationToken))
             {
                 return managerResult;
@@ -91,26 +88,26 @@ namespace InnoGotchiGame.Application.Managers
         /// <summary>
         /// Deletes the picture
         /// </summary>
-        /// <param name="id">IPicture id</param>
+        /// <param name="pictureId">IPicture pictureId</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerResult> DeleteAsync(int id, CancellationToken cancellationToken = default)
+        public async Task<ManagerResult> DeleteAsync(int pictureId, CancellationToken cancellationToken = default)
         {
             var managerResult = new ManagerResult();
-            if (!await CheckPictureIdAsync(id, managerResult, cancellationToken))
+            if (!await CheckPictureIdAsync(pictureId, managerResult, cancellationToken))
             {
                 return managerResult;
             }
 
-            _pictureRepository.Delete(await _pictureRepository.GetItems(false).FirstAsync(x => x.Id == id, cancellationToken));
+            _pictureRepository.Delete(await _pictureRepository.GetItems(false).FirstAsync(x => x.Id == pictureId, cancellationToken));
             await _repositoryManager.SaveAsync(cancellationToken);
 
             return managerResult;
         }
 
-        /// <returns>picture with special <paramref name="id"/> </returns>
-        public async Task<PictureDTO?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
+        /// <returns>picture with special <paramref name="pictureId"/> </returns>
+        public async Task<PictureDTO?> GetByIdAsync(int pictureId, CancellationToken cancellationToken = default)
         {
-            var picture = _mapper.Map<PictureDTO>(await _pictureRepository.GetItems(false).FirstAsync(x => x.Id == id, cancellationToken));
+            var picture = _mapper.Map<PictureDTO>(await _pictureRepository.GetItems(false).FirstAsync(x => x.Id == pictureId, cancellationToken));
             return picture;
         }
 
@@ -124,7 +121,7 @@ namespace InnoGotchiGame.Application.Managers
 
         }
 
-        private async Task<bool> IsUniqueNameAsync(string name, ManagerResult managerResult, CancellationToken cancellationToken = default)
+        private async Task<bool> IsNameUniqueAsync(string name, ManagerResult managerResult, CancellationToken cancellationToken = default)
         {
             if (await _pictureRepository.IsItemExistAsync(x => x.Name.ToLower() == name.ToLower(), cancellationToken))
             {
@@ -134,9 +131,9 @@ namespace InnoGotchiGame.Application.Managers
             return true;
         }
 
-        private async Task<bool> CheckPictureIdAsync(int id, ManagerResult managerResult, CancellationToken cancellationToken = default)
+        private async Task<bool> CheckPictureIdAsync(int pictureId, ManagerResult managerResult, CancellationToken cancellationToken = default)
         {
-            if (!await _pictureRepository.IsItemExistAsync(x => x.Id == id, cancellationToken))
+            if (!await _pictureRepository.IsItemExistAsync(x => x.Id == pictureId, cancellationToken))
             {
                 managerResult.Errors.Add("The farm ID is not in the database");
                 return false;

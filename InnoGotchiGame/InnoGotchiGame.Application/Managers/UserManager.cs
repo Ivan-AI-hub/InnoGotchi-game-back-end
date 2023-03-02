@@ -36,8 +36,7 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> AddAsync(UserDTO user, string password, CancellationToken cancellationToken = default)
         {
             var managerResult = new ManagerResult();
-
-            if (!await IsUniqueEmailAsync(user.Email, managerResult, cancellationToken))
+            if (!await IsEmailUniqueAsync(user.Email, managerResult, cancellationToken))
             {
                 return managerResult;
             }
@@ -61,19 +60,19 @@ namespace InnoGotchiGame.Application.Managers
         /// <summary>
         /// Updates user data
         /// </summary>
-        /// <param name="updatedId">IUser id</param>
+        /// <param name="userId">IUser id</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerResult> UpdateDataAsync(int updatedId, UserDTO newUser, CancellationToken cancellationToken = default)
+        public async Task<ManagerResult> UpdateDataAsync(int userId, UserDTO newUser, CancellationToken cancellationToken = default)
         {
             ManagerResult managerResult = new ManagerResult();
-            var dataUser = _mapper.Map<IUser>(newUser);
-
-            if (!await CheckUserIdAsync(updatedId, managerResult, cancellationToken))
+            if (!await IsUserIdExistAsync(userId, managerResult, cancellationToken))
             {
                 return managerResult;
             }
 
-            var oldUser = await _userRepository.GetItems(true).FirstAsync(x => x.Id == updatedId, cancellationToken);
+            var dataUser = _mapper.Map<IUser>(newUser);
+            var oldUser = await _userRepository.GetItems(true).FirstAsync(x => x.Id == userId, cancellationToken);
+
             if (dataUser.Picture != null)
             {
                 oldUser.Picture ??= dataUser.Picture;
@@ -91,24 +90,24 @@ namespace InnoGotchiGame.Application.Managers
 
             await _repositoryManager.SaveAsync(cancellationToken);
             _repositoryManager.Detach(oldUser);
-            
+
             return managerResult;
         }
 
         /// <summary>
         /// Updates user password
         /// </summary>
-        /// <param name="updatedId">IUser id</param>
+        /// <param name="userId">IUser id</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerResult> UpdatePasswordAsync(int updatedId, string oldPassword, string newPassword, CancellationToken cancellationToken = default)
+        public async Task<ManagerResult> UpdatePasswordAsync(int userId, string oldPassword, string newPassword, CancellationToken cancellationToken = default)
         {
             ManagerResult managerResult = new ManagerResult();
-            if (!await CheckUserIdAsync(updatedId, managerResult, cancellationToken))
+            if (!await IsUserIdExistAsync(userId, managerResult, cancellationToken))
             {
                 return managerResult;
             }
 
-            var dataUser = await _userRepository.GetItems(true).FirstAsync(x => x.Id == updatedId, cancellationToken);
+            var dataUser = await _userRepository.GetItems(true).FirstAsync(x => x.Id == userId, cancellationToken);
 
             if (dataUser.PasswordHach != StringToHach(oldPassword))
             {
@@ -127,17 +126,17 @@ namespace InnoGotchiGame.Application.Managers
         /// <summary>
         /// Deletes the user
         /// </summary>
-        /// <param name="deletedId">IUser id</param>
+        /// <param name="userId">IUser id</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerResult> DeleteAsync(int deletedId, CancellationToken cancellationToken = default)
+        public async Task<ManagerResult> DeleteAsync(int userId, CancellationToken cancellationToken = default)
         {
             var managerResult = new ManagerResult();
-            if (!await CheckUserIdAsync(deletedId, managerResult, cancellationToken))
+            if (!await IsUserIdExistAsync(userId, managerResult, cancellationToken))
             {
                 return managerResult;
             }
 
-            var user = await _userRepository.GetItems(false).FirstAsync(x => x.Id == deletedId, cancellationToken);
+            var user = await _userRepository.GetItems(false).FirstAsync(x => x.Id == userId, cancellationToken);
             _userRepository.Delete(user);
 
             return managerResult;
@@ -198,7 +197,7 @@ namespace InnoGotchiGame.Application.Managers
             }
         }
 
-        private async Task<bool> CheckUserIdAsync(int userId, ManagerResult managerResult, CancellationToken cancellationToken = default)
+        private async Task<bool> IsUserIdExistAsync(int userId, ManagerResult managerResult, CancellationToken cancellationToken = default)
         {
             if (!await _userRepository.IsItemExistAsync(x => x.Id == userId, cancellationToken))
             {
@@ -208,7 +207,7 @@ namespace InnoGotchiGame.Application.Managers
             return true;
         }
 
-        private async Task<bool> IsUniqueEmailAsync(string email, ManagerResult managerResult, CancellationToken cancellationToken = default)
+        private async Task<bool> IsEmailUniqueAsync(string email, ManagerResult managerResult, CancellationToken cancellationToken = default)
         {
             if (await _userRepository.IsItemExistAsync(x => x.Email == email, cancellationToken))
             {

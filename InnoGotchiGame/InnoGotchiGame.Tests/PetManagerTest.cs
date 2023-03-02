@@ -38,7 +38,7 @@ namespace InnoGotchiGame.Tests
                 return farm;
             });
 
-            _fixture.Register<IPet>(() => new Pet(_fixture.Create<IPetStatistic>(),_fixture.Create<IPetView>(), _fixture.Create<IPetFarm>()));
+            _fixture.Register<IPet>(() => new Pet(_fixture.Create<IPetStatistic>(), _fixture.Create<IPetView>(), _fixture.Create<IPetFarm>()));
 
             var config = new MapperConfiguration(cnf => cnf.AddProfiles(new List<Profile>() { new AssemblyMappingProfile() }));
             _fixture.Register<IMapper>(() => new Mapper(config));

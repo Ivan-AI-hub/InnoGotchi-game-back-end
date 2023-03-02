@@ -1,5 +1,4 @@
-﻿using InnoGotchiGame.Domain;
-using InnoGotchiGame.Domain.AggragatesModel.ColaborationRequestAggregate;
+﻿using InnoGotchiGame.Domain.AggragatesModel.ColaborationRequestAggregate;
 using InnoGotchiGame.Domain.BaseModels;
 using InnoGotchiGame.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
@@ -43,7 +42,7 @@ namespace InnoGotchiGame.Application.Managers
             _requestRepository.Create(request);
             await _repositoryManager.SaveAsync(cancellationToken);
             _repositoryManager.Detach(request);
-            
+
 
             return result;
         }
@@ -124,7 +123,7 @@ namespace InnoGotchiGame.Application.Managers
         public async Task<ManagerResult> DeleteRequestAsync(int requestId, CancellationToken cancellationToken = default)
         {
             var result = new ManagerResult();
-            if (!await IsRequestIdExistAsync(requestId, result,cancellationToken))
+            if (!await IsRequestIdExistAsync(requestId, result, cancellationToken))
             {
                 return result;
             }
@@ -133,7 +132,7 @@ namespace InnoGotchiGame.Application.Managers
 
             _requestRepository.Delete(request);
             await _repositoryManager.SaveAsync(cancellationToken);
-            
+
 
             return result;
         }

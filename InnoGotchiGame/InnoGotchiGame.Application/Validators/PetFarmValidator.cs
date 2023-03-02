@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using InnoGotchiGame.Domain;
 using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
 
 namespace InnoGotchiGame.Application.Validators

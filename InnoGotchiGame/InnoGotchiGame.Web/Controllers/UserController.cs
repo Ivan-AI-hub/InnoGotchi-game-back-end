@@ -106,7 +106,6 @@ namespace InnoGotchiGame.Web.Controllers
 
         /// <returns>A filtered and sorted page containing <paramref name="pageSize"/> users</returns>
         [HttpGet("{pageSize}/{pageNumber}")]
-        [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
         public async Task<IActionResult> GetPageAsync(int pageSize, int pageNumber, UserFiltrator filtrator, CancellationToken cancellationToken,
                                     string sortField = "LastName", bool isDescendingSort = false)
@@ -118,7 +117,6 @@ namespace InnoGotchiGame.Web.Controllers
 
         /// <returns>Filtered and sorted list of users</returns>
         [HttpGet]
-        [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
         public async Task<IActionResult> GetAsync(UserFiltrator filtrator, CancellationToken cancellationToken, string sortField = "LastName", bool isDescendingSort = false)
         {

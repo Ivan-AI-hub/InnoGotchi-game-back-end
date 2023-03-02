@@ -24,7 +24,7 @@ namespace InnoGotchiGame.Persistence
             modelBuilder.ApplyConfiguration(new PetFarmConfigurator());
             modelBuilder.ApplyConfiguration(new UserConfigurator());
             modelBuilder.ApplyConfiguration(new PictureConfigurator());
-            modelBuilder.ApplyConfiguration(new FriendlyRelationConfigurator());
+            modelBuilder.ApplyConfiguration(new ColaborationRequestConfigurator());
         }
     }
 }

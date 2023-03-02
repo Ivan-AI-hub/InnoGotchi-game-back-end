@@ -9,9 +9,6 @@ namespace InnoGotchiGame.Web.Models.Users
         [Required]
         public string OldPassword { get; set; }
         [Required]
-        public string NewPassword
-        {
-            get; set;
-        }
+        public string NewPassword { get; set; }
     }
 }

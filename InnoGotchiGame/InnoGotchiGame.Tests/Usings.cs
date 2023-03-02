@@ -7,7 +7,6 @@ global using InnoGotchiGame.Application.Managers;
 global using InnoGotchiGame.Application.Mappings;
 global using InnoGotchiGame.Application.Models;
 global using InnoGotchiGame.Application.Validators;
-global using InnoGotchiGame.Domain;
 global using InnoGotchiGame.Persistence;
 global using Microsoft.EntityFrameworkCore;
 global using Xunit;

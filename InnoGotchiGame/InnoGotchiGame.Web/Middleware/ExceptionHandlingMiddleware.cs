@@ -1,5 +1,6 @@
 ﻿using InnoGotchiGame.Web.Models.ErrorModel;
 using LoggerService;
+using System;
 using System.Net;
 
 namespace InnoGotchiGame.Web.Middleware
@@ -18,6 +19,10 @@ namespace InnoGotchiGame.Web.Middleware
             try
             {
                 await _next.Invoke(context);
+            }
+            catch (TaskCanceledException)
+            {
+
             }
             catch (Exception ex)
             {

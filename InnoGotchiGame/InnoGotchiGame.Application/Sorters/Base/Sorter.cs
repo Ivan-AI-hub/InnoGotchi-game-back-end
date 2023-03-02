@@ -10,6 +10,16 @@
         /// Performs IQueryable sorting according to the specified rules
         /// </summary>
         /// <returns> Sorted IQueryable </returns>
-        internal abstract IQueryable<T> Sort(IQueryable<T> query);
+        internal IQueryable<T> Sort(IQueryable<T> query)
+        {
+            if (IsDescendingSort)
+            {
+                return DescendingOrder(query);
+            }
+
+            return AscendingOrder(query);
+        }
+        protected abstract IQueryable<T> DescendingOrder(IQueryable<T> query);
+        protected abstract IQueryable<T> AscendingOrder(IQueryable<T> query);
     }
 }

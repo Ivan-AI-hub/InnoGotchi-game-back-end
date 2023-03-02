@@ -1,5 +1,4 @@
 ﻿using InnoGotchiGame.Application.Filtrators.Base;
-using InnoGotchiGame.Domain;
 using InnoGotchiGame.Domain.AggragatesModel.PictureAggregate;
 
 namespace InnoGotchiGame.Application.Filtrators

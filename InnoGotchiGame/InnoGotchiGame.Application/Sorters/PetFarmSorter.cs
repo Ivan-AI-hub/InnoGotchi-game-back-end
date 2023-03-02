@@ -1,6 +1,5 @@
 ﻿using InnoGotchiGame.Application.Sorters.Base;
 using InnoGotchiGame.Application.Sorters.SortRules;
-using InnoGotchiGame.Domain;
 using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
 
 namespace InnoGotchiGame.Application.Sorters
@@ -9,23 +8,22 @@ namespace InnoGotchiGame.Application.Sorters
     {
         public PetFarmSortRule SortRule { get; set; }
 
-        internal override IQueryable<IPetFarm> Sort(IQueryable<IPetFarm> petFarms)
+        protected override IQueryable<IPetFarm> AscendingOrder(IQueryable<IPetFarm> query)
         {
-            if (!IsDescendingSort)
-            {
-                switch(SortRule)
-                {
-                    case PetFarmSortRule.Name: return petFarms.OrderBy(x => x.Name);
-                    default: throw new NotImplementedException();
-                }    
-            }
-
             switch (SortRule)
             {
-                case PetFarmSortRule.Name: return petFarms.OrderByDescending(x => x.Name);
+                case PetFarmSortRule.Name: return query.OrderBy(x => x.Name);
                 default: throw new NotImplementedException();
             }
-            
+        }
+
+        protected override IQueryable<IPetFarm> DescendingOrder(IQueryable<IPetFarm> query)
+        {
+            switch (SortRule)
+            {
+                case PetFarmSortRule.Name: return query.OrderByDescending(x => x.Name);
+                default: throw new NotImplementedException();
+            }
         }
     }
 }

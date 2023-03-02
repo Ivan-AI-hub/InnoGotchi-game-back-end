@@ -10,11 +10,11 @@ namespace InnoGotchiGame.Persistence.EntityConfigurations
         {
             builder.HasIndex(user => user.Email).IsUnique();
             builder.HasKey(user => user.Id);
-            builder.HasOne(p => (PetFarm) p.OwnPetFarm)
+            builder.HasOne(p => (PetFarm)p.OwnPetFarm)
                 .WithOne(d => (User)d.Owner)
                 .HasForeignKey<PetFarm>(x => x.OwnerId);
 
-            builder.HasOne(user => (Picture) user.Picture).WithMany().OnDelete(DeleteBehavior.SetNull);
+            builder.HasOne(user => (Picture)user.Picture).WithMany().OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
