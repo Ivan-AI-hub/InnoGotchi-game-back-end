@@ -4,6 +4,7 @@ using InnoGotchiGame.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InnoGotchiGame.Web.Migrations
 {
     [DbContext(typeof(InnoGotchiGameContext))]
-    partial class InnoGotchiGameContextModelSnapshot : ModelSnapshot
+    [Migration("20230302133127_IsAlivePetStateReduce")]
+    partial class IsAlivePetStateReduce
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
