@@ -77,9 +77,9 @@ namespace InnoGotchiGame.Persistence.Managers
             _context.Entry(item).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
         }
 
-        public Task SaveAsync()
+        public Task SaveAsync(CancellationToken cancellationToken = default)
         {
-            return _context.SaveChangesAsync();
+            return _context.SaveChangesAsync(cancellationToken);
         }
     }
 }

@@ -2,7 +2,6 @@
 using InnoGotchiGame.Persistence.Abstracts;
 using InnoGotchiGame.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Linq.Expressions;
 
 namespace InnoGotchiGame.Persistence.Repositories
 {

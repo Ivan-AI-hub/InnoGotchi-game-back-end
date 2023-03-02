@@ -37,7 +37,10 @@ namespace InnoGotchiGame.Persistence.Abstracts
             Context.Set<T>().Remove((T)item);
         }
 
-        public Task<bool> IsItemExistAsync(Expression<Func<TInterface, bool>> predicate) => Context.Set<T>().AnyAsync(predicate);
+        public Task<bool> IsItemExistAsync(Expression<Func<TInterface, bool>> predicate, CancellationToken cancellationToken = default)
+        {
+            return Context.Set<T>().AnyAsync(predicate, cancellationToken);
+        }
 
         public IQueryable<TInterface> GetItemsByCondition(Expression<Func<TInterface, bool>> predicate, bool trackChanges)
         {

@@ -13,7 +13,7 @@ namespace InnoGotchiGame.Domain.BaseModels
         IPetRepository Pet { get; }
         IPictureRepository Picture { get; }
         IUserRepository User { get; }
-        Task SaveAsync();
+        Task SaveAsync(CancellationToken cancellationToken = default);
         void Detach(object item);
     }
 }

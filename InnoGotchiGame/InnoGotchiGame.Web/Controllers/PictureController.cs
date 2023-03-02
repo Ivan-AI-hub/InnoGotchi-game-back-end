@@ -22,9 +22,9 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
-        public async Task<IActionResult> PostAsync([FromBody] PictureDTO picture)
+        public async Task<IActionResult> PostAsync([FromBody] PictureDTO picture, CancellationToken cancellationToken)
         {
-            var result = await _manager.AddAsync(picture);
+            var result = await _manager.AddAsync(picture, cancellationToken);
             if (!result.IsComplete)
                 return BadRequest(new ErrorDetails(400, result.Errors));
 
@@ -38,9 +38,9 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut("{updatedId}")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
-        public async Task<IActionResult> PutAsync([FromBody] PictureDTO picture, int updatedId)
+        public async Task<IActionResult> PutAsync([FromBody] PictureDTO picture, int updatedId, CancellationToken cancellationToken)
         {
-            var result = await _manager.UpdateAsync(updatedId, picture);
+            var result = await _manager.UpdateAsync(updatedId, picture, cancellationToken);
 
             if (!result.IsComplete)
                 return BadRequest(new ErrorDetails(400, result.Errors));
@@ -51,9 +51,9 @@ namespace InnoGotchiGame.Web.Controllers
         /// <returns>Filtered list of pictures</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<PictureDTO>), 200)]
-        public async Task<IEnumerable<PictureDTO>> GetAsync(PictureFiltrator filtrator)
+        public async Task<IEnumerable<PictureDTO>> GetAsync(PictureFiltrator filtrator, CancellationToken cancellationToken)
         {
-            var pictures = await _manager.GetAllAsync(filtrator);
+            var pictures = await _manager.GetAllAsync(filtrator, cancellationToken);
             return pictures;
         }
 
@@ -61,9 +61,9 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpGet("{pictureId}")]
         [ProducesResponseType(typeof(UserDTO), 200)]
         [ProducesResponseType(typeof(ErrorDetails), 404)]
-        public async Task<IActionResult> GetByIdAsync(int pictureId)
+        public async Task<IActionResult> GetByIdAsync(int pictureId, CancellationToken cancellationToken)
         {
-            var picture = await _manager.GetByIdAsync(pictureId);
+            var picture = await _manager.GetByIdAsync(pictureId, cancellationToken);
             if (picture == null)
                 return NotFound(new ErrorDetails(404, "Invalid id."));
 

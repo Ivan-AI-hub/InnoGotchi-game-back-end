@@ -26,9 +26,9 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPost]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
-        public async Task<IActionResult> PostAsync([FromBody] AddPetModel addPetModel)
+        public async Task<IActionResult> PostAsync([FromBody] AddPetModel addPetModel, CancellationToken cancellationToken)
         {
-            var result = await _petManager.AddAsync(addPetModel.FarmId, addPetModel.Name, addPetModel.View);
+            var result = await _petManager.AddAsync(addPetModel.FarmId, addPetModel.Name, addPetModel.View, cancellationToken);
             if (!result.IsComplete)
                 return BadRequest(new ErrorDetails(400, result.Errors));
 
@@ -41,9 +41,9 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut]
         [ProducesResponseType(202)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
-        public async Task<IActionResult> PutAsync([FromBody] UpdatePetModel updatePetModel)
+        public async Task<IActionResult> PutAsync([FromBody] UpdatePetModel updatePetModel, CancellationToken cancellationToken)
         {
-            var result = await _petManager.UpdateAsync(updatePetModel.UpdatedId, updatePetModel.Name);
+            var result = await _petManager.UpdateAsync(updatePetModel.UpdatedId, updatePetModel.Name, cancellationToken);
 
             if (!result.IsComplete)
                 return BadRequest(new ErrorDetails(400, result.Errors));
@@ -58,10 +58,10 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut("{petId}/feed")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
-        public async Task<IActionResult> FeedAsync(int petId)
+        public async Task<IActionResult> FeedAsync(int petId, CancellationToken cancellationToken)
         {
             var userId = int.Parse(User.GetUserId()!);
-            var result = await _petManager.FeedAsync(petId, userId);
+            var result = await _petManager.FeedAsync(petId, userId, cancellationToken);
 
             if (!result.IsComplete)
                 return BadRequest(new ErrorDetails(400, result.Errors));
@@ -76,9 +76,9 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut("{petId}/resetHappinessDay")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
-        public async Task<IActionResult> ResetHappinessDayAsync(int petId)
+        public async Task<IActionResult> ResetHappinessDayAsync(int petId, CancellationToken cancellationToken)
         {
-            var result = await _petManager.ResetHappinessDayAsync(petId);
+            var result = await _petManager.ResetHappinessDayAsync(petId, cancellationToken);
 
             if (!result.IsComplete)
                 return BadRequest(new ErrorDetails(400, result.Errors));
@@ -93,10 +93,10 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut("{petId}/drink")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
-        public async Task<IActionResult> GiveDrinkAsync(int petId)
+        public async Task<IActionResult> GiveDrinkAsync(int petId, CancellationToken cancellationToken)
         {
             var userId = int.Parse(User.GetUserId()!);
-            var result = await _petManager.GiveDrinkAsync(petId, userId);
+            var result = await _petManager.GiveDrinkAsync(petId, userId, cancellationToken);
 
             if (!result.IsComplete)
                 return BadRequest(new ErrorDetails(400, result.Errors));
@@ -111,9 +111,9 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut("{petId}/dead")]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
-        public async Task<IActionResult> SetDeadStatusAsync(int petId, DateTime deadDate)
+        public async Task<IActionResult> SetDeadStatusAsync(int petId, DateTime deadDate, CancellationToken cancellationToken)
         {
-            var result = await _petManager.SetDeadStatusAsync(petId, deadDate);
+            var result = await _petManager.SetDeadStatusAsync(petId, deadDate, cancellationToken);
 
             if (!result.IsComplete)
                 return BadRequest(new ErrorDetails(400, result.Errors));
@@ -124,21 +124,21 @@ namespace InnoGotchiGame.Web.Controllers
         /// <returns>Filtered and sorted list of pets</returns>
         [HttpGet]
         [ProducesResponseType(typeof(IEnumerable<PetDTO>), 200)]
-        public async Task<IEnumerable<PetDTO>> GetAsync(PetFiltrator filtrator, string sortField = "Age", bool isDescendingSort = false)
+        public async Task<IEnumerable<PetDTO>> GetAsync(PetFiltrator filtrator, CancellationToken cancellationToken, string sortField = "Age", bool isDescendingSort = false)
         {
             var sorter = GetSorter(sortField, isDescendingSort);
-            var pets = await _petManager.GetPetsAsync(filtrator, sorter);
+            var pets = await _petManager.GetPetsAsync(filtrator, sorter, cancellationToken);
             return pets;
         }
 
         /// <returns>A filtered and sorted page containing <paramref name="pageSize"/> pets</returns>
         [HttpGet("{pageSize}/{pageNumber}")]
         [ProducesResponseType(typeof(IEnumerable<PetDTO>), 200)]
-        public async Task<IEnumerable<PetDTO>> GetPageAsync(int pageSize, int pageNumber, PetFiltrator filtrator,
+        public async Task<IEnumerable<PetDTO>> GetPageAsync(int pageSize, int pageNumber, PetFiltrator filtrator, CancellationToken cancellationToken,
             string sortField = "Age", bool isDescendingSort = false)
         {
             var sorter = GetSorter(sortField, isDescendingSort);
-            var pets = await _petManager.GetPetsPageAsync(pageSize, pageNumber, filtrator, sorter);
+            var pets = await _petManager.GetPetsPageAsync(pageSize, pageNumber, filtrator, sorter, cancellationToken);
             return pets;
         }
 
@@ -146,9 +146,9 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpGet("{petId}")]
         [ProducesResponseType(typeof(PetDTO), 200)]
         [ProducesResponseType(typeof(ErrorDetails), 404)]
-        public async Task<IActionResult> GetByIdAsync(int petId)
+        public async Task<IActionResult> GetByIdAsync(int petId, CancellationToken cancellationToken)
         {
-            var pet = await _petManager.GetPetByIdAsync(petId);
+            var pet = await _petManager.GetPetByIdAsync(petId, cancellationToken);
             if (pet == null)
                 return NotFound(new ErrorDetails(404, "Invalid id."));
 

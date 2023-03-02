@@ -6,7 +6,7 @@ namespace InnoGotchiGame.Domain.BaseModels
     {
 
         /// <returns>true if the element exists, and false if not</returns>
-        public Task<bool> IsItemExistAsync(Expression<Func<T, bool>> predicate);
+        public Task<bool> IsItemExistAsync(Expression<Func<T, bool>> predicate, CancellationToken cancellationToken = default);
 
         /// <param name="predicate">Special predicate for element search</param>
         /// <returns>The element, if it was found in the database or null</returns>

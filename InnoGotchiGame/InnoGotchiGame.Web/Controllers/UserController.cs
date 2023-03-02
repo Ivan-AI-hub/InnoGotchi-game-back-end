@@ -38,11 +38,11 @@ namespace InnoGotchiGame.Web.Controllers
         [AllowAnonymous]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
-        public async Task<IActionResult> PostAsync([FromBody] AddUserModel addUserModel)
+        public async Task<IActionResult> PostAsync([FromBody] AddUserModel addUserModel, CancellationToken cancellationToken)
         {
             UserDTO user = _mapper.Map<UserDTO>(addUserModel);
 
-            var result = await _userManager.AddAsync(user, addUserModel.Password);
+            var result = await _userManager.AddAsync(user, addUserModel.Password, cancellationToken);
             if (!result.IsComplete)
                 return BadRequest(new ErrorDetails(400, result.Errors));
 
@@ -56,11 +56,11 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut("data")]
         [ProducesResponseType(202)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
-        public async Task<IActionResult> PutDataAsync([FromBody] UpdateUserDataModel updateUserModel)
+        public async Task<IActionResult> PutDataAsync([FromBody] UpdateUserDataModel updateUserModel, CancellationToken cancellationToken)
         {
             UserDTO user = _mapper.Map<UserDTO>(updateUserModel);
 
-            var result = await _userManager.UpdateDataAsync(updateUserModel.UpdatedId, user);
+            var result = await _userManager.UpdateDataAsync(updateUserModel.UpdatedId, user, cancellationToken);
 
             if (!result.IsComplete)
                 return BadRequest(new ErrorDetails(400, result.Errors));
@@ -75,9 +75,12 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpPut("password")]
         [ProducesResponseType(202)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
-        public async Task<IActionResult> PutPasswordAsync([FromBody] UpdateUserPasswordModel updateUserModel)
+        public async Task<IActionResult> PutPasswordAsync([FromBody] UpdateUserPasswordModel updateUserModel, CancellationToken cancellationToken)
         {
-            var result = await _userManager.UpdatePasswordAsync(updateUserModel.UpdatedId, updateUserModel.OldPassword, updateUserModel.NewPassword);
+            var result = await _userManager.UpdatePasswordAsync(updateUserModel.UpdatedId,
+                                                                updateUserModel.OldPassword,
+                                                                updateUserModel.NewPassword,
+                                                                cancellationToken);
 
             if (!result.IsComplete)
                 return BadRequest(new ErrorDetails(400, result.Errors));
@@ -92,9 +95,9 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpDelete("{userId}")]
         [ProducesResponseType(204)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
-        public async Task<IActionResult> DeleteAsync(int userId)
+        public async Task<IActionResult> DeleteAsync(int userId, CancellationToken cancellationToken)
         {
-            var result = await _userManager.DeleteAsync(userId);
+            var result = await _userManager.DeleteAsync(userId, cancellationToken);
             if (!result.IsComplete)
                 return BadRequest(new ErrorDetails(400, result.Errors));
 
@@ -105,11 +108,11 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpGet("{pageSize}/{pageNumber}")]
         [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
-        public async Task<IActionResult> GetPageAsync(int pageSize, int pageNumber, UserFiltrator filtrator,
+        public async Task<IActionResult> GetPageAsync(int pageSize, int pageNumber, UserFiltrator filtrator, CancellationToken cancellationToken,
                                     string sortField = "LastName", bool isDescendingSort = false)
         {
             var sorter = GetSorter(sortField, isDescendingSort);
-            var users = await _userManager.GetUsersPageAsync(pageSize, pageNumber, filtrator, sorter);
+            var users = await _userManager.GetUsersPageAsync(pageSize, pageNumber, filtrator, sorter, cancellationToken);
             return Ok(users);
         }
 
@@ -117,10 +120,10 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpGet]
         [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<UserDTO>), 200)]
-        public async Task<IActionResult> GetAsync(UserFiltrator filtrator, string sortField = "LastName", bool isDescendingSort = false)
+        public async Task<IActionResult> GetAsync(UserFiltrator filtrator, CancellationToken cancellationToken, string sortField = "LastName", bool isDescendingSort = false)
         {
             var sorter = GetSorter(sortField, isDescendingSort);
-            var users = await _userManager.GetUsersAsync(filtrator, sorter);
+            var users = await _userManager.GetUsersAsync(filtrator, sorter, cancellationToken);
             return Ok(users);
         }
 
@@ -129,9 +132,9 @@ namespace InnoGotchiGame.Web.Controllers
         [HttpGet("{userId}")]
         [ProducesResponseType(typeof(UserDTO), 200)]
         [ProducesResponseType(typeof(ErrorDetails), 404)]
-        public async Task<IActionResult> GetByIdAsync(int userId)
+        public async Task<IActionResult> GetByIdAsync(int userId, CancellationToken cancellationToken)
         {
-            var user = await _userManager.GetUserByIdAsync(userId);
+            var user = await _userManager.GetUserByIdAsync(userId, cancellationToken);
             if (user == null)
                 return NotFound(new ErrorDetails(404, "Invalid id."));
 
@@ -141,10 +144,10 @@ namespace InnoGotchiGame.Web.Controllers
         /// <returns>Authorized user</returns>
         [HttpGet("Authorized")]
         [ProducesResponseType(typeof(UserDTO), 200)]
-        public async Task<IActionResult> GetAuthorizeUserAsync()
+        public async Task<IActionResult> GetAuthorizeUserAsync(CancellationToken cancellationToken)
         {
             var userId = int.Parse(User.GetUserId()!);
-            var user = await _userManager.GetUserByIdAsync(userId);
+            var user = await _userManager.GetUserByIdAsync(userId, cancellationToken);
 
             return new ObjectResult(user);
         }
@@ -156,9 +159,9 @@ namespace InnoGotchiGame.Web.Controllers
         [AllowAnonymous]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
-        public async Task<IActionResult> TokenAsync(string email, string password)
+        public async Task<IActionResult> TokenAsync(string email, string password, CancellationToken cancellationToken)
         {
-            UserDTO? user = await _userManager.FindUserInDbAsync(email, password);
+            UserDTO? user = await _userManager.FindUserInDbAsync(email, password, cancellationToken);
             if (user == null)
             {
                 return BadRequest(new ErrorDetails(400, "Invalid email or password."));

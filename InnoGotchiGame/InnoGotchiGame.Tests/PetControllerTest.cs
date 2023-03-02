@@ -18,10 +18,10 @@ namespace InnoGotchiGame.Tests
                 Mock<IMapper> mapper,
                 Mock<AbstractValidator<IPet>> validator)
         {
-            repManager.Setup(x => x.PetFarm.IsItemExistAsync(It.IsAny<Expression<Func<IPetFarm, bool>>>())).Returns(Task.FromResult(true));
+            repManager.Setup(x => x.PetFarm.IsItemExistAsync(It.IsAny<Expression<Func<IPetFarm, bool>>>(), It.IsAny<CancellationToken>())).Returns(Task.FromResult(true));
             var mock = new Mock<PetManager>(repManager.Object, mapper.Object, validator.Object);
             var controller = new PetController(mock.Object);
-            var result = await controller.PostAsync(addModel);
+            var result = await controller.PostAsync(addModel, new CancellationToken());
 
             result.Should().BeOfType<OkResult>();
         }

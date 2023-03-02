@@ -26,12 +26,12 @@ namespace InnoGotchiGame.Application.Managers
         /// <param name="senderId">id of the sending user</param>
         /// <param name="recipientId">id of the recipient user</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerResult> SendColaborationRequestAsync(int senderId, int recipientId)
+        public async Task<ManagerResult> SendColaborationRequestAsync(int senderId, int recipientId, CancellationToken cancellationToken = default)
         {
             var result = new ManagerResult();
 
             var isSecondRequest = await _requestRepository.IsItemExistAsync(x => x.RequestSenderId == senderId && x.RequestReceiverId == recipientId ||
-                                                           x.RequestReceiverId == senderId && x.RequestSenderId == recipientId);
+                                                           x.RequestReceiverId == senderId && x.RequestSenderId == recipientId, cancellationToken);
             if (isSecondRequest)
             {
                 result.Errors.Add("The collaborating request for these users already exists");
@@ -41,7 +41,7 @@ namespace InnoGotchiGame.Application.Managers
             var request = new ColaborationRequest(senderId, recipientId, ColaborationRequestStatus.Undefined);
 
             _requestRepository.Create(request);
-            await _repositoryManager.SaveAsync();
+            await _repositoryManager.SaveAsync(cancellationToken);
             _repositoryManager.Detach(request);
             
 
@@ -54,15 +54,15 @@ namespace InnoGotchiGame.Application.Managers
         /// <param name="requestId">id of the request</param>
         /// <param name="recipientId">id of the recipient user</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerResult> ConfirmRequestAsync(int requestId, int recipientId)
+        public async Task<ManagerResult> ConfirmRequestAsync(int requestId, int recipientId, CancellationToken cancellationToken = default)
         {
             var result = new ManagerResult();
-            if (!await IsRequestIdExistAsync(requestId, result))
+            if (!await IsRequestIdExistAsync(requestId, result, cancellationToken))
             {
                 return result;
             }
 
-            var request = await _requestRepository.GetItems(false).FirstAsync(x => x.Id == requestId);
+            var request = await _requestRepository.GetItems(true).FirstAsync(x => x.Id == requestId, cancellationToken);
 
             if (request.Status == ColaborationRequestStatus.Colaborators)
                 result.Errors.Add("Request already confirmed");
@@ -75,8 +75,7 @@ namespace InnoGotchiGame.Application.Managers
             }
 
             request.Status = ColaborationRequestStatus.Colaborators;
-            _repositoryManager.ColaborationRequest.Update(request);
-            await _repositoryManager.SaveAsync();
+            await _repositoryManager.SaveAsync(cancellationToken);
 
             _repositoryManager.Detach(request);
 
@@ -89,15 +88,15 @@ namespace InnoGotchiGame.Application.Managers
         /// <param name="requestId">id of the request</param>
         /// <param name="participantId">id of the participant</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerResult> RejectRequestAsync(int requestId, int participantId)
+        public async Task<ManagerResult> RejectRequestAsync(int requestId, int participantId, CancellationToken cancellationToken = default)
         {
             var result = new ManagerResult();
-            if (!await IsRequestIdExistAsync(requestId, result))
+            if (!await IsRequestIdExistAsync(requestId, result, cancellationToken))
             {
                 return result;
             }
 
-            var request = await _requestRepository.GetItems(false).FirstAsync(x => x.Id == requestId);
+            var request = await _requestRepository.GetItems(true).FirstAsync(x => x.Id == requestId, cancellationToken);
 
             if (request.Status == ColaborationRequestStatus.NotColaborators)
                 result.Errors.Add("Request already rejected");
@@ -110,8 +109,7 @@ namespace InnoGotchiGame.Application.Managers
             }
 
             request.Status = ColaborationRequestStatus.NotColaborators;
-            _repositoryManager.ColaborationRequest.Update(request);
-            await _repositoryManager.SaveAsync();
+            await _repositoryManager.SaveAsync(cancellationToken);
 
             _repositoryManager.Detach(request);
 
@@ -123,26 +121,26 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="requestId">id of the request</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerResult> DeleteRequestAsync(int requestId)
+        public async Task<ManagerResult> DeleteRequestAsync(int requestId, CancellationToken cancellationToken = default)
         {
             var result = new ManagerResult();
-            if (!await IsRequestIdExistAsync(requestId, result))
+            if (!await IsRequestIdExistAsync(requestId, result,cancellationToken))
             {
                 return result;
             }
 
-            var request = await _requestRepository.GetItems(false).FirstAsync(x => x.Id == requestId);
+            var request = await _requestRepository.GetItems(false).FirstAsync(x => x.Id == requestId, cancellationToken);
 
             _requestRepository.Delete(request);
-            await _repositoryManager.SaveAsync();
+            await _repositoryManager.SaveAsync(cancellationToken);
             
 
             return result;
         }
 
-        private async Task<bool> IsRequestIdExistAsync(int id, ManagerResult result)
+        private async Task<bool> IsRequestIdExistAsync(int id, ManagerResult result, CancellationToken cancellationToken)
         {
-            if (!(await _requestRepository.IsItemExistAsync(x => x.Id == id)))
+            if (!(await _requestRepository.IsItemExistAsync(x => x.Id == id, cancellationToken)))
             {
                 result.Errors.Add("The request ID is not in the database");
                 return false;

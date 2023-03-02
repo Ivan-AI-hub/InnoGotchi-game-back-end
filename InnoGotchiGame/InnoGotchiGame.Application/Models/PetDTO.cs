@@ -9,8 +9,6 @@ namespace InnoGotchiGame.Application.Models
         public PetStatisticDTO Statistic { get; set; }
         public PetViewDTO View { get; set; }
         public int FarmId { get; set; }
-        [JsonIgnore]
-        public PetFarmDTO Farm { get; set; }
 
         public PetDTO()
         {

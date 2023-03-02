@@ -14,7 +14,6 @@ namespace InnoGotchiGame.Persistence.Repositories
         public override IQueryable<IColaborationRequest> GetItems(bool trackChanges)
         {
             var requests = Context.ColaborationRequests
-                .AsNoTracking()
                 .Include(x => x.RequestReceiver)
                 .Include(x => x.RequestSender);
 

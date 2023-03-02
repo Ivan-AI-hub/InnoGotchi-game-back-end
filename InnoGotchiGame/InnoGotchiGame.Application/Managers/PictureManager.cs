@@ -31,11 +31,11 @@ namespace InnoGotchiGame.Application.Managers
         /// Adds <paramref name="picture"/> to database
         /// </summary>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerResult> AddAsync(PictureDTO picture)
+        public async Task<ManagerResult> AddAsync(PictureDTO picture, CancellationToken cancellationToken = default)
         {
             var managerResult = new ManagerResult();
 
-            if (!await IsUniqueNameAsync(picture.Name, managerResult))
+            if (!await IsUniqueNameAsync(picture.Name, managerResult, cancellationToken))
             {
                 return managerResult;
             }
@@ -49,7 +49,7 @@ namespace InnoGotchiGame.Application.Managers
             }
 
             _pictureRepository.Create(pictureData);
-            await _repositoryManager.SaveAsync();
+            await _repositoryManager.SaveAsync(cancellationToken);
             _repositoryManager.Detach(pictureData);
 
             return managerResult;
@@ -60,16 +60,16 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="updatedId">Id of the picture being updated</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerResult> UpdateAsync(int updatedId, PictureDTO newPicture)
+        public async Task<ManagerResult> UpdateAsync(int updatedId, PictureDTO newPicture, CancellationToken cancellationToken = default)
         {
             var managerResult = new ManagerResult();
 
-            if (!await CheckPictureIdAsync(updatedId, managerResult))
+            if (!await CheckPictureIdAsync(updatedId, managerResult, cancellationToken))
             {
                 return managerResult;
             }
 
-            var pictureData = await _pictureRepository.GetItems(true).FirstAsync(x => x.Id == updatedId);
+            var pictureData = await _pictureRepository.GetItems(true).FirstAsync(x => x.Id == updatedId, cancellationToken);
             pictureData.Description = newPicture.Description;
             pictureData.Format = newPicture.Format;
             pictureData.Image = newPicture.Image;
@@ -81,7 +81,7 @@ namespace InnoGotchiGame.Application.Managers
                 return new ManagerResult(validationResult);
             }
 
-            await _repositoryManager.SaveAsync();
+            await _repositoryManager.SaveAsync(cancellationToken);
             _repositoryManager.Detach(pictureData);
 
             newPicture.Id = updatedId;
@@ -93,40 +93,40 @@ namespace InnoGotchiGame.Application.Managers
         /// </summary>
         /// <param name="id">IPicture id</param>
         /// <returns>Result of method execution</returns>
-        public async Task<ManagerResult> DeleteAsync(int id)
+        public async Task<ManagerResult> DeleteAsync(int id, CancellationToken cancellationToken = default)
         {
             var managerResult = new ManagerResult();
-            if (!await CheckPictureIdAsync(id, managerResult))
+            if (!await CheckPictureIdAsync(id, managerResult, cancellationToken))
             {
                 return managerResult;
             }
 
-            _pictureRepository.Delete(await _pictureRepository.GetItems(false).FirstAsync(x => x.Id == id));
-            await _repositoryManager.SaveAsync();
+            _pictureRepository.Delete(await _pictureRepository.GetItems(false).FirstAsync(x => x.Id == id, cancellationToken));
+            await _repositoryManager.SaveAsync(cancellationToken);
 
             return managerResult;
         }
 
         /// <returns>picture with special <paramref name="id"/> </returns>
-        public async Task<PictureDTO?> GetByIdAsync(int id)
+        public async Task<PictureDTO?> GetByIdAsync(int id, CancellationToken cancellationToken = default)
         {
-            var picture = _mapper.Map<PictureDTO>(await _pictureRepository.GetItems(false).FirstAsync(x => x.Id == id));
+            var picture = _mapper.Map<PictureDTO>(await _pictureRepository.GetItems(false).FirstAsync(x => x.Id == id, cancellationToken));
             return picture;
         }
 
         /// <returns>Filtered list of pictures</returns>
-        public async Task<IEnumerable<PictureDTO>> GetAllAsync(Filtrator<IPicture>? filtrator)
+        public async Task<IEnumerable<PictureDTO>> GetAllAsync(Filtrator<IPicture>? filtrator, CancellationToken cancellationToken = default)
         {
             var pictures = _pictureRepository.GetItems(false);
             pictures = filtrator != null ? filtrator.Filter(pictures) : pictures;
             pictures = pictures.OrderBy(x => x.Name);
-            return _mapper.Map<IEnumerable<PictureDTO>>(await pictures.ToListAsync());
+            return _mapper.Map<IEnumerable<PictureDTO>>(await pictures.ToListAsync(cancellationToken));
 
         }
 
-        private async Task<bool> IsUniqueNameAsync(string name, ManagerResult managerResult)
+        private async Task<bool> IsUniqueNameAsync(string name, ManagerResult managerResult, CancellationToken cancellationToken = default)
         {
-            if (await _pictureRepository.IsItemExistAsync(x => x.Name.ToLower() == name.ToLower()))
+            if (await _pictureRepository.IsItemExistAsync(x => x.Name.ToLower() == name.ToLower(), cancellationToken))
             {
                 managerResult.Errors.Add("A picture with the same Name already exists in the database");
                 return false;
@@ -134,9 +134,9 @@ namespace InnoGotchiGame.Application.Managers
             return true;
         }
 
-        private async Task<bool> CheckPictureIdAsync(int id, ManagerResult managerResult)
+        private async Task<bool> CheckPictureIdAsync(int id, ManagerResult managerResult, CancellationToken cancellationToken = default)
         {
-            if (!await _pictureRepository.IsItemExistAsync(x => x.Id == id))
+            if (!await _pictureRepository.IsItemExistAsync(x => x.Id == id, cancellationToken))
             {
                 managerResult.Errors.Add("The farm ID is not in the database");
                 return false;
