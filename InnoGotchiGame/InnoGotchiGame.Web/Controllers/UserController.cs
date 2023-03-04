@@ -132,7 +132,7 @@ namespace InnoGotchiGame.Web.Controllers
         [ProducesResponseType(typeof(ErrorDetails), 404)]
         public async Task<IActionResult> GetByIdAsync(int userId, CancellationToken cancellationToken)
         {
-            var user = await _userManager.GetUserByIdAsync(userId, cancellationToken);
+            var user = OptimizeData(await _userManager.GetUserByIdAsync(userId, cancellationToken));
             if (user == null)
                 return NotFound(new ErrorDetails(404, "Invalid id."));
 
@@ -142,24 +142,24 @@ namespace InnoGotchiGame.Web.Controllers
         /// <returns>Authorized user</returns>
         [HttpGet("Authorized")]
         [ProducesResponseType(typeof(UserDTO), 200)]
+        [ProducesResponseType(typeof(ErrorDetails), 404)]
         public async Task<IActionResult> GetAuthorizeUserAsync(CancellationToken cancellationToken)
         {
             var userId = int.Parse(User.GetUserId()!);
-            var user = await _userManager.GetUserByIdAsync(userId, cancellationToken);
 
-            return new ObjectResult(user);
+            return await GetByIdAsync(userId, cancellationToken);
         }
 
         /// <param name="email"></param>
         /// <param name="password"></param>
         /// <returns>access token for user witn same email and password</returns>
-        [HttpPost("token")]
+        [HttpGet("token")]
         [AllowAnonymous]
         [ProducesResponseType(200)]
         [ProducesResponseType(typeof(ErrorDetails), 400)]
         public async Task<IActionResult> TokenAsync(string email, string password, CancellationToken cancellationToken)
         {
-            UserDTO? user = await _userManager.FindUserInDbAsync(email, password, cancellationToken);
+            UserDTO? user = OptimizeData(await _userManager.FindUserInDbAsync(email, password, cancellationToken));
             if (user == null)
             {
                 return BadRequest(new ErrorDetails(400, "Invalid email or password."));
@@ -202,6 +202,13 @@ namespace InnoGotchiGame.Web.Controllers
                 User = user
             };
             return token;
+        }
+
+        private UserDTO? OptimizeData(UserDTO? user)
+        {
+            if(user != null)
+                user.Collaborators.ToList().ForEach(x => { x.AcceptedColaborations.Clear(); x.SentColaborations.Clear(); });
+            return user;
         }
     }
 }

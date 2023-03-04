@@ -148,7 +148,7 @@ namespace InnoGotchiGame.Application.Managers
             var user = await _userRepository.GetFullData(false).FirstOrDefaultAsync(x => x.Id == userId, cancellationToken);
             var userDto = _mapper.Map<UserDTO>(user);
             userDto.Collaborators.ToList().ForEach(x => { x.AcceptedColaborations.Clear(); x.SentColaborations.Clear(); });
-            return userDto;
+            return _mapper.Map<UserDTO>(user);
         }
 
         /// <summary>
