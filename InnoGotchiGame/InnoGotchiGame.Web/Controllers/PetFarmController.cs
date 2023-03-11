@@ -4,7 +4,7 @@ using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Application.Sorters.SortRules;
 using InnoGotchiGame.Web.Extensions;
-using InnoGotchiGame.Web.Models.ErrorModel;
+using InnoGotchiGame.Web.Models.ErrorModels;
 using InnoGotchiGame.Web.Models.PetFarms;
 using Microsoft.AspNetCore.Mvc;
 

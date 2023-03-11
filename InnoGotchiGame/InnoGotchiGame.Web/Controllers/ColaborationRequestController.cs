@@ -1,6 +1,6 @@
 ﻿using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Web.Extensions;
-using InnoGotchiGame.Web.Models.ErrorModel;
+using InnoGotchiGame.Web.Models.ErrorModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InnoGotchiGame.Web.Controllers

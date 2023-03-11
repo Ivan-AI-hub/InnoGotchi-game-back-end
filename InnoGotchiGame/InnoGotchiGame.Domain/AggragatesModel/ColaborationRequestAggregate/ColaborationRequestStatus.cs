@@ -3,7 +3,7 @@
     public enum ColaborationRequestStatus
     {
         NotColaborators = -1,
-        Undefined = 0,
-        Colaborators = 1
+        Undefined,
+        Colaborators
     }
 }

@@ -6,11 +6,8 @@ namespace InnoGotchiGame.Application.Models
     public class UserDTO
     {
         public int Id { get; set; }
-        [MaxLength(20)]
         public string FirstName { get; set; }
-        [MaxLength(20)]
         public string LastName { get; set; }
-        [EmailAddress]
         public string Email { get; set; }
         public PictureDTO? Picture { get; set; }
         public int OwnPetFarmId => OwnPetFarm != null ? OwnPetFarm.Id : 0;

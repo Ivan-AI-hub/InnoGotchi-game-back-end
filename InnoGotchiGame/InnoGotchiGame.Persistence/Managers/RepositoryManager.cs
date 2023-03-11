@@ -10,12 +10,12 @@ namespace InnoGotchiGame.Persistence.Managers
 {
     public class RepositoryManager : IRepositoryManager
     {
-        public InnoGotchiGameContext _context;
-        public IColaborationRequestRepository _colaborationRequestRepository;
-        public IPetFarmRepository _petFarmRepository;
-        public IPetRepository _petRepository;
-        public IPictureRepository _pictureRepository;
-        public IUserRepository _userRepository;
+        private InnoGotchiGameContext _context;
+        private IColaborationRequestRepository _colaborationRequestRepository;
+        private IPetFarmRepository _petFarmRepository;
+        private IPetRepository _petRepository;
+        private IPictureRepository _pictureRepository;
+        private IUserRepository _userRepository;
 
         public RepositoryManager(InnoGotchiGameContext context)
         {

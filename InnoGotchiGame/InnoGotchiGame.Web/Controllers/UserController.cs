@@ -5,7 +5,7 @@ using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters;
 using InnoGotchiGame.Application.Sorters.SortRules;
 using InnoGotchiGame.Web.Extensions;
-using InnoGotchiGame.Web.Models.ErrorModel;
+using InnoGotchiGame.Web.Models.ErrorModels;
 using InnoGotchiGame.Web.Models.Users;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -206,7 +206,7 @@ namespace InnoGotchiGame.Web.Controllers
 
         private UserDTO? OptimizeData(UserDTO? user)
         {
-            if(user != null)
+            if (user != null)
                 user.Collaborators.ToList().ForEach(x => { x.AcceptedColaborations.Clear(); x.SentColaborations.Clear(); });
             return user;
         }

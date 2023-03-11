@@ -1,4 +1,4 @@
-﻿using InnoGotchiGame.Web.Models.ErrorModel;
+﻿using InnoGotchiGame.Web.Models.ErrorModels;
 using System.Net;
 
 namespace InnoGotchiGame.Web.Middleware

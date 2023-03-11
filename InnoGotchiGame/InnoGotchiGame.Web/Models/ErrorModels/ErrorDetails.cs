@@ -1,6 +1,6 @@
 ﻿using System.Text.Json;
 
-namespace InnoGotchiGame.Web.Models.ErrorModel
+namespace InnoGotchiGame.Web.Models.ErrorModels
 {
     public class ErrorDetails
     {
@@ -16,7 +16,7 @@ namespace InnoGotchiGame.Web.Models.ErrorModel
         public ErrorDetails(int statusCode, IEnumerable<string> messages)
         {
             StatusCode = statusCode;
-            Message = String.Join('\n', messages);
+            Message = string.Join('\n', messages);
         }
 
         public override string ToString() => JsonSerializer.Serialize(this);
