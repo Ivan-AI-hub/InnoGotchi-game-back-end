@@ -17,25 +17,20 @@ namespace InnoGotchiGame.Web.Initializers
             if (!(await pictureManager.GetAllAsync(filter)).Any())
             {
                 var dataModel = options.Value;
-                foreach (var bodyLink in dataModel.BodiesLinks)
-                {
-                    await AddImageToDb(bodyLink, "petView-body", pictureManager);
-                }
-                foreach (var eyesLink in dataModel.EyesLinks)
-                {
-                    await AddImageToDb(eyesLink, "petView-eyes", pictureManager);
-                }
-                foreach (var mounthLink in dataModel.MouthsLinks)
-                {
-                    await AddImageToDb(mounthLink, "petView-mouth", pictureManager);
-                }
-                foreach (var noseLink in dataModel.NosesLinks)
-                {
-                    await AddImageToDb(noseLink, "petView-nose", pictureManager);
-                }
+                await AddImagesToDb(dataModel.BodiesLinks, "petView-body", pictureManager);
+                await AddImagesToDb(dataModel.EyesLinks, "petView-eyes", pictureManager);
+                await AddImagesToDb(dataModel.MouthsLinks, "petView-mouth", pictureManager);
+                await AddImagesToDb(dataModel.NosesLinks, "petView-nose", pictureManager);
             }
         }
 
+        private static async Task AddImagesToDb(IList<string> paths, string description, PictureManager manager)
+        {
+            foreach (var path in paths)
+            {
+                await AddImageToDb(path, description, manager);
+            }
+        }
         private static async Task AddImageToDb(string path, string description, PictureManager manager)
         {
             var picture = new PictureDTO()
