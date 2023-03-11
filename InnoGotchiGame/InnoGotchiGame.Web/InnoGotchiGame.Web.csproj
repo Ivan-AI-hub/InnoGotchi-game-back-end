@@ -22,7 +22,6 @@
     <ProjectReference Include="..\InnoGotchiGame.Application\InnoGotchiGame.Application.csproj" />
     <ProjectReference Include="..\InnoGotchiGame.Domain\InnoGotchiGame.Domain.csproj" />
     <ProjectReference Include="..\InnoGotchiGame.Persistence\InnoGotchiGame.Persistence.csproj" />
-    <ProjectReference Include="..\LoggerService\LoggerService.csproj" />
   </ItemGroup>
 
 </Project>

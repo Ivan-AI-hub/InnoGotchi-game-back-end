@@ -13,7 +13,6 @@ LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nl
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 builder.Services.ConfigureCors(builder.Configuration, MyAllowSpecificOrigins);
-builder.Services.ConfigureLoggerService();
 builder.Services.ConfigureSqlContext(builder.Configuration);
 
 builder.Services.ConfigureRepositoryManager();

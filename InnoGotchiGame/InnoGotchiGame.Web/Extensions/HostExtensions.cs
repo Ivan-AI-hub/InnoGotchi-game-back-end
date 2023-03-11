@@ -1,7 +1,6 @@
 ﻿using InnoGotchiGame.Application.Managers;
 using InnoGotchiGame.Web.Initializers;
 using InnoGotchiGame.Web.Initializers.Models;
-using LoggerService;
 using Microsoft.Extensions.Options;
 
 namespace InnoGotchiGame.Web.Extensions
@@ -22,7 +21,7 @@ namespace InnoGotchiGame.Web.Extensions
                 }
                 catch (Exception ex)
                 {
-                    var logger = services.GetRequiredService<ILoggerManager>();
+                    var logger = services.GetRequiredService<ILogger<IHost>>();
                     logger.LogError($"An error occurred when filling pets view./n{ex}");
                 }
             }

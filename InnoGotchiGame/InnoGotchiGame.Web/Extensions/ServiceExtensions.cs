@@ -2,7 +2,6 @@
 using InnoGotchiGame.Domain.BaseModels;
 using InnoGotchiGame.Persistence;
 using InnoGotchiGame.Persistence.Managers;
-using LoggerService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -28,11 +27,6 @@ namespace InnoGotchiGame.Web.Extensions
                                       .AllowAnyMethod());
 
             });
-        }
-
-        public static void ConfigureLoggerService(this IServiceCollection services)
-        {
-            services.AddScoped<ILoggerManager, LoggerManager>();
         }
 
         public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)

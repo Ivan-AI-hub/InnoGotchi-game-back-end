@@ -1,6 +1,4 @@
 ﻿using InnoGotchiGame.Web.Models.ErrorModel;
-using LoggerService;
-using System;
 using System.Net;
 
 namespace InnoGotchiGame.Web.Middleware
@@ -14,7 +12,7 @@ namespace InnoGotchiGame.Web.Middleware
             _next = next;
         }
 
-        public async Task InvokeAsync(HttpContext context, ILoggerManager loggerManager)
+        public async Task InvokeAsync(HttpContext context, ILogger<ExceptionHandlingMiddleware> loggerManager)
         {
             try
             {
@@ -30,7 +28,7 @@ namespace InnoGotchiGame.Web.Middleware
             }
         }
 
-        private async Task HandleExceptionAsync(Exception exception, HttpContext context, ILoggerManager logger)
+        private async Task HandleExceptionAsync(Exception exception, HttpContext context, ILogger<ExceptionHandlingMiddleware> logger)
         {
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
             context.Response.ContentType = "application/json";
