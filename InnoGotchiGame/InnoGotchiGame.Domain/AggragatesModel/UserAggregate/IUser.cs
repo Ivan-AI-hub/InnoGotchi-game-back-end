@@ -18,7 +18,5 @@ namespace InnoGotchiGame.Domain.AggragatesModel.UserAggregate
 
         IEnumerable<IColaborationRequest> SentColaborations { get; }
         IEnumerable<IColaborationRequest> AcceptedColaborations { get; }
-
-        IEnumerable<IUser> GetColaborators();
     }
 }

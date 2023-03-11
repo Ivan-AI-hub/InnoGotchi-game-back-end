@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using FluentValidation;
+using InnoGotchiGame.Application.Extensions;
 using InnoGotchiGame.Application.Filtrators.Base;
 using InnoGotchiGame.Application.Models;
 using InnoGotchiGame.Application.Sorters.Base;

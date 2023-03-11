@@ -42,16 +42,5 @@ namespace InnoGotchiGame.Persistence.Models
         {
             OwnPetFarmId = ownPetFarmId;
         }
-
-        /// <returns>All colaborators of user</returns>
-        public IEnumerable<IUser> GetColaborators()
-        {
-            Func<IColaborationRequest, bool> whereFunc = x => x.Status == ColaborationRequestStatus.Colaborators;
-
-            var friends = new List<IUser>();
-            friends.AddRange(AcceptedColaborations.Where(whereFunc).Select(x => x.RequestSender));
-            friends.AddRange(SentColaborations.Where(whereFunc).Select(x => x.RequestReceiver));
-            return friends;
-        }
     }
 }
