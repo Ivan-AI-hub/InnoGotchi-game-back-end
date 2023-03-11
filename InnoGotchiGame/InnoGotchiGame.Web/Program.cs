@@ -12,15 +12,15 @@ var builder = WebApplication.CreateBuilder(args);
 LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
-builder.Services.ConfigureCors(builder.Configuration, MyAllowSpecificOrigins);
-builder.Services.ConfigureSqlContext(builder.Configuration);
+builder.Services.ConfigureCors(builder.Configuration, "AllowedSpecificOrigins", MyAllowSpecificOrigins);
+builder.Services.ConfigureSqlContext(builder.Configuration, "DefaultConnection");
 
 builder.Services.ConfigureRepositoryManager();
 builder.Services.ConfigureBLLManagers();
 
 builder.Services.ConfigureSwagger();
 
-builder.Services.ConfigureJWT(builder.Configuration);
+builder.Services.ConfigureJWT(builder.Configuration, "JwtSettings", "validIssuer", "validAudience", "issuerSigningKey");
 builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles
 );

@@ -13,9 +13,9 @@ namespace InnoGotchiGame.Web.Extensions
 {
     public static class ServiceExtensions
     {
-        public static void ConfigureCors(this IServiceCollection services, IConfiguration configuration, string policyName = "CorsPolicy")
+        public static void ConfigureCors(this IServiceCollection services, IConfiguration configuration, string allowedOriginsSectionName, string policyName = "CorsPolicy")
         {
-            IEnumerable<string> allowedOrigins = configuration.GetSection("AllowedSpecificOrigins")
+            IEnumerable<string> allowedOrigins = configuration.GetSection(allowedOriginsSectionName)
                                                               .AsEnumerable()
                                                               .Select(x => x.Value)
                                                               .Where(x => x != null)!;
@@ -29,9 +29,9 @@ namespace InnoGotchiGame.Web.Extensions
             });
         }
 
-        public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration)
+        public static void ConfigureSqlContext(this IServiceCollection services, IConfiguration configuration, string connectionStringSectionName)
         {
-            string connection = configuration.GetConnectionString("DefaultConnection");
+            var connection = configuration.GetConnectionString(connectionStringSectionName);
             services.AddDbContext<InnoGotchiGameContext>(options =>
                                 options.UseSqlServer(connection,
                                 b => b.MigrationsAssembly(Assembly.GetExecutingAssembly().GetName().Name)));
@@ -51,9 +51,10 @@ namespace InnoGotchiGame.Web.Extensions
             services.AddScoped<PetFarmManager>();
         }
 
-        public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration)
+        public static void ConfigureJWT(this IServiceCollection services, IConfiguration configuration,
+                                        string jwtSettingsSection, string issuerSection, string audienceSection, string keySection)
         {
-            var jwtSettings = configuration.GetSection("JwtSettings");
+            var jwtSettings = configuration.GetSection(jwtSettingsSection);
             services.AddAuthentication(opt =>
             {
                 opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -67,9 +68,9 @@ namespace InnoGotchiGame.Web.Extensions
                     ValidateAudience = true,
                     ValidateLifetime = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = jwtSettings.GetSection("validIssuer").Value,
-                    ValidAudience = jwtSettings.GetSection("validAudience").Value,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.GetSection("issuerSigningKey").Value))
+                    ValidIssuer = jwtSettings.GetSection(issuerSection).Value,
+                    ValidAudience = jwtSettings.GetSection(audienceSection).Value,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.GetSection(keySection).Value))
                 };
             });
         }
