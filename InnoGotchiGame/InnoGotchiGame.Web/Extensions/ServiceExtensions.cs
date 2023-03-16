@@ -1,7 +1,13 @@
 ﻿using InnoGotchiGame.Application.Managers;
+using InnoGotchiGame.Domain.AggragatesModel.ColaborationRequestAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PetAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.PictureAggregate;
+using InnoGotchiGame.Domain.AggragatesModel.UserAggregate;
 using InnoGotchiGame.Domain.BaseModels;
 using InnoGotchiGame.Persistence;
 using InnoGotchiGame.Persistence.Managers;
+using InnoGotchiGame.Persistence.Repositories;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -40,6 +46,11 @@ namespace InnoGotchiGame.Web.Extensions
         public static void ConfigureRepositoryManager(this IServiceCollection services)
         {
             services.AddScoped<IRepositoryManager, RepositoryManager>();
+            services.AddScoped<IColaborationRequestRepository, ColaborationRequestRepository>();
+            services.AddScoped<IPetFarmRepository, PetFarmRepository>();
+            services.AddScoped<IPetRepository, PetRepository>();
+            services.AddScoped<IPictureRepository, PictureRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
         }
 
         public static void ConfigureBLLManagers(this IServiceCollection services)

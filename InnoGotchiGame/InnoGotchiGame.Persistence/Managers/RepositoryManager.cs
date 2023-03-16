@@ -4,22 +4,24 @@ using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
 using InnoGotchiGame.Domain.AggragatesModel.PictureAggregate;
 using InnoGotchiGame.Domain.AggragatesModel.UserAggregate;
 using InnoGotchiGame.Domain.BaseModels;
-using InnoGotchiGame.Persistence.Repositories;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace InnoGotchiGame.Persistence.Managers
 {
     public class RepositoryManager : IRepositoryManager
     {
         private InnoGotchiGameContext _context;
+        private IServiceProvider _serviceProvider;
         private IColaborationRequestRepository _colaborationRequestRepository;
         private IPetFarmRepository _petFarmRepository;
         private IPetRepository _petRepository;
         private IPictureRepository _pictureRepository;
         private IUserRepository _userRepository;
 
-        public RepositoryManager(InnoGotchiGameContext context)
+        public RepositoryManager(InnoGotchiGameContext context, IServiceProvider serviceProvider)
         {
             _context = context;
+            _serviceProvider = serviceProvider;
         }
 
         public IColaborationRequestRepository ColaborationRequest
@@ -27,7 +29,7 @@ namespace InnoGotchiGame.Persistence.Managers
             get
             {
                 if (_colaborationRequestRepository == null)
-                    _colaborationRequestRepository = new ColaborationRequestRepository(_context);
+                    _colaborationRequestRepository = _serviceProvider.GetRequiredService<IColaborationRequestRepository>();
                 return _colaborationRequestRepository;
             }
         }
@@ -37,7 +39,7 @@ namespace InnoGotchiGame.Persistence.Managers
             get
             {
                 if (_petFarmRepository == null)
-                    _petFarmRepository = new PetFarmRepository(_context);
+                    _petFarmRepository = _serviceProvider.GetRequiredService<IPetFarmRepository>();
                 return _petFarmRepository;
             }
         }
@@ -47,7 +49,7 @@ namespace InnoGotchiGame.Persistence.Managers
             get
             {
                 if (_petRepository == null)
-                    _petRepository = new PetRepository(_context);
+                    _petRepository = _serviceProvider.GetRequiredService<IPetRepository>();
                 return _petRepository;
             }
         }
@@ -57,7 +59,7 @@ namespace InnoGotchiGame.Persistence.Managers
             get
             {
                 if (_pictureRepository == null)
-                    _pictureRepository = new PictureRepository(_context);
+                    _pictureRepository = _serviceProvider.GetRequiredService<IPictureRepository>();
                 return _pictureRepository;
             }
         }
@@ -67,7 +69,7 @@ namespace InnoGotchiGame.Persistence.Managers
             get
             {
                 if (_userRepository == null)
-                    _userRepository = new UserRepository(_context);
+                    _userRepository = _serviceProvider.GetRequiredService<IUserRepository>();
                 return _userRepository;
             }
         }
