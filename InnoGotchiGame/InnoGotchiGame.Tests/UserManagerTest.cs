@@ -1,6 +1,8 @@
 using InnoGotchiGame.Domain.AggragatesModel.UserAggregate;
 using InnoGotchiGame.Domain.BaseModels;
 using InnoGotchiGame.Persistence.Managers;
+using InnoGotchiGame.Persistence.Repositories;
+using Moq;
 
 namespace InnoGotchiGame.Tests
 {
@@ -20,8 +22,12 @@ namespace InnoGotchiGame.Tests
             _fixture.Behaviors.OfType<ThrowingRecursionBehavior>().ToList()
                     .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IUserRepository)))
+                .Returns(new UserRepository(context));
 
-            _fixture.Register<IRepositoryManager>(() => new RepositoryManager(context));
+            _fixture.Register<IRepositoryManager>(() => new RepositoryManager(context, serviceProvider.Object));
             _fixture.Register<IValidator<IUser>>(() => new UserValidator());
 
             var config = new MapperConfiguration(cnf => cnf.AddProfiles(new List<Profile>() { new AssemblyMappingProfile() }));
@@ -176,6 +182,8 @@ namespace InnoGotchiGame.Tests
         private UserDTO GetValidUser()
         {
             var user = GetInvalidUser();
+            user.FirstName = $"test{emailId}";
+            user.LastName = $"test{emailId}";
             user.Email = $"test{emailId}@mail.com";
             emailId++;
             return user;

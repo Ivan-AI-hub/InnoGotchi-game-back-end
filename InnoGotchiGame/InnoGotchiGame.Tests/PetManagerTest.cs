@@ -4,6 +4,11 @@ using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
 using InnoGotchiGame.Domain.BaseModels;
 using InnoGotchiGame.Persistence.Managers;
 using InnoGotchiGame.Persistence.Models;
+using InnoGotchiGame.Persistence.Repositories;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Moq;
 
 namespace InnoGotchiGame.Tests
 {
@@ -22,10 +27,16 @@ namespace InnoGotchiGame.Tests
                     .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IPetFarmRepository)))
+                .Returns(new PetFarmRepository(context));
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IPetRepository)))
+                .Returns(new PetRepository(context));
 
-            _fixture.Register<IRepositoryManager>(() => new RepositoryManager(context));
+            _fixture.Register<IRepositoryManager>(() => new RepositoryManager(context, serviceProvider.Object));
             _fixture.Register<IValidator<IPet>>(() => new PetValidator());
-            _fixture.Register<IRepositoryManager>(() => new RepositoryManager(context));
 
             _fixture.Register<IPetStatistic>(() => _fixture.Build<PetStatistic>().Without(x => x.DeadDate).Create());
             _fixture.Register<IPetView>(() => new PetView());

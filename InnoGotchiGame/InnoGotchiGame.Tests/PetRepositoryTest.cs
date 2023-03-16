@@ -3,6 +3,8 @@ using InnoGotchiGame.Domain.AggragatesModel.PetFarmAggregate;
 using InnoGotchiGame.Domain.BaseModels;
 using InnoGotchiGame.Persistence.Managers;
 using InnoGotchiGame.Persistence.Models;
+using InnoGotchiGame.Persistence.Repositories;
+using Moq;
 
 namespace InnoGotchiGame.Tests
 {
@@ -22,7 +24,11 @@ namespace InnoGotchiGame.Tests
                     .ForEach(b => _fixture.Behaviors.Remove(b));
             _fixture.Behaviors.Add(new OmitOnRecursionBehavior());
 
-            _fixture.Register<IRepositoryManager>(() => new RepositoryManager(context));
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider
+                .Setup(x => x.GetService(typeof(IPetRepository)))
+                .Returns(new PetRepository(context));
+            _fixture.Register<IRepositoryManager>(() => new RepositoryManager(context, serviceProvider.Object));
             _fixture.Register<IPetStatistic>(() => _fixture.Create<PetStatistic>());
             _fixture.Register<IPetView>(() => new PetView());
             _fixture.Register<IPetFarm>(() => new PetFarm(_fixture.Create<string>(), _fixture.Create<int>()));
