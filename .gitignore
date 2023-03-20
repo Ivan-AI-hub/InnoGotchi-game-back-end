@@ -396,3 +396,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+InnoGotchiGame/InnoGotchiGame.Web/internal_logs/internallog.txt

@@ -1,6 +1,6 @@
-﻿using InnoGotchiGame.Domain;
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
+﻿using InnoGotchiGame.Persistence.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace InnoGotchiGame.Persistence.EntityConfigurations
 {
@@ -8,15 +8,10 @@ namespace InnoGotchiGame.Persistence.EntityConfigurations
     {
         public void Configure(EntityTypeBuilder<PetFarm> builder)
         {
-            builder.Ignore(x => x.AlivesPetsCount);
-            builder.Ignore(x => x.DeadsPetsCount);
-            builder.Ignore(x => x.AveragePetsHappinessDaysCount);
-            builder.Ignore(x => x.AveragePetsAge);
-
-            builder.HasOne(p => p.User)
-                .WithOne(d => d.OwnPetFarm)
-                .HasForeignKey<User>(x => x.OwnPetFarmId)
-                .OnDelete(DeleteBehavior.Cascade);
+            builder.HasIndex(x => x.Name).IsUnique();
+            builder.HasOne(p => (User)p.Owner)
+                .WithOne(d => (PetFarm)d.OwnPetFarm)
+                .HasForeignKey<User>(x => x.OwnPetFarmId);
         }
     }
 }
